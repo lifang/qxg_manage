@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  content: MyText
+  types: 1
+  knowledge_card_id: 1
+  round_id: 1
+
+two:
+  content: MyText
+  types: 1
+  knowledge_card_id: 1
+  round_id: 1

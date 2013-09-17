@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  chapter_id: 1
+  name: MyString
+  questions_count: 1
+  round_time: 1
+  time_ratio: 1
+  blood: 1
+  max_score: 1
+
+two:
+  chapter_id: 1
+  name: MyString
+  questions_count: 1
+  round_time: 1
+  time_ratio: 1
+  blood: 1
+  max_score: 1

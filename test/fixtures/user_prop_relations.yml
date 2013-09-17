@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  user_id: 1
+  prop_id: 1
+  user_prop_num: 1
+
+two:
+  user_id: 1
+  prop_id: 1
+  user_prop_num: 1

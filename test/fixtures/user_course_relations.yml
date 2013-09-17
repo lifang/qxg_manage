@@ -1,0 +1,21 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  user_id: 1
+  course_id: 1
+  cardbag_count: 1
+  cardbag_use_count: 1
+  gold: 1
+  gold_total: 1
+  level: 1
+  achieve_point: 1
+
+two:
+  user_id: 1
+  course_id: 1
+  cardbag_count: 1
+  cardbag_use_count: 1
+  gold: 1
+  gold_total: 1
+  level: 1
+  achieve_point: 1

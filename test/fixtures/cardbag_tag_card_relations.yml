@@ -1,0 +1,9 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  cardbag_tag_id: 1
+  card_id: 1
+
+two:
+  cardbag_tag_id: 1
+  card_id: 1

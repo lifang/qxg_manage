@@ -1,0 +1,23 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  name: MyString
+  press: MyString
+  description: MyText
+  img: MyString
+  types: 1
+  status: 1
+  time_ratio: 1
+  blood: 1
+  max_score: 1
+
+two:
+  name: MyString
+  press: MyString
+  description: MyText
+  img: MyString
+  types: 1
+  status: 1
+  time_ratio: 1
+  blood: 1
+  max_score: 1

@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  user_id: 1
+  chapter_id: 1
+  round_id: 1
+  score: 1
+  day: 2013-09-16 14:34:37
+
+two:
+  user_id: 1
+  chapter_id: 1
+  round_id: 1
+  score: 1
+  day: 2013-09-16 14:34:37

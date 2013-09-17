@@ -30,7 +30,7 @@ gem 'jquery-rails', '~> 2.1.0'
 
 # To use debugger
 # gem 'ruby-debug19', :require => 'ruby-debug'
-
+gem 'mime-types','1.21'
 group :test do
   # Pretty printed test output
   gem 'turn', '0.8.2', :require => false

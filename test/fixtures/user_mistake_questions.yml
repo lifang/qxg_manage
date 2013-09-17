@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  user_id: 1
+  course: 1
+  question_id: 1
+  wrong_time: 2013-09-16 14:54:05
+
+two:
+  user_id: 1
+  course: 1
+  question_id: 1
+  wrong_time: 2013-09-16 14:54:05
