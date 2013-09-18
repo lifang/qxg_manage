@@ -5,9 +5,7 @@ class Api::UsersController < ActionController::Base
     user = User.find_by_email(email)
     password = params[:password]
     if user
-      if user.types == User::TYPES[:DELETED]
-        render :json => "deleted"
-      elsif Digest::SHA2.hexdigest(password) != user.password
+      if Digest::SHA2.hexdigest(password) != user.password
         render :json => "error_pwd"
       else
         courses = Course.find_by_sql("select ucr.*, c.* from users u left join user_course_relations ucr on u.id=user_id
@@ -37,22 +35,35 @@ class Api::UsersController < ActionController::Base
   end
 
   def edit      #编辑
-    user = User.find_by_id(params[:uid])
+    user = User.find_by_id(params[:uid].to_i)
     render :json => user
   end
 
   def update    #更新
-
+    user = User.find_by_id(params[:uid].to_i)
+    name = params[:name].strip
+    birthday = params[:birthday]
+    sex = params[:sex]
+    if name.nil? || name.empty?
+      render :json => "昵称不能为空"
+    else
+      if user.update_attributes(:name => name, :birthday => birthday, :sex => sex)
+        render :json => "success"
+      else
+        render :json => "falied"
+      end
+    end
   end
 
   def upload_head_img     #上传头像
-
+    img = params[:img]
+    
   end
 
   def set_password      #设置密码
     opwd = params[:old_password]
     npwd = params[:new_password]
-    user = User.find_by_id(params[:uid])
+    user = User.find_by_id(params[:uid].to_i)
     if Digest::SHA2.hexdigest(opwd) != user.password
       render :json => "error_pwd"
     else
