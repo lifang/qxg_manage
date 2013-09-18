@@ -59,9 +59,12 @@ QxgManage::Application.routes.draw do
   namespace :api do
     resources :users do
       collection do
-      get :login, :digest
-      post :regist, :set_password
+      get :digest
+      post  :login, :regist, :set_password
       end
+    end
+    resources :user_manages do
+      get :selected_courses
     end
   end
 end
