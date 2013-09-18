@@ -29,4 +29,13 @@ class CoursesController < ApplicationController
       render :edit
     end
   end
+
+  #审核
+  def verify
+    @course = Course.find_by_id params[:id]
+    if @course.update_attribute(:status, true)
+    else
+      
+    end
+  end
 end
