@@ -1,0 +1,11 @@
+<%= flash[:notice] %>
+<% p @email %>
+<%= form_for :user, :url=>"/login", :method => "post", :html => {:onsubmit => "return check_login()"} do %>
+  <div class="login_list">
+    <label>邮箱：</label>
+    <input id="user_name" name="user_email" type="text" value="<%= @email.nil? ? "" : @email %>"/></div>
+  <div class="login_list">
+    <label>密码：</label>
+    <input id="user_password" name="user_password" type="password" /></div>
+  <div class="login_btn"><button type="submit" id="login_exam">登录</button></div>
+<% end %>

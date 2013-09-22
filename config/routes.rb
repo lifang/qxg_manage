@@ -11,6 +11,10 @@ QxgManage::Application.routes.draw do
     end
   end
 
+  get "/", :to => "sessions#new"
+  post "/login", :to => "sessions#create"
+  get '/logout', :to => "sessions#destroy"
+
   root :to => 'courses#index'
 
   # See how all your routes lay out with "rake routes"

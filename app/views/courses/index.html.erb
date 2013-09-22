@@ -3,6 +3,7 @@
 
 <% @courses.each do |course|%>
   <li>
+    <%= image_tag course.img.thumb.url %>
   课程名： <%= course.name%>
   课程类别： <%= course.types%>
   出版社： <%= course.press%>
@@ -13,8 +14,9 @@
   规定时间： <%= course.round_time%>
   时间正确率比例： <%= course.time_ratio%>
   <%= link_to "编辑", edit_course_path(course.id),:remote => "true" %>
-  
+  <%= verify_button(course) %>
   <%= link_to "进入课程", course_chapters_path(course.id) %>
+  <%= link_to "删除", course, :method => :delete, :confirm => '删除课程将删除所有课程相关记录，确定删除吗？' %>
   </li>
 <% end%>
 

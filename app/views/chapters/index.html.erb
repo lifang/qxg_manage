@@ -1,6 +1,19 @@
-<%#
-# To change this template, choose Tools | Templates
-# and open the template in the editor.
-%>
+<%= link_to "添加章节", new_course_chapter_path(@course.id), :remote => "true" %>
+<ul>
+<% @chapters.each do |chapter| %>
+  <li>
+    名称： <%= chapter.name %>
+    图片： <%= image_tag chapter.img.thumb.url %>
+    <%= link_to "编辑", edit_course_chapter_path(@course.id, chapter.id),:remote => "true" %>
+  <%= link_to "进入章节", course_chapter_rounds_path(@course.id, chapter.id) %>
+  <%= link_to "删除", course_chapter_path(@course.id, chapter.id), :method => :delete, :confirm => '删除章节将删除所有章节相关记录，确定删除吗？' %>
+  </li>
+<% end %>
+  </ul>
+<div style="display: none" id="new_chapter">
+  新建
+</div>
 
-<%= "index.html" %>
+<div style="display: none" id="edit_chapter">
+  编辑
+</div>
