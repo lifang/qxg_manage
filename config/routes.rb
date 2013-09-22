@@ -1,4 +1,12 @@
 QxgManage::Application.routes.draw do
+  namespace :api do
+    resources :chapters do
+      member do
+        get :user_chapter,:user_achieve,:user_prop,:user_round,:user_rank,:user_card
+        post :used_prop
+      end
+    end
+  end
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
