@@ -9,6 +9,13 @@ QxgManage::Application.routes.draw do
     resources :chapters do
       resources :rounds
     end
+    resources :cardbag_tags
+    resources :props
+  end
+  resources :rounds do
+    resources :questions do
+      resources :branch_questions
+    end
   end
 
   get "/", :to => "sessions#new"

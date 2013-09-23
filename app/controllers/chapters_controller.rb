@@ -1,6 +1,5 @@
 class ChaptersController < ApplicationController
-  before_filter :sign?
-  before_filter :get_course
+  before_filter :sign?, :get_course
 
   def index
     @chapters = @course.chapters

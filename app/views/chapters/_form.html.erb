@@ -1,7 +1,7 @@
-<%= form_for [@course,@chapter] do |f| %>
+<%= form_for [@course,@chapter], :html =>{:id => "chapterForm"} do |f| %>
   <div>
-    <label>名称</label>
-    <%= f.text_field :name %>
+    <label class="required">名称</label>
+    <%= f.text_field :name, :class => "required" %>
   </div>
   <div>
     <label>图片</label>
@@ -10,3 +10,10 @@
   </div>
   <%= submit_tag "提交" %>
 <% end %>
+<script>
+  $(document).ready(function(){
+    $('label.required').append('&nbsp;<strong>*</strong>&nbsp;');
+
+    $("#chapterForm").validate();  //课程表单验证
+  })
+</script>
