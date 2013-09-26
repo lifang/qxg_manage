@@ -1,0 +1,8 @@
+<%= link_to "添加课程", new_course_path %>
+<ul>
+<li>
+<% @courses.each do |course|%>
+  课程名： <%= course.name%>
+<% end%>
+</li>
+</ul>

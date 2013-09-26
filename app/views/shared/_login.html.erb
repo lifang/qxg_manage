@@ -1,0 +1,5 @@
+<% if session[:email].nil? %>
+<%= link_to '登陆', '/'%>
+<% else %>
+<%= link_to '登出', '/logout' %>
+<% end %>

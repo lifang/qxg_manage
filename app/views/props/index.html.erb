@@ -1,0 +1,24 @@
+<%= render "/shared/course_head" %>
+<%= link_to "添加", new_course_prop_path(@course), :remote => true %>
+
+<ul>
+  <% @props.each do |prop| %>
+    <li>
+      道具名称：<%= prop.name %>
+      道具描述：<%= prop.description %>
+      道具图标:<%= image_tag prop.img.thumb.url %>
+      金币：<%= prop.price %>
+      题型：<%= prop.question_types.split(",").map{|type| Question::TYPES[type.to_i]}.join("、") %>
+      类型：<%= Prop::TYPES[prop.types] %>
+      <% unless prop.status %>
+        <%= link_to "编辑", edit_course_prop_path(@course, prop), :remote => true %>
+
+        <%= link_to "删除", course_prop_path(@course, prop), :method => :delete, :confirm => "确定删除吗？" %>
+      <% else %>
+        已删除
+      <% end %>
+    </li>
+  <% end %>
+</ul>
+<div style="display: none" id="prop_container">
+</div>
