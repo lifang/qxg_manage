@@ -1,0 +1,14 @@
+<%= form_for [@course, @tag] , :html => {:id => "tagForm" } do |f| %>
+  <div>
+    <label class="required">名称：</label>
+    <%= f.text_field :name, :required => true %>
+  </div>
+  <%= submit_tag "提交" %>
+<% end %>
+<script>
+  $(document).ready(function(){
+    $('label.required').append('&nbsp;<strong>*</strong>&nbsp;');
+
+    $("#tagForm").validate();  //课程表单验证
+  })
+</script>

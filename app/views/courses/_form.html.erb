@@ -16,9 +16,9 @@
     <%= f.text_area :description, :required => true %>
   </div>
   <div>
-    <label>课程图片：</label>
+    <label class="<%= @course.new_record? ? "required" :"" %>">课程图片：</label>
     <% if(@course.new_record?) %>
-      <%= f.file_field :img %>
+      <%= f.file_field :img, :required => true %>
     <% else %>
       <%= f.file_field :img %>
     <% end %>

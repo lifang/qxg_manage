@@ -13,7 +13,7 @@ class RoundsController < ApplicationController
   def create
     @round = @chapter.rounds.create(params[:round].merge({:course_id => @course.id}))
     if @round.save
-      redirect_to course_chapter_rounds_path(@chapter.id, @course.id)
+      redirect_to course_chapter_rounds_path(@course.id,@chapter.id)
     else
       render :new
     end
@@ -26,7 +26,7 @@ class RoundsController < ApplicationController
   def update
     @round = Round.find_by_id params[:id]
     if @round.update_attributes(params[:round])
-      redirect_to course_chapter_rounds_path(@chapter.id, @course.id)
+      redirect_to course_chapter_rounds_path(@course.id,@chapter.id)
     else
       render :edit
     end
@@ -35,7 +35,17 @@ class RoundsController < ApplicationController
   def destroy
     @round = Round.find_by_id params[:id]
     @round.destroy
-    redirect_to course_chapter_rounds_path(@chapter.id, @course.id)
+    redirect_to course_chapter_rounds_path(@course.id,@chapter.id)
+  end
+
+  #审核
+  def verify
+    @round = Round.find_by_id params[:id]
+    if @round.update_attribute(:status, true)
+      @notice = "审核成功"
+    else
+      @notice = "审核失败"
+    end
   end
 
   private

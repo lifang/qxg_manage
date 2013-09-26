@@ -4,7 +4,7 @@ QxgManage::Application.routes.draw do
 
   resources :courses do
     member do
-      get :verify
+      get :verify #审核课程
     end
     resources :chapters do
       resources :rounds
@@ -12,7 +12,17 @@ QxgManage::Application.routes.draw do
     resources :cardbag_tags
     resources :props
   end
+
+  resources :chapters do
+    member do
+      get :verify #审核章节
+    end
+  end
+
   resources :rounds do
+    member do
+      get :verify #审核关卡
+    end
     resources :questions do
       resources :branch_questions
     end

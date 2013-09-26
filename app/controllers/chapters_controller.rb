@@ -1,3 +1,4 @@
+#encoding: utf-8
 class ChaptersController < ApplicationController
   before_filter :sign?, :get_course
 
@@ -35,6 +36,16 @@ class ChaptersController < ApplicationController
     @chapter = Chapter.find_by_id(params[:id])
     @chapter.destroy
     redirect_to course_chapters_path(@course.id)
+  end
+
+  #审核
+  def verify
+    @chapter = Chapter.find_by_id params[:id]
+    if @chapter.update_attribute(:status, true)
+      @notice = "审核成功"
+    else
+      @notice = "审核失败"
+    end
   end
 
   private

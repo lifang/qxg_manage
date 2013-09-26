@@ -1,16 +1,17 @@
 <%= render "/shared/course_head" %>
-<%= link_to "添加章节", new_course_chapter_path(@course.id), :remote => "true" %>
+<%= link_to "添加章节", new_course_chapter_path(@course), :remote => "true" %>
 <ul>
   <% @chapters.each do |chapter| %>
     <li>
       名称： <%= chapter.name %>
       图片： <%= image_tag chapter.img.thumb.url %>
-      <%= link_to "编辑", edit_course_chapter_path(@course.id, chapter.id),:remote => "true" %>
-      <%= link_to "删除", course_chapter_path(@course.id, chapter.id), :method => :delete, :confirm => '删除章节将删除章节所有相关记录，确定删除吗？' %>
-      <%= link_to "进入章节", course_chapter_rounds_path(@course.id, chapter.id) %>
+      关卡数目：<%= chapter.round_count %>
+      <%= link_to "编辑", edit_course_chapter_path(@course, chapter),:remote => "true" %>
+      <%= verify_button(chapter) %>
+      <%= link_to "删除", course_chapter_path(@course, chapter), :method => :delete, :confirm => '删除章节将删除章节所有相关记录，确定删除吗？' %>
+      <%= link_to "进入章节", course_chapter_rounds_path(@course, chapter) %>
     </li>
   <% end %>
 </ul>
 <div style="display: none" id="chapter_container">
-  新建
 </div>
