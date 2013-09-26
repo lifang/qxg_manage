@@ -7,6 +7,9 @@ QxgManage::Application.routes.draw do
       get :verify #审核课程
     end
     resources :chapters do
+      collection do
+        post :uploadfile
+      end
       resources :rounds
     end
     resources :cardbag_tags do
