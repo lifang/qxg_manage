@@ -9,7 +9,11 @@ QxgManage::Application.routes.draw do
     resources :chapters do
       resources :rounds
     end
-    resources :cardbag_tags
+    resources :cardbag_tags do
+      collection do
+        post :search  #搜索标签
+      end
+    end
     resources :props
   end
 
