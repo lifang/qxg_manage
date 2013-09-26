@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+#<<<<<<< HEAD
 QxgManage::Application.routes.draw do
   # The priority is based upon order of creation:
   # first created -> highest priority.
@@ -71,7 +71,7 @@ QxgManage::Application.routes.draw do
     end
   end
 end
-=======
+#=======
 QxgManage::Application.routes.draw do
 
 
@@ -81,6 +81,9 @@ QxgManage::Application.routes.draw do
       get :verify #审核课程
     end
     resources :chapters do
+      collection do
+        post :uploadfile
+      end
       resources :rounds
     end
     resources :cardbag_tags
@@ -122,4 +125,4 @@ QxgManage::Application.routes.draw do
     end
   end
 end
->>>>>>> 121ae6dc3ce5060c9a82847c8505611682f8b839
+#>>>>>>> 121ae6dc3ce5060c9a82847c8505611682f8b839

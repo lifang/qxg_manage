@@ -32,6 +32,16 @@ class ChaptersController < ApplicationController
     end
   end
 
+  def uploadfile
+    p params[:picture]
+    uploaded_io = params[:picture]
+    File.open(Rails.root.join('public', 'qixueguan/tmp', uploaded_io.original_filename), 'wb') do |file|
+      file.write(uploaded_io.read)
+    end
+
+    redirect_to :action => "index"
+  end
+
   def destroy
     @chapter = Chapter.find_by_id(params[:id])
     @chapter.destroy
