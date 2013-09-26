@@ -11,7 +11,8 @@ class Api::UserManagesController < ActionController::Base
 
   def selected_courses  #用户已选择的课程
     uid = params[:uid].to_i
-    courses = UserCourseRelation.find_by_sql("select c.* from user_course_relations ucr
+    courses = UserCourseRelation.find_by_sql("select c.id id, c.name name, c.press press, c.description description
+                                              from user_course_relations ucr
                                               inner join courses c on ucr.course_id=c.id
                                               where ucr.user_id=#{uid}")
     render :json => courses

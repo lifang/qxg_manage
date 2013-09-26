@@ -64,7 +64,9 @@ QxgManage::Application.routes.draw do
       end
     end
     resources :user_manages do
-      get :selected_courses
+      collection do
+        get :selected_courses
+      end
     end
   end
 end
