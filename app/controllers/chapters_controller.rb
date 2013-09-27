@@ -39,14 +39,14 @@ class ChaptersController < ApplicationController
 
     if !zipfile.nil?
       user_id = 121
-      time_now = Time.now().to_s.slice(0,19).gsub()
+      time_now = Time.now().to_s.slice(0,19).gsub(/\:/,'-')
 
       if !File.directory? "#{Rails.root}/public/qixueguan/tmp/user_#{user_id}"
         Dir.mkdir "#{Rails.root}/public/qixueguan/tmp/user_#{user_id}"
       end
 
       filename = zipfile.original_filename.split(".")
-      zipfile.original_filename = time_now.slice(0,10) + "_" + time_now.slice(11,8).gsub(/\:/, '-') + "." +filename[1]
+      zipfile.original_filename = time_now.slice(0,10) + "_" + time_now.slice(11,8) + "." +filename[1]
       File.open(Rails.root.join("public", "qixueguan/tmp/user_#{user_id}", zipfile.original_filename), "wb") do |file|
         file.write(zipfile.read)
       end
