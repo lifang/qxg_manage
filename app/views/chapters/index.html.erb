@@ -15,8 +15,9 @@
 </ul>
 <div id="import_chapter">
   <%= form_tag({:action => :uploadfile}, :multipart => true) do %>
-      导入章节:<%= file_field_tag 'picture' %>
-      <button type="submit">上 传</button>
+      导入章节:<%= file_field_tag 'zip', :onchange => "check_filetype();" %>
+      <!--<button id="btn_upload" type="submit" disabled="true">上 传</button>-->
+      <button id="btn_upload" type="submit" >上 传</button>
   <% end %>
 </div>
 <div style="display: none" id="chapter_container">

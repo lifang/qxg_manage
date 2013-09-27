@@ -1,4 +1,6 @@
 #encoding: utf-8
+require 'rubygems'
+require 'archive/zip'
 class ChaptersController < ApplicationController
   before_filter :sign?, :get_course
 
@@ -33,13 +35,35 @@ class ChaptersController < ApplicationController
   end
 
   def uploadfile
-    p params[:picture]
-    uploaded_io = params[:picture]
-    File.open(Rails.root.join('public', 'qixueguan/tmp', uploaded_io.original_filename), 'wb') do |file|
-      file.write(uploaded_io.read)
-    end
+    zipfile = params[:zip]
 
+    if !zipfile.nil?
+      user_id = 121
+      time_now = Time.now().to_s.slice(0,19).gsub()
+
+      if !File.directory? "#{Rails.root}/public/qixueguan/tmp/user_#{user_id}"
+        Dir.mkdir "#{Rails.root}/public/qixueguan/tmp/user_#{user_id}"
+      end
+
+      filename = zipfile.original_filename.split(".")
+      zipfile.original_filename = time_now.slice(0,10) + "_" + time_now.slice(11,8).gsub(/\:/, '-') + "." +filename[1]
+      File.open(Rails.root.join("public", "qixueguan/tmp/user_#{user_id}", zipfile.original_filename), "wb") do |file|
+        file.write(zipfile.read)
+      end
+      unzip(121, '', '', zipfile.original_filename)
+    end
     redirect_to :action => "index"
+  end
+
+  def unzip user_id, chapter_id = '', round_id = '', zip_filename
+    zip_url = "#{Rails.root}/public/qixueguan/tmp/user_#{user_id}"
+    p zip_url
+    zip_dir = zip_filename.to_s.split('.')[0]
+    p zip_dir
+    if !File.directory? "#{zip_url}/#{zip_dir}"
+      Dir.mkdir "#{zip_url}/#{zip_dir}"
+    end
+      Archive::Zip.extract("#{zip_url}/#{zip_filename}","#{zip_url}/#{zip_dir}")
   end
 
   def destroy
