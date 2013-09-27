@@ -36,11 +36,10 @@ class ChaptersController < ApplicationController
 
   def uploadfile
     zipfile = params[:zip]
-
+    p zipfile
     if !zipfile.nil?
       user_id = 121
       time_now = Time.now().to_s.slice(0,19).gsub(/\:/,'-')
-
       if !File.directory? "#{Rails.root}/public/qixueguan/tmp/user_#{user_id}"
         Dir.mkdir "#{Rails.root}/public/qixueguan/tmp/user_#{user_id}"
       end
@@ -50,12 +49,14 @@ class ChaptersController < ApplicationController
       File.open(Rails.root.join("public", "qixueguan/tmp/user_#{user_id}", zipfile.original_filename), "wb") do |file|
         file.write(zipfile.read)
       end
-      unzip(121, '', '', zipfile.original_filename)
+
+      unzip 121, zipfile.original_filename
     end
+
     redirect_to :action => "index"
   end
 
-  def unzip user_id, chapter_id = '', round_id = '', zip_filename
+  def unzip user_id, zip_filename
     zip_url = "#{Rails.root}/public/qixueguan/tmp/user_#{user_id}"
     p zip_url
     zip_dir = zip_filename.to_s.split('.')[0]
@@ -63,7 +64,8 @@ class ChaptersController < ApplicationController
     if !File.directory? "#{zip_url}/#{zip_dir}"
       Dir.mkdir "#{zip_url}/#{zip_dir}"
     end
-      Archive::Zip.extract("#{zip_url}/#{zip_filename}","#{zip_url}/#{zip_dir}")
+    Archive::Zip.extract "#{zip_url}/#{zip_filename}","#{zip_url}/#{zip_dir}"
+    File.delete "#{zip_url}/#{zip_filename}"
   end
 
   def destroy
