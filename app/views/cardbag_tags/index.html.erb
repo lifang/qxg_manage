@@ -1,15 +1,16 @@
 <%= render "/shared/course_head" %>
 
 <%= link_to "添加标签", new_course_cardbag_tag_path(@course), :remote => true %>
-<ul>
-  search
-  <% @tags.each do |tag| %>
-    <li>
-      标签名称：<%= tag.name %>
-      <%= link_to "编辑", edit_course_cardbag_tag_path(@course, tag), :remote => true %>
-      <%= link_to "删除", course_cardbag_tag_path(@course, tag), :method => :delete, :confirm => "确定删除吗？" %>
-    </li>
-  <% end %>
+
+<%= form_for :tag, :url => search_course_cardbag_tags_path(@course), :method => :post, :remote => true do |f|%>
+  <div>
+    <label>名称：</label>
+    <input type="text" name="tag_name" id="search_tag"/>
+    <%= submit_tag "查询" %>
+  </div>
+<% end %>
+<ul class="tag_list">
+  <%= render "tag_list" %>
 </ul>
 <div style="display: none" id="tag_container">
 </div>

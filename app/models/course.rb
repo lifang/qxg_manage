@@ -8,4 +8,11 @@ class Course < ActiveRecord::Base
 
   TYPES = {0 => "英语四级", 1 => "英语六级", 2 => "托福口语", 3 => "雅思"}
   STATUS_NAME = { 0 => "未审核", 1 => "已审核"}
+
+  after_destroy :remove_img
+  def remove_img
+    img_full_path_str = (Rails.root.to_s + "/public" + self.img.url)
+    file_dir = File.expand_path("..",img_full_path_str)
+    FileUtils.rm_r file_dir if Dir.exists?(file_dir)
+  end
 end

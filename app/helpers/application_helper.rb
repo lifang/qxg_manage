@@ -10,4 +10,5 @@ module ApplicationHelper
   def signed_in?
     return session[:email] != nil
   end
+
 end
