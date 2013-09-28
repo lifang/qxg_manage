@@ -7,6 +7,16 @@ class QuestionsController < ApplicationController
     
   end
 
+  def destroy
+   @question = Question.find_by_id params[:id]
+   @question.destroy
+   redirect_to round_questions_path(@round)
+  end
+
+  def remove_knowledge_card
+    @question = Question.find_by_id params[:question_id]
+    @question.update_attribute(:knowledge_card_id, nil)
+  end
   
   private
   def get_round

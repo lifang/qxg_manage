@@ -35,11 +35,10 @@ QxgManage::Application.routes.draw do
       resources :branch_questions
     end
   end
-
   get "/", :to => "sessions#new"
   post "/login", :to => "sessions#create"
   get '/logout', :to => "sessions#destroy"
-
+  get '/remove_knowledge_card/:question_id', :to => "questions#remove_knowledge_card", :as => "remove_knowledge_card"
   root :to => 'courses#index'
 
   # See how all your routes lay out with "rake routes"

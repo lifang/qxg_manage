@@ -1,6 +1,16 @@
-<%#
-# To change this template, choose Tools | Templates
-# and open the template in the editor.
-%>
+<div class="question_content" onclick="toggleNext(this)">
+  <%= question.content %>
+</div>
 
-<%= "_lineup.html" %>
+<div class="question_options" style="display: none">
+  <ul>
+    <% @branch_question_hash[question.id][0].options.split(";||;").each  do |option| %>
+    <li>
+      <span style="width: 200px; margin-right: 100px"><%= option.split(";=;")[0] %></span>
+      <%= option.split(";=;")[1] %>
+    </li>
+    
+    <% end %>
+  </ul>
+
+</div>

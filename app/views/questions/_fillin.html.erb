@@ -1,6 +1,18 @@
-<%#
-# To change this template, choose Tools | Templates
-# and open the template in the editor.
-%>
+<div class="question_content" onclick="toggleNext(this)">
+  <%= question.content.gsub(/\[\[[text]*\]\]/, "___") %>
+</div>
 
-<%= "_fillin.html" %>
+<div class="question_options" style="display: none">
+  <ul>
+    <% @branch_question_hash[question.id].each_with_index do |branch_option, index| %>
+      <li>
+        <%= index+1 %>
+        <% branch_option.options.split(";||;").each  do |option| %>
+          <input name="answer" type="radio"/>
+          <%= option %>
+
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+</div>

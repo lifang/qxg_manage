@@ -7,6 +7,7 @@
       关卡血量： <%= round.blood%>
       规定时间： <%= round.round_time%>
       时间比例： <%= round.time_ratio%>
+      题目数量：<%= round.questions_count || 0 %>
       <%= link_to "编辑", edit_course_chapter_round_path(@course, @chapter, round), :remote => true %>
       <%= verify_button(round) %>
       <%= link_to "删除", course_chapter_round_path(@course, @chapter, round), :method => :delete, :confirm => "删除关卡将删除关卡所有相关记录，确认删除吗？" %>
