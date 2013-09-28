@@ -15,8 +15,10 @@ class ChaptersController < ApplicationController
   def create
     @chapter = @course.chapters.create(params[:chapter])
     if @chapter.save
-      redirect_to course_chapters_path(@course.id)
+      flash[:notice] = "创建成功！"
+      render :success
     else
+      @notice = "创建失败！ #{@chapter.errors.messages.values.flatten.join("<br/>")}"
       render :new
     end
   end
@@ -28,8 +30,10 @@ class ChaptersController < ApplicationController
   def update
     @chapter = Chapter.find_by_id(params[:id])
     if @chapter.update_attributes(params[:chapter])
-      redirect_to course_chapters_path(@course.id)
+      flash[:notice] = "更新成功！"
+      render :success
     else
+      @notice = "更新失败！ #{@chapter.errors.messages.values.flatten.join("<br/>")}"
       render :edit
     end
   end
@@ -71,6 +75,7 @@ class ChaptersController < ApplicationController
   def destroy
     @chapter = Chapter.find_by_id(params[:id])
     @chapter.destroy
+    flash[:notice] = "删除成功"
     redirect_to course_chapters_path(@course.id)
   end
 

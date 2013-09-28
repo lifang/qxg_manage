@@ -1,4 +1,4 @@
-<%= form_for [@course, @prop], :html => {:id => "propForm"} do |f| %>
+<%= form_for [@course, @prop], :html => {:id => "propForm"}, :remote => true do |f| %>
   <div>
     <label class="required" >名称：</label>
     <%= f.text_field :name, :required => true  %>
@@ -27,7 +27,7 @@
     <label class="required">适合题型：</label>
 
     <% Question::TYPES.each do |value, name| %>
-      <% check = @prop.new_record? ? false : @prop.question_types.split(",").map(&:to_i).include?(value) %>
+      <% check = @prop.question_types.nil? ? false : @prop.question_types.split(",").map(&:to_i).include?(value) %>
       <%= check_box_tag "prop[question_types][]", value, check,  :required => true %><%= name %>
     <% end %>
 

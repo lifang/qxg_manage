@@ -1,1 +1,14 @@
+<ul>
+  <% @questions.each do |question| %>
+  <li>
+    <%= render :partial => "#{Question::TYPE_NAMES.invert[question.types]}", :locals => {:question => question} %>
+    <a href="javascript:void(0)" onclick="toggleCard(this, <%= question.id %>)">知识卡片</a>
+    <div id="question_<%= question.id %>" class="toggle_display">
+       名称： <%= question.knowledge_card.name %>
+       描述: <%= question.knowledge_card.description %>
+    </div>
+  </li>
+  <br/>
+  <% end %>
+</ul>
 

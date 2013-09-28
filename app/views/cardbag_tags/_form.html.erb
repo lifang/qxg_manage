@@ -1,4 +1,4 @@
-<%= form_for [@course, @tag] , :html => {:id => "tagForm" } do |f| %>
+<%= form_for [@course, @tag] , :html => {:id => "tagForm" }, :remote => true do |f| %>
   <div>
     <label class="required">名称：</label>
     <%= f.text_field :name, :required => true %>

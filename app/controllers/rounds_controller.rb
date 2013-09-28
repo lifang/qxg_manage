@@ -6,10 +6,11 @@ class RoundsController < ApplicationController
     @rounds = Round.where({:course_id => params[:course_id], :chapter_id => params[:chapter_id]})
   end
 
+  # no need
   def new
     @round = Round.new
   end
-
+  # no need
   def create
     @round = @chapter.rounds.create(params[:round].merge({:course_id => @course.id}))
     if @round.save
@@ -26,15 +27,19 @@ class RoundsController < ApplicationController
   def update
     @round = Round.find_by_id params[:id]
     if @round.update_attributes(params[:round])
-      redirect_to course_chapter_rounds_path(@course.id,@chapter.id)
+      flash[:notice] = "更新成功！"
+      render :success
     else
+      @notice = "更新失败！ #{@round.errors.messages.values.flatten.join("<br/>")}"
       render :edit
     end
+   
   end
 
   def destroy
     @round = Round.find_by_id params[:id]
     @round.destroy
+    flash[:notice] = "删除成功"
     redirect_to course_chapter_rounds_path(@course.id,@chapter.id)
   end
 

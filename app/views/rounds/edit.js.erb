@@ -1,1 +1,4 @@
+<% if @round.errors.any? %>
+  alert("<%= @notice.html_safe() %>");
+<% end %>
 $("#round_container").html("编辑" + '<%= j(render :partial => "form") %>').show()

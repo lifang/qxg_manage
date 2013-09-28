@@ -17,21 +17,25 @@ class CardbagTagsController < ApplicationController
   def create
     @tag = @course.cardbag_tags.create(params[:cardbag_tag])
     if @tag.save
-      redirect_to course_cardbag_tags_path(@course.id)
+      flash[:notice] = "创建成功"
+      render :success
     else
+      @notice = "创建失败！ #{@tag.errors.messages.values.flatten.join("<br/>")}"
       render :new
     end
   end
 
   def edit
-   @tag = CardbagTag.find_by_id(params[:id])
+    @tag = CardbagTag.find_by_id(params[:id])
   end
 
   def update
     @tag = CardbagTag.find_by_id(params[:id])
     if @tag.update_attributes(params[:cardbag_tag])
-      redirect_to course_cardbag_tags_path(@course.id)
+      flash[:notice] = "更新成功"
+      render :success
     else
+      @notice = "创建失败！ #{@tag.errors.messages.values.flatten.join("<br/>")}"
       render :edit
     end
   end
@@ -39,6 +43,7 @@ class CardbagTagsController < ApplicationController
   def destroy
     @tag = CardbagTag.find_by_id(params[:id])
     @tag.destroy
+    flash[:notice] = "删除成功"
     redirect_to course_cardbag_tags_path(@course.id)
   end
 

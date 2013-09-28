@@ -18,6 +18,7 @@ QxgManage::Application.routes.draw do
       end
     end
     resources :props
+    resources :knowledge_cards
   end
 
   resources :chapters do

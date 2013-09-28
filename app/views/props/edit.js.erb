@@ -1,1 +1,4 @@
+<% if @prop.errors.any? %>
+  alert("<%= @notice.html_safe %>")
+<% end %>
 $("#prop_container").html("编辑" + '<%= j (render 'form') %>').show()
