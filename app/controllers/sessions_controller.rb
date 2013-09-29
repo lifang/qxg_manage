@@ -1,7 +1,7 @@
 #encoding: utf-8
 class SessionsController < ApplicationController
   def new
-    
+    render :layout => nil
   end
 
   def create
