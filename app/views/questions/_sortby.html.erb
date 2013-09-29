@@ -1,0 +1,20 @@
+<div class="question_content" onclick="toggleNext(this)">
+  <%= question.content %>
+</div>
+
+<div class="question_options" style="display: none">
+  <ul>
+    <% options_arr = @branch_question_hash[question.id][0].options.split(";||;") %>
+    <% options_arr.length.times do |i| %>
+    ____
+    <% end %>
+    <br/>
+    <% options_arr.each  do |option| %>
+
+      <span>
+        <%= option %>
+      </span>
+    <% end %>
+  </ul>
+
+</div>

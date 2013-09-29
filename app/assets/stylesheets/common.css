@@ -1,0 +1,20 @@
+/* 
+    Document   : common
+    Created on : 2013-9-27, 16:48:59
+    Author     : AbelZhang
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* 
+   TODO customize this sample style
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+
+root { 
+    display: block;
+}
+
+.toggle_display{
+    display:none
+}

@@ -7,10 +7,18 @@ QxgManage::Application.routes.draw do
       get :verify #审核课程
     end
     resources :chapters do
+      collection do
+        post :uploadfile
+      end
       resources :rounds
     end
-    resources :cardbag_tags
+    resources :cardbag_tags do
+      collection do
+        post :search  #搜索标签
+      end
+    end
     resources :props
+    resources :knowledge_cards
   end
 
   resources :chapters do
@@ -27,11 +35,10 @@ QxgManage::Application.routes.draw do
       resources :branch_questions
     end
   end
-
   get "/", :to => "sessions#new"
   post "/login", :to => "sessions#create"
   get '/logout', :to => "sessions#destroy"
-
+  get '/remove_knowledge_card/:question_id', :to => "questions#remove_knowledge_card", :as => "remove_knowledge_card"
   root :to => 'courses#index'
 
   # See how all your routes lay out with "rake routes"
@@ -50,4 +57,6 @@ QxgManage::Application.routes.draw do
       
     end
   end
+
 end
+

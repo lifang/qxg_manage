@@ -6,8 +6,11 @@ gem 'rails', '3.1.2'
 # gem 'rails',     :git => 'git://github.com/rails/rails.git'
 
 gem 'mysql2' , '0.3.10'
-gem "mini_magick", "3.5.0"
-gem 'carrierwave', "0.5.8"
+gem "mini_magick", "3.5.0" #handle image
+gem 'carrierwave', "0.5.8" #upload image
+gem 'archive-zip'
+gem 'remotipart', '~> 1.0' #ajax upload file
+
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -19,7 +22,7 @@ end
 
 gem 'json', '1.7.6'
 gem 'jquery-rails', '~> 2.1.0'
-
+gem "will_paginate", '3.0.3'
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
 

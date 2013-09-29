@@ -1,4 +1,6 @@
 #encoding: utf-8
+require 'rubygems'
+require 'archive/zip'
 class ChaptersController < ApplicationController
   before_filter :sign?, :get_course
 
@@ -13,8 +15,10 @@ class ChaptersController < ApplicationController
   def create
     @chapter = @course.chapters.create(params[:chapter])
     if @chapter.save
-      redirect_to course_chapters_path(@course.id)
+      flash[:notice] = "创建成功！"
+      render :success
     else
+      @notice = "创建失败！ #{@chapter.errors.messages.values.flatten.join("<br/>")}"
       render :new
     end
   end
@@ -26,15 +30,52 @@ class ChaptersController < ApplicationController
   def update
     @chapter = Chapter.find_by_id(params[:id])
     if @chapter.update_attributes(params[:chapter])
-      redirect_to course_chapters_path(@course.id)
+      flash[:notice] = "更新成功！"
+      render :success
     else
+      @notice = "更新失败！ #{@chapter.errors.messages.values.flatten.join("<br/>")}"
       render :edit
     end
+  end
+
+  def uploadfile
+    zipfile = params[:zip]
+    p zipfile
+    if !zipfile.nil?
+      user_id = 121
+      time_now = Time.now().to_s.slice(0,19).gsub(/\:/,'-')
+      if !File.directory? "#{Rails.root}/public/qixueguan/tmp/user_#{user_id}"
+        Dir.mkdir "#{Rails.root}/public/qixueguan/tmp/user_#{user_id}"
+      end
+
+      filename = zipfile.original_filename.split(".")
+      zipfile.original_filename = time_now.slice(0,10) + "_" + time_now.slice(11,8) + "." +filename[1]
+      File.open(Rails.root.join("public", "qixueguan/tmp/user_#{user_id}", zipfile.original_filename), "wb") do |file|
+        file.write(zipfile.read)
+      end
+
+      unzip 121, zipfile.original_filename
+    end
+
+    redirect_to :action => "index"
+  end
+
+  def unzip user_id, zip_filename
+    zip_url = "#{Rails.root}/public/qixueguan/tmp/user_#{user_id}"
+    p zip_url
+    zip_dir = zip_filename.to_s.split('.')[0]
+    p zip_dir
+    if !File.directory? "#{zip_url}/#{zip_dir}"
+      Dir.mkdir "#{zip_url}/#{zip_dir}"
+    end
+    Archive::Zip.extract "#{zip_url}/#{zip_filename}","#{zip_url}/#{zip_dir}"
+    File.delete "#{zip_url}/#{zip_filename}"
   end
 
   def destroy
     @chapter = Chapter.find_by_id(params[:id])
     @chapter.destroy
+    flash[:notice] = "删除成功"
     redirect_to course_chapters_path(@course.id)
   end
 

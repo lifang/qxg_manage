@@ -1,0 +1,33 @@
+<% @tags.each do |tag| %>
+  <li>
+    标签名称：<%= tag.name %>
+    <%= link_to "编辑", edit_course_cardbag_tag_path(@course, tag), :remote => true %>
+    <%= link_to "删除", course_cardbag_tag_path(@course, tag), :method => :delete, :confirm => "确定删除吗？" %>
+  </li>
+<% end %>
+<%= will_paginate @tags %>
+
+<script type="text/javascript">
+<%  if controller.action_name !="index" %>
+    $(document).ready(function(){
+      $(".pagination a").unbind("click");
+      $(".pagination a").bind("click", function() {
+        var url = this.href + "&tag_name="+$("#search_tag").val();
+        $.ajax({
+          async:true,
+          url:url,
+          dataType:"script",
+          type:"POST",
+          success:function(){
+            // alert(1);
+          },error:function(){
+            // alert("error");
+          }
+        });
+        /* alert(this.href); */
+        return false;
+      });
+     
+    });
+<% end %>
+</script>

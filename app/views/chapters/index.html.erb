@@ -5,7 +5,7 @@
     <li>
       名称： <%= chapter.name %>
       图片： <%= image_tag chapter.img.thumb.url %>
-      关卡数目：<%= chapter.round_count %>
+      关卡数目：<%= chapter.round_count || 0%>
       <%= link_to "编辑", edit_course_chapter_path(@course, chapter),:remote => "true" %>
       <%= verify_button(chapter) %>
       <%= link_to "删除", course_chapter_path(@course, chapter), :method => :delete, :confirm => '删除章节将删除章节所有相关记录，确定删除吗？' %>
@@ -13,5 +13,12 @@
     </li>
   <% end %>
 </ul>
+<div id="import_chapter">
+  <%= form_tag({:action => :uploadfile}, :multipart => true) do %>
+      导入章节:<%= file_field_tag 'zip', :onchange => "check_filetype();" %>
+      <!--<button id="btn_upload" type="submit" disabled="true">上 传</button>-->
+      <button id="btn_upload" type="submit" >上 传</button>
+  <% end %>
+</div>
 <div style="display: none" id="chapter_container">
 </div>

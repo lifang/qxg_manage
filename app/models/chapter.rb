@@ -7,12 +7,13 @@ class Chapter < ActiveRecord::Base
   
   STATUS_NAME = { 0 => "未审核", 1 => "已审核"}
 
-  after_destroy :remove_img
+  validates :name, uniqueness: { scope: :course_id,
+    message: "同一课程下章节名称已存在！" }
 
+  after_destroy :remove_img
   def remove_img
     img_full_path_str = (Rails.root.to_s + "/public" + self.img.url)
     file_dir = File.expand_path("..",img_full_path_str)
-    FileUtils.rm file_dir if Dir.exists?(file_dir)
-   # Dir.delete(file_dir)
+    FileUtils.rm_r file_dir if Dir.exists?(file_dir)
   end
 end

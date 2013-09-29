@@ -1,1 +1,28 @@
+<%= form_for :tag, :url => search_questions_path(@round), :method => :post, :remote => true do |f|%>
+  <div>
+    <label>题型：</label>
+    <input type="text" name="question_name" id="search_tag"/>
+    <%= submit_tag "查询" %>
+  </div>
+<% end %>
+
+<ul>
+  <% @questions.each do |question| %>
+    <li>
+      <%= render :partial => "#{Question::TYPE_NAMES.invert[question.types]}", :locals => {:question => question} %>
+      <%= link_to "删除题目", round_question_path(question.round_id, question), :method => :delete, :confirm => "确认删除题目吗？" %>
+      <% if question.knowledge_card.present? %>
+        <div class="question_<%= question.id %>">
+          <a href="javascript:void(0)" onclick="toggleCard(this, <%= question.id %>)">知识卡片</a>
+          <div id="question_<%= question.id %>" class="toggle_display">
+            名称： <%= question.knowledge_card.try(:name) %>
+            描述: <%= question.knowledge_card.try(:description) %>
+            <%= link_to "移除知识卡片", remove_knowledge_card_path(question), :remote => true, :confirm => "确定移除知识卡片吗？" %>
+          </div>
+        </div>
+      <% end %>
+    </li>
+    <br/>
+  <% end %>
+</ul>
 

@@ -30,10 +30,11 @@ class CoursesController < ApplicationController
       render :edit
     end
   end
-#TODO
+  #TODO
   def destroy
     @course = Course.find_by_id params[:id]
     @course.destroy
+    flash[:notice] = "删除成功"
     redirect_to courses_path
   end
 

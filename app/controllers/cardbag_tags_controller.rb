@@ -3,7 +3,11 @@ class CardbagTagsController < ApplicationController
   before_filter :sign?, :get_course
 
   def index
-    @tags = @course.cardbag_tags
+    @tags = @course.cardbag_tags.paginate(:per_page => 5, :page => params[:page])
+    respond_to do |f|
+      f.html
+      f.js {render :search}
+    end
   end
 
   def new
@@ -13,21 +17,25 @@ class CardbagTagsController < ApplicationController
   def create
     @tag = @course.cardbag_tags.create(params[:cardbag_tag])
     if @tag.save
-      redirect_to course_cardbag_tags_path(@course.id)
+      flash[:notice] = "创建成功"
+      render :success
     else
+      @notice = "创建失败！ #{@tag.errors.messages.values.flatten.join("<br/>")}"
       render :new
     end
   end
 
   def edit
-   @tag = CardbagTag.find_by_id(params[:id])
+    @tag = CardbagTag.find_by_id(params[:id])
   end
 
   def update
     @tag = CardbagTag.find_by_id(params[:id])
     if @tag.update_attributes(params[:cardbag_tag])
-      redirect_to course_cardbag_tags_path(@course.id)
+      flash[:notice] = "更新成功"
+      render :success
     else
+      @notice = "创建失败！ #{@tag.errors.messages.values.flatten.join("<br/>")}"
       render :edit
     end
   end
@@ -35,6 +43,13 @@ class CardbagTagsController < ApplicationController
   def destroy
     @tag = CardbagTag.find_by_id(params[:id])
     @tag.destroy
+    flash[:notice] = "删除成功"
+    redirect_to course_cardbag_tags_path(@course.id)
+  end
+
+  #搜索标签
+  def search
+    @tags = @course.cardbag_tags.where("name like (?)", "%#{params[:tag_name].gsub(/[%_]/){|x| '\\' + x}}%" ).paginate(:per_page => 5, :page => params[:page])
   end
  
   private

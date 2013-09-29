@@ -1,0 +1,10 @@
+<div class="question_content" onclick="toggleNext(this)">
+  <%= question.content %>
+</div>
+
+<div class="question_options" style="display: none">
+
+    <%= @branch_question_hash[question.id][0].answer %>
+
+
+</div>

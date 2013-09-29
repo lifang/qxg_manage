@@ -1,1 +1,4 @@
+<% if @chapter.errors.any? %>
+  alert("<%= @notice.html_safe() %>");
+<% end %>
 $("#chapter_container").html("编辑" + '<%= j(render :partial => "form") %>').show()

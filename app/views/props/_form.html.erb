@@ -1,11 +1,11 @@
-<%= form_for [@course, @prop], :html => {:id => "propForm"} do |f| %>
+<%= form_for [@course, @prop], :html => {:id => "propForm"}, :remote => true do |f| %>
   <div>
     <label class="required" >名称：</label>
     <%= f.text_field :name, :required => true  %>
   </div>
   <div>
     <label class="required" >描述：</label>
-    <%= f.text_field :description, :required => true  %>
+    <%= f.text_area :description, :required => true  %>
   </div>
   <div>
     <label class="required" >类型：</label>
@@ -13,7 +13,7 @@
   </div>
   <div>
     <label class="required">金币：</label>
-    <%= f.text_field :price, :required => true   %>
+    <%= f.text_field :price, :required => true, :digits => true %>
   </div>
   <div>
     <label class="<%= @prop.new_record? ? "required" : "" %>">图片：</label>
@@ -25,7 +25,12 @@
   </div>
   <div>
     <label class="required">适合题型：</label>
-    <%= f.select :question_types, Question::TYPES.invert, {:prompt => "请选择题型"}, {:required => true, :multiple => true}  %>
+
+    <% Question::TYPES.each do |value, name| %>
+      <% check = @prop.question_types.nil? ? false : @prop.question_types.split(",").map(&:to_i).include?(value) %>
+      <%= check_box_tag "prop[question_types][]", value, check,  :required => true %><%= name %>
+    <% end %>
+
   </div>
   <div>
     <%= submit_tag "提交" %>
