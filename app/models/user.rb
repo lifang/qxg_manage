@@ -12,19 +12,17 @@ class User < ActiveRecord::Base
     self.password = Digest::SHA2.hexdigest(pwd)
   end
 
-   def self.upload_img(img_url,user_id,pic_types,pics_size)
+   def self.upload_img(img_url,user_id,folder_name)
     path = "#{Rails.root}/public"
-    dirs=["/#{pic_types}","/#{user_id}"]
+    dirs=["/#{folder_name}","/#{user_id}"]
     dirs.each_with_index {|dir,index| Dir.mkdir path+dirs[0..index].join   unless File.directory? path+dirs[0..index].join }
     file=img_url.original_filename
-    filename="#{dirs.join}/img#{user_id}."+ file.split(".").reverse[0]
+    filename="#{dirs.join}/img_#{user_id}."+ file.split(".").reverse[0]
     File.open(path+filename, "wb")  {|f|  f.write(img_url.read) }
-    img = MiniMagick::Image.open path+filename,"rb"
-    pics_size.each do |size|
-      new_file="#{dirs.join}/img#{user_id}_#{size}."+ file.split(".").reverse[0]
-      resize = size > img["width"] ? img["width"] : size
-      height = img["height"].to_f*resize/img["width"].to_f > 345 ?  345 : resize
-      img.run_command("convert #{path+filename}  -resize #{resize}x#{height} #{path+new_file}")
+    temp_file = img_url.tempfile
+    unless !File.exist?(temp_file.path) || temp_file.nil?
+      temp_file.close
+      temp_file.unlink
     end
     return filename
   end

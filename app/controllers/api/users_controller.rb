@@ -34,30 +34,37 @@ class Api::UsersController < ActionController::Base
     end
   end
 
-  def edit      #编辑
-    user = User.find_by_id(params[:uid].to_i)
-    render :json => user
-  end
+#  def edit      编辑
+#    user = User.find_by_id(params[:uid].to_i)
+#    render :json => user
+#  end
 
-  def update    #更新
+  def update_user_date    #更新
     user = User.find_by_id(params[:uid].to_i)
     name = params[:name].strip
     birthday = params[:birthday]
     sex = params[:sex]
     if name.nil? || name.empty?
-      render :json => "昵称不能为空"
+      render :json => "name is empty"
     else
       if user.update_attributes(:name => name, :birthday => birthday, :sex => sex)
         render :json => "success"
       else
-        render :json => "falied"
+        render :json => "error"
       end
     end
   end
 
   def upload_head_img     #上传头像
     img = params[:img]
-    
+    uid = params[:uid]
+    user = User.find_by_id(uid)
+    url = User.upload_img(img, uid, "user_head_img")
+    if user.update_attribute("img", url)
+      render :json => "success"
+    else
+      render :json => "error"
+    end
   end
 
   def set_password      #设置密码
@@ -65,12 +72,12 @@ class Api::UsersController < ActionController::Base
     npwd = params[:new_password]
     user = User.find_by_id(params[:uid].to_i)
     if Digest::SHA2.hexdigest(opwd) != user.password
-      render :json => "error_pwd"
+      render :json => "error_password"
     else
       if user.update_attribute(:password, Digest::SHA2.hexdigest(npwd))
         render :json => "success"
       else
-        render :json => "failed"
+        render :json => "error"
       end
     end
   end
