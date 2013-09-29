@@ -1,3 +1,4 @@
+      <%= link_to "编辑", edit_course_chapter_round_path(@course, @chapter, round), :remote => true %>
 <%= form_for :tag, :url => search_questions_path(@round), :method => :post, :remote => true do |f|%>
   <div>
     <label>题型：</label>

@@ -1,0 +1,29 @@
+<div class="head">
+  <div class="box cf">
+    <div class="logo">齐学馆后台管理系统</div>
+    <div class="user">
+      <% if session[:email].nil? %>
+        <%= link_to '登陆', '/'%>
+      <% else %>
+        <div class="user_name"><%= session[:email] %></div>
+        <div class="out"><%= link_to '退出', '/logout', :title => "退出" %></div>
+      <% end %>
+    </div>
+  </div>
+  <% unless session[:email].nil? %>
+    <div class="nav">
+      <div class="menu cf">
+        <ul>
+          <li><a href="#" class="course_hover">课程</a></li>
+          <li><a href="#" class="<%= controller_name=="users" ? "hover" : ""%>">用户</a></li>
+        </ul>
+      </div>
+    </div>
+  <% end %>
+</div>
+  <script type="text/javascript">
+    if(!$(".course_hover").parent("li").next().find("a").hasClass("hover")){
+      $(".course_hover").addClass("hover")
+    }
+  </script>
+

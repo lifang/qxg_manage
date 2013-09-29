@@ -1,5 +1,12 @@
-<div>
-  <%= link_to "标签", course_cardbag_tags_path(@course.id) %>
-  <%= link_to "道具", course_props_path(@course.id) %>
-  <%= link_to "章节", course_chapters_path(@course.id) %>
-</div>
+<% p controller_name %>
+<ul class="theTabs">
+  <li class="theTab <%= controller_name == "cardbag_tags" ? "used" : "" %>">
+    <span><%= link_to "标签", course_cardbag_tags_path(@course.id) %></span>
+  </li>
+  <li class="theTab <%= controller_name == "props" ? "used" : "" %>">
+    <span><%= link_to "道具", course_props_path(@course.id) %></span>
+  </li>
+  <li class="theTab <%= controller_name == "chapters" ? "used" : "" %>">
+    <span><%= link_to "章节", course_chapters_path(@course.id) %></span>
+  </li>
+</ul>

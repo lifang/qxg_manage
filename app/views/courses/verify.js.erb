@@ -1,2 +1,3 @@
 alert('<%= @notice %>')
-$("#course_<%=  @course.id %>").text("已审核").attr('href', '#').attr("class", "verified")
+$("#course_<%=  @course.id %>").prev().text("已审核");
+$("#course_<%=  @course.id %>").remove()

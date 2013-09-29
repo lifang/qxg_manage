@@ -1,10 +1,19 @@
-<% @tags.each do |tag| %>
-  <li>
-    标签名称：<%= tag.name %>
-    <%= link_to "编辑", edit_course_cardbag_tag_path(@course, tag), :remote => true %>
-    <%= link_to "删除", course_cardbag_tag_path(@course, tag), :method => :delete, :confirm => "确定删除吗？" %>
-  </li>
-<% end %>
+<table>
+  <tr>
+    <th>名称</th>
+    <th>操作</th>
+  </tr>
+  <% @tags.each do |tag| %>
+
+    <tr>
+      <td><%= tag.name %></td>
+      <td>
+        <%= link_to "编辑", edit_course_cardbag_tag_path(@course, tag), :remote => true, :class => "markInfo green_btn" %>
+        <%= link_to "删除", course_cardbag_tag_path(@course, tag), :method => :delete, :confirm => "确定删除吗？", :class=>"green_btn" %>
+      </td>
+    </tr>
+  <% end %>
+</table>
 <%= will_paginate @tags %>
 
 <script type="text/javascript">

@@ -1,4 +1,6 @@
 <% if @chapter.errors.any? %>
   alert("<%= @notice.html_safe() %>");
 <% end %>
-$("#chapter_container").html("编辑" + '<%= j(render :partial => "form") %>').show()
+
+$("#chapter_container").html("<h1>编辑章节</h1>" + '<%= j (render 'form') %>');
+$("#chapter_container").parent(".second_content").show();
