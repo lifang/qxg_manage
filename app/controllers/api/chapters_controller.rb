@@ -11,7 +11,7 @@ class Api::ChaptersController < ApplicationController
 
   #我的成就
   def user_achieve
-    render :json => Achieve.where(:user_id=>params[:id],:course_id=>params[:course_id]).select(:achieve_data_id).map(&:achieve_data_id).uniq
+    render :json => Achieve.where(:user_id=>params[:id],:course_id=>params[:course_id]).select(:achieve_data_id).order("created_at desc").map(&:achieve_data_id).uniq
   end
 
   #我的道具
@@ -57,9 +57,25 @@ class Api::ChaptersController < ApplicationController
 
   #查询收藏的知识卡片
   def search_card
-    
+    render :json => KnowledgeCard.joins(:user_cards_relations).select("*").where(:"user_cards_relations.user_id"=>params[:id])
   end
 
+
+  #移除知识卡片
+  def delete_card
+    UserCardsRelation.where(:user_id=>params[:id],:knowledge_card_id => params[:card_id]).first.destroy
+    render :json=>{:msg => 1}
+  end
+  
+  #卡片列表
+  def list_card
+    render :json =>KnowledgeCard.where(:course_id=>params[:course_id])
+  end
+
+
+  def change_info
+    
+  end
 
   
 

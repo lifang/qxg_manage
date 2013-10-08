@@ -6,7 +6,7 @@ gem 'rails', '3.1.2'
 # gem 'rails',     :git => 'git://github.com/rails/rails.git'
 
 gem 'mysql2' , '0.3.10'
-
+gem "mini_magick", "~> 3.5.0"
 
 # Gems used only for assets and not required
 # in production environments by default.
