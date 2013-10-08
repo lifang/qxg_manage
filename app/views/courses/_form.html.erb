@@ -2,45 +2,39 @@
   <div>
     <label class="required">课程名：</label>
     <%= f.text_field :name, :required => true %>
-  </div>
-  <div>
+
     <label class="required">课程类别：</label>
     <%= f.select :types, Course::TYPES.invert, {:prompt => "请选择类别"}, {:required => true}  %>
-  </div>
-  <div>
+
     <label class="required">出版社：</label>
     <%= f.text_field :press, :required => true %>
-  </div>
-  <div>
+
     <label class="required">课程描述：</label>
-    <%= f.text_area :description, :required => true %>
-  </div>
-  <div>
+    <%= f.text_area :description, :required => true, :rows => "5"%>
+
     <label class="<%= @course.new_record? ? "required" :"" %>">课程图片：</label>
     <% if(@course.new_record?) %>
       <%= f.file_field :img, :required => true %>
     <% else %>
       <%= f.file_field :img %>
     <% end %>
-  </div>
- 设置关卡基础值
-  <div>
+
+    <h3>设置关卡基础值</h3>
+
     <label class="required">关卡总分：</label>
     <%= f.text_field :max_score, :required => true, :digits => true %>
-  </div>
-  <div>
+
     <label class="required">关卡血量：</label>
     <%= f.text_field :blood, :required => true, :digits => true%>
-  </div>
-  <div>
+
     <label class="required">规定时间：</label>
     <%= f.text_field :round_time, :required => true, :digits => true %>
-  </div>
-  <div>
+
     <label class="required">时间比例：</label>
     <%= f.text_field :time_ratio, :required => true,:digits => true, :min => 0, :max => 100 %>
+
+    <%= button_tag "提交",:type => "submit", class: "green_btn" %>
   </div>
-  <%= submit_tag "提交"  %>
 <% end %>
 <script>
   $(document).ready(function(){

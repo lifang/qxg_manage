@@ -19,7 +19,7 @@
     <label class="required">时间比例：</label>
     <%= f.text_field :time_ratio, :required => true,:digits => true, :min => 0, :max => 100, :value => @round.new_record? ?  @course.time_ratio : @round.time_ratio %>
   </div>
-  <%= submit_tag "提交" %>
+  <%= button_tag "提交", :type => "submit", :class => "green_btn" %>
 <% end %>
 <script>
   $(document).ready(function(){

@@ -1,4 +1,6 @@
 <% if @prop.errors.any? %>
   alert("<%= @notice.html_safe %>")
 <% end %>
-$("#prop_container").html("编辑" + '<%= j (render 'form') %>').show()
+$("#prop_container").html("<h1>编辑道具</h1>" + '<%= j (render 'form') %>');
+$("#prop_container").parent(".second_content").show()
+

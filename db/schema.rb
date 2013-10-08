@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130926033137) do
+ActiveRecord::Schema.define(:version => 20131008064416) do
 
   create_table "achieve_counts", :force => true do |t|
     t.integer  "user_id"
@@ -59,6 +59,7 @@ ActiveRecord::Schema.define(:version => 20130926033137) do
     t.integer  "question_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "types",          :limit => 1
   end
 
   add_index "branch_questions", ["question_id"], :name => "index_branch_questions_on_question_id"
@@ -118,13 +119,13 @@ ActiveRecord::Schema.define(:version => 20130926033137) do
     t.text     "description"
     t.string   "img"
     t.integer  "types"
-    t.integer  "status",      :limit => 1, :default => 0
     t.integer  "time_ratio"
     t.integer  "blood"
     t.integer  "max_score"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "round_time"
+    t.integer  "status",      :limit => 1, :default => 0
     t.integer  "round_count"
   end
 
@@ -223,6 +224,7 @@ ActiveRecord::Schema.define(:version => 20130926033137) do
     t.string   "remark"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "cardbag_tag_id"
   end
 
   add_index "user_cards_relations", ["user_id"], :name => "index_user_cards_relations_on_user_id"

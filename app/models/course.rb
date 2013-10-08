@@ -1,5 +1,6 @@
 #encoding: utf-8
 class Course < ActiveRecord::Base
+  has_many :knowledge_cards
   has_many :chapters, :dependent => :destroy
   has_many :rounds, :dependent => :destroy
   has_many :cardbag_tags, :dependent => :destroy

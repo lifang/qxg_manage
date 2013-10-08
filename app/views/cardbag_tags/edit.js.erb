@@ -1,4 +1,7 @@
 <% if @tag.errors.any? %>
   alert('<%= @notice.html_safe %>')
 <% end %>
-$("#tag_container").html("编辑" + '<%= j (render 'form') %>').show()
+  
+$("#tag_container").html("<h1>编辑标签</h1>" + '<%= j (render 'form') %>');
+$("#tag_container").parent(".second_content").show()
+

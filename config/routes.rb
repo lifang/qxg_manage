@@ -1,6 +1,27 @@
 QxgManage::Application.routes.draw do
+  namespace :api do
+    resources :chapters do
+      collection do
+        get :user_chapter,:user_achieve,:user_prop,:user_round,:user_rank,:user_card,:search_card,:list_card
+        post :used_prop,:save_card,:delete_card
+      end
+    end
+    resources :users do
+      collection do
+        get   :digest
+        post  :login, :regist, :set_password, :update_user_date, :upload_head_img
+      end
+    end
+    resources :user_manages do
+      get "selected_courses", "search_course", "search_single_course"
+      collection do
+        get "achieve_points_ranking"
+      end
+    end
+  end
 
-
+  # The priority is based upon order of creation:
+  # first created -> highest priority.
 
   resources :courses do
     member do
@@ -32,6 +53,9 @@ QxgManage::Application.routes.draw do
       get :verify #审核关卡
     end
     resources :questions do
+      collection do
+        post :search
+      end
       resources :branch_questions
     end
   end
@@ -60,4 +84,5 @@ QxgManage::Application.routes.draw do
   end
 
 end
+
 

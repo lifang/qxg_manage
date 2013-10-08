@@ -1,12 +1,47 @@
-<%= form_for :user, :url=>"/login", :method => "post", :html =>{:id => "loginForm"} do %>
-  <div class="login_list">
-    <label>邮箱：</label>
-    <input id="user_name" name="user_email" type="text" value="<%= @email.nil? ? "" : @email %>" required/></div>
-  <div class="login_list">
-    <label>密码：</label>
-    <input id="user_password" name="user_password" type="password" required/></div>
-  <div class="login_btn"><button type="submit" id="login_exam">登录</button></div>
-<% end %>
-  <script>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+    <title>奇学馆登录</title>
+    <%= stylesheet_link_tag    "application" %>
+    <%= javascript_include_tag "application" %>
+    <%= csrf_meta_tags %>
+    <script>
+     $(function(){
+       /*
+        $(".name").keyup(function(){
+          //alert($(this).val());
+          if($(this).val() == "账号" ||$(this).val() == ""){
+            $(this).css("color","#ddd");
+          }else{
+            $(this).css("color","#000");
+          }
+        })
 
-</script>
+        $(".password").keyup(function(){
+          //alert($(this).val());
+          if($(this).val() == "密码" ||$(this).val() == ""){
+            $(this).css("color","#ddd");
+          }else{
+            $(this).css("color","#000");
+          }
+        })*/
+      })
+    </script>
+  </head
+
+  <body>
+    <div class="login">
+      <div class="title">
+        <p><strong>齐学馆后台管理系统</strong></p>
+      </div>
+      <div>
+        <%= form_for :user, :url=>"/login", :method => "post", :html =>{:id => "loginForm"} do %>
+          <input class="name" name="user_email" type="text" required style="color:#ddd;background-image:url(/assets/username.png);" placeholder="邮箱" />
+          <input class="password" name="user_password" type="password" required style="color:#ddd;background-image:url(/assets/password.png);" placeholder="密码"/>
+          <button type="submit" id="login_exam">登录</button>
+        <% end %>
+      </div>
+    </div>
+
+  </body>
+</html>

@@ -2,7 +2,8 @@
 require 'rubygems'
 require 'archive/zip'
 class ChaptersController < ApplicationController
-  before_filter :sign?, :get_course
+  before_filter :sign?
+  before_filter :get_course, :except => [:verify]
 
   def index
     @chapters = @course.chapters

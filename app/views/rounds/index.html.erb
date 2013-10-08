@@ -1,20 +1,37 @@
-<%= link_to "添加关卡(这个真实情况没有添加功能)", new_course_chapter_round_path(@course, @chapter), :remote => true %>
-<ul>
-  <% @rounds.each do |round| %>
-    <li>
-      关卡名称：<%= round.name %>
-      关卡总分： <%= round.max_score%>
-      关卡血量： <%= round.blood%>
-      规定时间： <%= round.round_time%>
-      时间比例： <%= round.time_ratio%>
-      题目数量：<%= round.questions_count || 0 %>
-      <%= link_to "编辑", edit_course_chapter_round_path(@course, @chapter, round), :remote => true %>
-      <%= verify_button(round) %>
-      <%= link_to "删除", course_chapter_round_path(@course, @chapter, round), :method => :delete, :confirm => "删除关卡将删除关卡所有相关记录，确认删除吗？" %>
-      <%= link_to "进入关卡", round_questions_path(round)  %>
-    </li>
-  <% end %>
-</ul>
+<%#= render "/shared/course_head" %>
 
-<div style="display: none" id="round_container">
+
+<h1><%= link_to @course.name, course_chapters_path(@course.id) %>><%= link_to @chapter.name, course_chapter_rounds_path(@course.id, @chapter.id) %></h1>
+<div class="clear"></div>
+<div class="set_btn cf"><%= link_to "添加关卡(这个真实情况没有添加功能)", new_course_chapter_round_path(@course, @chapter), :remote => true, :class =>"green_btn"%></div>
+
+<div class="m_con">
+  <div class="passUp">
+    <input type="file" />
+    <button class="green_btn">导入</button>
+  </div>
+
+  <div class="passList">
+    <% @rounds.each do |round| %>
+      <div class="pass_box con_box cf">
+        <%= link_to "删除", course_chapter_round_path(@course, @chapter, round), :method => :delete, :confirm => "删除关卡将删除关卡所有相关记录，确认删除吗？", :class => "close", :title => "删除" %>
+
+        <label><%= round.name %></label>
+        <p class="passEnter">题目数量：<%= round.questions_count || 0 %></p>
+        <p class="passEnter">是否通过审核：<span><%= Course::STATUS_NAME[round.status] %></span>
+        <%= verify_button(round) if round.status==0 %></p>
+        <br/>
+        <%= link_to "进入关卡", round_questions_path(round),:class => "green_btn passEnter" %>
+
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="second_content cf" style="display:none;"></div>
+
+<div style="display: none"  class="second_content cf">
+  <span class="close" onclick="sConClose();return false">关闭</span>
+  <div class="second_view" id="round_container">
+  </div>
 </div>

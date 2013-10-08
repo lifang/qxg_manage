@@ -1,4 +1,4 @@
-﻿* { padding: 0; margin: 0;}
+* { padding: 0; margin: 0;}
 body { font-family: "微软雅黑", "宋体", Arial; font-size: 12px; background:#edf0f1;}
 li { list-style: none;}
 a { text-decoration: none;}
@@ -31,7 +31,7 @@ h1 { font-size: 18px; color: #202e3c; line-height:36px; margin-bottom:5px; paddi
 	height: 17px; 
 	display: block; 
 	text-indent: -999px;
-	background: url(../images/close.png) no-repeat;
+	background: url(/assets/close.png) no-repeat;
 	cursor: pointer;
 }
 
@@ -49,7 +49,7 @@ h1 { font-size: 18px; color: #202e3c; line-height:36px; margin-bottom:5px; paddi
 .user { float: right; margin-top: 18px;}
 .user_name { 
     padding-left: 30px; 
-	background: url(../images/user_icon.png) no-repeat 0px center; 
+	background: url(/assets/user_icon.png) no-repeat 0px center;
 	height: 24px; 
 	line-height:24px;
 	color: #bec8d1;
@@ -60,7 +60,7 @@ h1 { font-size: 18px; color: #202e3c; line-height:36px; margin-bottom:5px; paddi
     width: 20px; 
 	height:20px; 
 	display: block; 
-	background: url(../images/out_icon.png) no-repeat; 
+	background: url(/assets/out_icon.png) no-repeat;
 	text-indent: -999px; 
 	overflow: hidden;
 }
@@ -160,6 +160,10 @@ h1 a { cursor: pointer;}
 	margin-left:40px;
 }
 
+.theTabs li span a{
+	color:#FFFFFF;
+}
+
 .theTabs li.used {
 	background-color:#384990;
 }
@@ -207,6 +211,11 @@ h1 a { cursor: pointer;}
 
 .pass_box button{
 	display:block;
+	margin-left:20px;
+	margin-top:10px;
+}
+
+.pass_box .passEnter{
 	margin-left:20px;
 	margin-top:10px;
 }
@@ -292,7 +301,7 @@ h1 a { cursor: pointer;}
     width: 100px;
 }
 
-.second_content form input,.second_content form textarea,.second_content form select {
+.second_content form input[type='text'],.second_content form input[type='file'],.second_content form textarea,.second_content form select{
     background-color: #EDF0F1;
     border: 1px solid #CBD5D9;
     display: block;
@@ -300,10 +309,21 @@ h1 a { cursor: pointer;}
     font-size: 18px;
     margin-bottom: 10px;
     width: 250px;
-	margin-right:50px;
+    margin-right:50px;
 }
-
-
+.second_content form .prop_question_type{
+    background-color: #EDF0F1;
+    border: 1px solid #CBD5D9;
+    display: inline-block;
+    font-size: 14px;
+    margin-bottom: 10px;
+    width: 250px;
+    margin-left: 130px;
+}
+.prop_name img {
+  margin-bottom: -10px;
+  margin-top: 5px;
+}
 .second_content form h3 {
     float: left;
     margin-bottom: 10px;
@@ -315,6 +335,51 @@ h1 a { cursor: pointer;}
 	width:100px;
 	margin-left:130px;
 }
+/*登录*/
+.login {
+	width:400px;
+	height:320px;
+	margin-left:400px;
+	margin-top:100px;
+	background: #ffffff;
+	border-radius: 5px;
+	text-align:center;
+}
 
+.login .title {
+	height:65px;
+	line-height:65px;
+	background-color: #2c3e51;
+	border-radius: 5px 5px 0 0;
+}
+
+.login .title p {
+	color:#FFFFFF;
+	font-size:25px;
+}
+
+.login input{
+	width:300px;
+	height:56px;
+	line-height:56px;
+	border:1px solid #003333;
+	font-size:20px;
+	text-indent:50px;
+	margin-top:20px;
+	margin-left:auto;
+}
+
+.login button {
+	width:300px;
+	height:56px;
+	font-size:20px;
+	color:#FFFFFF;
+	margin-top:20px;
+	border:0;
+	background: #31455a;
+	border-radius: 5px;
+}
+/*登录*/
 .second_content .btn_div { padding-top:60px; padding-left:120px;}
 .second_content .btn_div button { margin-left:10px;}
+.clear{ clear: both;  }

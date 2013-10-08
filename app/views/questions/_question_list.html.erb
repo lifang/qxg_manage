@@ -1,0 +1,57 @@
+ <table>
+      <tr>
+        <th width="60">题型</th>
+        <th width="400">题面</th>
+        <th width="150">操作</th>
+        <th width="80">知识卡片</th>
+      </tr>
+      <% @questions.each do |question| %>
+        <tr>
+          <td><%= Question::TYPES[question.types] %></td>
+          <td><%= render :partial => "#{Question::TYPE_NAMES.invert[question.types]}", :locals => {:question => question} %></td>
+          <td>
+            <button class="green_btn questionEdit">编辑</button>
+            <%= link_to "删除题目", round_question_path(question.round_id, question), :method => :delete, :confirm => "确认删除题目吗?", :class => "green_btn" %>
+
+          </td>
+          <td>
+            <% if question.knowledge_card.present? %>
+              <div class="question_<%= question.id %>">
+                <a href="javascript:void(0)" class="knowledgeCard green_btn" onclick="toggleCard(this, <%= question.id %>)">知识卡片</a>
+                <div id="question_<%= question.id %>" class="toggle_display">
+                  名称： <%= question.knowledge_card.try(:name) %>
+                  描述: <%= question.knowledge_card.try(:description) %>
+                  <%= link_to "移除知识卡片", remove_knowledge_card_path(question), :remote => true, :confirm => "确定移除知识卡片吗？" %>
+                </div>
+              </div>
+            <% end %>
+
+          </td>
+        </tr>
+      <% end %>
+    </table>
+    <%= will_paginate @questions %>
+
+<script type="text/javascript">
+<%  if controller.action_name !="index" %>
+    $(document).ready(function(){
+      $(".pagination a").unbind("click");
+      $(".pagination a").bind("click", function() {
+        var url = this.href + "&question_types="+$("#question_types").val();
+        $.ajax({
+          async:true,
+          url:url,
+          dataType:"script",
+          type:"POST",
+          success:function(){
+            // alert(1);
+          },error:function(){
+            // alert("error");
+          }
+        });
+        return false;
+      });
+
+    });
+<% end %>
+</script>
