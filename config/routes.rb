@@ -20,8 +20,6 @@ QxgManage::Application.routes.draw do
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
-
-
   resources :courses do
     member do
       get :verify #审核课程
@@ -52,6 +50,9 @@ QxgManage::Application.routes.draw do
       get :verify #审核关卡
     end
     resources :questions do
+      collection do
+        post :search
+      end
       resources :branch_questions
     end
   end
@@ -62,6 +63,21 @@ QxgManage::Application.routes.draw do
   root :to => 'courses#index'
 
   # See how all your routes lay out with "rake routes"
+
+  namespace :api do
+    resources :users do
+      collection do
+      get :digest
+      post  :login, :regist, :set_password, :update_user_date, :upload_head_img
+      end
+    end
+    resources :user_manages do
+      collection do
+        get "selected_courses", "search_course", "search_single_course","achieve_points_ranking"     
+      end
+    end
+  end
+
 end
 
 

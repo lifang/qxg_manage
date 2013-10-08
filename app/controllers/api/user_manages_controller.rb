@@ -56,6 +56,18 @@ class Api::UserManagesController < ActionController::Base
       render :json => "success"
   end
 
+  def achieve_points_ranking  #成就点数排行，根据user_id 和course_id ,查出包括自己跟好友的成就排行
+    user_id = params[:user_id]
+    course_id = params[:course_id]
+    friend_ids = Friend.find_all_by_user_id(user_id).map(&:friend_id) << user_id
+
+    achieve_points_arr = UserCourseRelation.joins(:user => :friends).where(:user_id => friend_ids, :course_id => course_id)
+    .select("user_course_relations.user_id as user_id, users.name as uname, user_course_relations.achieve_point as achieve_point, users.img as logo")
+    .order("achieve_point desc")
+    achieve_points_arr.each{|achieve| achieve[:self] = (achieve.user_id == user_id.to_i ? 1 : 0)}
+    render :json => achieve_points_arr
+  end
+
   def everyday_tasks    #每日任务
 
   end

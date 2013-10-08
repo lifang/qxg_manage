@@ -1,29 +1,41 @@
-      <%= link_to "编辑", edit_course_chapter_round_path(@course, @chapter, round), :remote => true %>
-<%= form_for :tag, :url => search_questions_path(@round), :method => :post, :remote => true do |f|%>
-  <div>
-    <label>题型：</label>
-    <input type="text" name="question_name" id="search_tag"/>
-    <%= submit_tag "查询" %>
-  </div>
-<% end %>
-
-<ul>
-  <% @questions.each do |question| %>
-    <li>
-      <%= render :partial => "#{Question::TYPE_NAMES.invert[question.types]}", :locals => {:question => question} %>
-      <%= link_to "删除题目", round_question_path(question.round_id, question), :method => :delete, :confirm => "确认删除题目吗？" %>
-      <% if question.knowledge_card.present? %>
-        <div class="question_<%= question.id %>">
-          <a href="javascript:void(0)" onclick="toggleCard(this, <%= question.id %>)">知识卡片</a>
-          <div id="question_<%= question.id %>" class="toggle_display">
-            名称： <%= question.knowledge_card.try(:name) %>
-            描述: <%= question.knowledge_card.try(:description) %>
-            <%= link_to "移除知识卡片", remove_knowledge_card_path(question), :remote => true, :confirm => "确定移除知识卡片吗？" %>
-          </div>
-        </div>
-      <% end %>
-    </li>
+<h1><a>某课程</a>><a>某章节</a>><a>某关卡</a>>关卡详情</h1>
+<div class="m_con">
+  <div class="searchDiv cf">
+    <span>上传：</span>
+    <input type="file" />
+    <button class="green_btn">导入</button>
     <br/>
-  <% end %>
-</ul>
+    <%= form_for :tag, :url => search_round_questions_path(@round), :method => :post, :remote => true do |f|%>
+      <div>
+        <span>题型：</span>
+        <select name="question_types" id="question_types">
+          <option value="">请选择题型</option>
+          <% Question::TYPES.each do |k, v| %>
+            <option value="<%= k %>"><%= v %></option>
+          <% end %>
+        </select>
+        <%= button_tag "查询", :type => "submit", :class => "green_btn" %>
+      </div>
+    <% end %>
+  </div>
+  <div class="infoDiv passInfo cf">
+    <div class="rightText">
+      <span>关卡基本信息</span><%= link_to "编辑", edit_course_chapter_round_path(@course, @chapter, @round), :remote => true, :class => "green_btn", :style => "margin-left:45px" %>
+      <br/>
+      <br/>
+      <dl>
+        <dt>血量：</dt><dd><%= @round.blood %></dd>
+        <dt>规定时间：</dt><dd><%= @round.round_time %></dd>
+        <dt>关卡总分：</dt><dd><%= @round.max_score %></dd>
+        <dt>关卡总题数：</dt><dd><%= @round.questions_count %></dd>
+        <dt>时间比例：</dt><dd><%= @round.time_ratio %></dd>
+      </dl>
+    </div>
+  </div>
 
+  <div class="qstDiv question_list">
+    <%= render "question_list" %>
+  </div>
+
+
+</div>

@@ -1,4 +1,4 @@
 class UserCourseRelation < ActiveRecord::Base
-  belongs_to :courses
-  belongs_to :users
+  belongs_to :course
+  belongs_to :user
 end
