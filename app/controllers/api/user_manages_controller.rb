@@ -14,7 +14,7 @@ class Api::UserManagesController < ActionController::Base
     render :json => {:c => courses, :sc => selected_courses, :type_name => a}
   end
 
-  def search_single_course
+  def search_single_course      #查询单个课程
     uid = params[:uid].to_i
     cid = params[:course_id]
     course = Course.select("id, name, press, description, round_count, types").find_by_id(cid.to_i)
@@ -38,8 +38,14 @@ class Api::UserManagesController < ActionController::Base
   end
 
   def props_list    #道具列表
-    props = Props.all
-    render :json => props
+    cid = params[:cid].to_i
+    props = Prop.where(["course_id = ?", cid])
+    if props
+      render :json => props
+    else
+      render :json => "error"
+    end
+    
   end
 
   def buy_prop      #购买道具
@@ -52,11 +58,41 @@ class Api::UserManagesController < ActionController::Base
     else
       UserPropRelation.create(:user_id => uid, :prop_id => pid, :user_prop_num => pcount)
     end
-      BuyRecord.create(:user_id => uid, :prop_id => pid, :count => pcount)
-      render :json => "success"
+      sp = UserPropRelation.find_by_user_id_and_prop_id(uid, pid)
+      render :json => sp
   end
 
   def everyday_tasks    #每日任务
+     uid = params[:uid].to_i
+     cid = params[:cid].to_i
+     et = EverydayTask.find_by_user_id_and_course_id(uid, cid)
+     if et.nil?
+       render :json => "error"
+     else
+       task_time = et.updated_at.nil? || et.updated_at == "" ? 0 : et.updated_at.strftime("%Y%m%d").to_i
+       now_time = Time.now.strftime("%Y%m%d").to_i
+       if now_time - task_time > 1
+         et.update_attribute("day", 0)
+       end
+       render :json => et.day
+     end
+  end
 
+  def set_task_day  #修改连续天数
+    uid = params[:uid].to_i
+    cid = params[:cid].to_i
+    et = EverydayTask.find_by_user_id_and_course_id(uid, cid)
+    if et.nil?
+      render :json => "error"
+    else
+      task_time = et.updated_at.nil? || et.updated_at == "" ? 0 : et.updated_at.strftime("%Y%m%d").to_i
+      now_time = Time.now.strftime("%Y%m%d").to_i
+      if now_time - task_time == 1
+        et.update_attribute("day", et.day+1)
+      else
+        et.update_attribute("day", 1)
+      end
+      render :json => et.day
+    end
   end
 end

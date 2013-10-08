@@ -34,12 +34,8 @@ class Api::UsersController < ActionController::Base
     end
   end
 
-#  def edit      编辑
-#    user = User.find_by_id(params[:uid].to_i)
-#    render :json => user
-#  end
 
-  def update_user_date    #更新
+  def update_user_date    #编辑更新
     user = User.find_by_id(params[:uid].to_i)
     name = params[:name].strip
     birthday = params[:birthday]
@@ -82,8 +78,21 @@ class Api::UsersController < ActionController::Base
     end
   end
 
-#  def digest
-#    pwd = params[:pwd]
-#    p Digest::SHA2.hexdigest(pwd)
-#  end
+  def set_email #修改邮箱
+    uid = params[:uid].to_i
+    pwd = params[:pwd]
+    email = params[:email].strip
+    user = User.find_by_id(uid)
+    if user.nil?
+      render :json => "error"
+    else
+      if Digest::SHA2.hexdigest(pwd) != user.password
+        render :json => "error_password"
+      else
+        user.update_attribute("email", email)
+        render :json => "success"
+      end
+    end
+  end
+  
 end
