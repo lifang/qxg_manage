@@ -1,9 +1,9 @@
  <table>
       <tr>
-        <th>题型</th>
-        <th>题面</th>
-        <th>操作</th>
-        <th>知识卡片</th>
+        <th width="60">题型</th>
+        <th width="400">题面</th>
+        <th width="150">操作</th>
+        <th width="80">知识卡片</th>
       </tr>
       <% @questions.each do |question| %>
         <tr>
@@ -11,7 +11,7 @@
           <td><%= render :partial => "#{Question::TYPE_NAMES.invert[question.types]}", :locals => {:question => question} %></td>
           <td>
             <button class="green_btn questionEdit">编辑</button>
-            <%= link_to "删除题目", round_question_path(question.round_id, question), :method => :delete, :confirm => "确认删除题目吗", :class => "green_btn" %>
+            <%= link_to "删除题目", round_question_path(question.round_id, question), :method => :delete, :confirm => "确认删除题目吗?", :class => "green_btn" %>
 
           </td>
           <td>

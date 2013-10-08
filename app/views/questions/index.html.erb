@@ -1,4 +1,4 @@
-<h1><a>某课程</a>><a>某章节</a>><a>某关卡</a>>关卡详情</h1>
+<h1><%= link_to @course.name, course_chapters_path(@course.id) %>><%= link_to @chapter.name, course_chapter_rounds_path(@course.id, @chapter.id) %>><span class="round_name"><%= @round.name %></span></h1>
 <div class="m_con">
   <div class="searchDiv cf">
     <span>上传：</span>
@@ -18,24 +18,17 @@
       </div>
     <% end %>
   </div>
-  <div class="infoDiv passInfo cf">
-    <div class="rightText">
-      <span>关卡基本信息</span><%= link_to "编辑", edit_course_chapter_round_path(@course, @chapter, @round), :remote => true, :class => "green_btn", :style => "margin-left:45px" %>
-      <br/>
-      <br/>
-      <dl>
-        <dt>血量：</dt><dd><%= @round.blood %></dd>
-        <dt>规定时间：</dt><dd><%= @round.round_time %></dd>
-        <dt>关卡总分：</dt><dd><%= @round.max_score %></dd>
-        <dt>关卡总题数：</dt><dd><%= @round.questions_count %></dd>
-        <dt>时间比例：</dt><dd><%= @round.time_ratio %></dd>
-      </dl>
-    </div>
+  <div class="infoDiv passInfo cf" id="round_detail">
+    <%= render :partial => "rounds/detail" %>
   </div>
 
   <div class="qstDiv question_list">
     <%= render "question_list" %>
   </div>
 
-
+</div>
+<div style="display: none"  class="second_content cf round_container">
+  <span class="close" onclick="sConClose();return false">关闭</span>
+  <div class="second_view" id="round_container">
+  </div>
 </div>

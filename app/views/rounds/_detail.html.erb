@@ -1,0 +1,12 @@
+<div class="rightText">
+  <span>关卡基本信息</span><%= link_to "编辑", edit_course_chapter_round_path(@course, @chapter, @round), :remote => true, :class => "green_btn", :style => "margin-left:45px" %>
+  <br/>
+  <br/>
+  <dl>
+    <dt>血量：</dt><dd><%= @round.blood %></dd>
+    <dt>规定时间：</dt><dd><%= @round.round_time %></dd>
+    <dt>关卡总分：</dt><dd><%= @round.max_score %></dd>
+    <dt>关卡总题数：</dt><dd><%= @round.questions_count %></dd>
+    <dt>时间比例：</dt><dd><%= @round.time_ratio %></dd>
+  </dl>
+</div>

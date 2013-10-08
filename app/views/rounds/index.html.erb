@@ -1,9 +1,10 @@
-<%= render "/shared/course_head" %>
+<%#= render "/shared/course_head" %>
+
+
+<h1><%= link_to @course.name, course_chapters_path(@course.id) %>><%= link_to @chapter.name, course_chapter_rounds_path(@course.id, @chapter.id) %></h1>
 <div class="clear"></div>
 <div class="set_btn cf"><%= link_to "添加关卡(这个真实情况没有添加功能)", new_course_chapter_round_path(@course, @chapter), :remote => true, :class =>"green_btn"%></div>
 
-
-<h1><a>某课程</a>><a>某章节</a>>关卡列表</h1>
 <div class="m_con">
   <div class="passUp">
     <input type="file" />
