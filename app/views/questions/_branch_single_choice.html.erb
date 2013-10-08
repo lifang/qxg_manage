@@ -1,0 +1,10 @@
+<div>
+  <%= index %>
+  <%= branch_question.branch_content %>
+</div>
+
+<% branch_question.options.split(";||;").each do |option| %>
+
+  <input name="answer" type="radio"/><%= option %>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<% end %>

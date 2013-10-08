@@ -1,29 +1,41 @@
-<%= link_to "添加课程", new_course_path, :remote => "true" %>
-<ul>
+<h1>课程中心</h1>
+<div class="set_btn cf"><%= link_to "添加课程", new_course_path, :remote => "true", :class =>"green_btn" %></div>
+<div class="m_con">
 
-<% @courses.each do |course|%>
-  <li>
-  课程名： <%= course.name%>
-  课程类别： <%= course.types%>
-  出版社： <%= course.press%>
-  课程描述： <%= course.description%>
-  课程图片： <%#= course.name%>
-  关卡总分： <%= course.max_score%>
-  关卡血量： <%= course.blood%>
-  规定时间： <%= course.round_time%>
-  时间正确率比例： <%= course.time_ratio%>
-  <%= link_to "编辑", edit_course_path(course.id),:remote => "true" %>
-  
-  <%= link_to "进入课程", course_chapters_path(course.id) %>
-  </li>
-<% end%>
+  <% @courses.each do |course|%>
+    <div class="obj_box con_box cf">
+      <%= link_to "删除", course, :method => :delete, :confirm => '删除课程将删除课程所有相关记录，确定删除吗？',:class=>"close", :title => "删除" %>
 
-</ul>
+      <div class="imgText">
+        <% if course.img.blank? %>
+          <%= image_tag "/assets/default.jpg", :class => "leftImg", :style =>"width:80px;height:123px" %>
+        <% else %>
+          <%= image_tag course.img.thumb.url, :class => "leftImg" %>
+        <% end %>
+        <div class="rightText">
+          <dl>
+            <dt>课程名：</dt><dd><%= course.name %></dd>
+            <dt>出版社：</dt><dd><%= course.press %></dd>
+            <dt>课程类别：</dt><dd><%= Course::TYPES[course.types] %></dd>
+            <dt>描述：</dt><dd><%= course.description.truncate(30, separator: ' ') %></dd>
+          </dl>
+        </div>
+      </div>
+      <div class="action">
+        是否通过审核：<span><%= Course::STATUS_NAME[course.status] %></span>
+        <%= verify_button(course) if course.status==0 %>
+        <br/>
+        <br/>
+        <%= link_to "编辑", edit_course_path(course.id),:remote => "true", :class => "grey_btn" %>
+        <%= link_to "进入课程", course_chapters_path(course.id), :class => "green_btn" %>
+      </div>
+    </div>
 
-<div style="display: none" id="new_course">
-  新建
+  <% end %>
 </div>
 
-<div style="display: none" id="edit_course">
-  编辑
+<div style="display: none"  class="second_content cf">
+  <span class="close" onclick="sConClose();return false">关闭</span>
+  <div class="second_view" id="course_container">
+  </div>
 </div>

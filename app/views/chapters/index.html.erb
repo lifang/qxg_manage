@@ -1,6 +1,50 @@
-<%#
-# To change this template, choose Tools | Templates
-# and open the template in the editor.
-%>
+<%= render "/shared/course_head" %>
+<div class="clear"></div>
+<div class="set_btn cf"><%= link_to "添加章节", new_course_chapter_path(@course), :remote => "true", :class =>"green_btn" %></div>
 
-<%= "index.html" %>
+<div id="import_chapter">
+  <%= form_tag({:action => :uploadfile}, :multipart => true) do %>
+    导入章节:<%= file_field_tag 'zip', :onchange => "check_filetype();" %>
+    <!--<button id="btn_upload" type="submit" disabled="true">上 传</button>-->
+    <button id="btn_upload" type="submit" >上 传</button>
+  <% end %>
+</div>
+<div class="clear"></div>
+<div class="m_con">
+  <% @chapters.each do |chapter| %>
+
+    <div class="cpt_box con_box cf">
+      <%= link_to "删除", course_chapter_path(@course, chapter), :method => :delete, :confirm => '删除章节将删除章节所有相关记录，确定删除吗？', :class => "close", :title => "删除" %>
+
+      <div class="imgText">
+        <%= image_tag chapter.img.thumb.url, :class => "leftImg", :style =>"width:80px;height:123px" %>
+        <div class="rightText">
+          <span class="cpt_title"><%= chapter.name %></span>
+          <span style="margin-left:30px">关卡数目：<%= chapter.round_count || 0  %></span>
+        </div>
+       
+      </div>
+      <div class="action">
+        
+        是否通过审核：<span><%= Course::STATUS_NAME[chapter.status] %></span>
+        <%= verify_button(chapter) if chapter.status==0 %>
+        <br/>
+        <br/>
+        <%= link_to "编辑", edit_course_chapter_path(@course, chapter),:remote => "true", :class => "chapterInfo grey_btn" %>
+        <%= link_to "进入章节", course_chapter_rounds_path(@course, chapter), :class => "chapterEnter green_btn" %>
+      </div>
+    </div>
+
+    <div class="chapterDetail"></div>
+    <div class="chapterDetail"></div>
+    <div class="chapterDetail"></div>
+
+  <% end %>
+
+
+</div>
+<div style="display: none" class="second_content cf">
+  <span class="close" onclick="sConClose();return false">关闭</span>
+  <div class="second_view" id="chapter_container">
+  </div>
+</div>

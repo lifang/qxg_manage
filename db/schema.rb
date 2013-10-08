@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130916065853) do
+ActiveRecord::Schema.define(:version => 20130926033137) do
 
   create_table "achieve_counts", :force => true do |t|
     t.integer  "user_id"
@@ -78,18 +78,6 @@ ActiveRecord::Schema.define(:version => 20130916065853) do
   add_index "buy_records", ["prop_id"], :name => "index_buy_records_on_prop_id"
   add_index "buy_records", ["user_id"], :name => "index_buy_records_on_user_id"
 
-  create_table "carbag_tags", :force => true do |t|
-    t.integer  "user_id"
-    t.integer  "course_id"
-    t.string   "name"
-    t.integer  "types"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "carbag_tags", ["course_id"], :name => "index_carbag_tags_on_course_id"
-  add_index "carbag_tags", ["user_id"], :name => "index_carbag_tags_on_user_id"
-
   create_table "cardbag_tag_card_relations", :force => true do |t|
     t.integer  "cardbag_tag_id"
     t.integer  "card_id"
@@ -100,6 +88,18 @@ ActiveRecord::Schema.define(:version => 20130916065853) do
   add_index "cardbag_tag_card_relations", ["card_id"], :name => "index_cardbag_tag_card_relations_on_card_id"
   add_index "cardbag_tag_card_relations", ["cardbag_tag_id"], :name => "index_cardbag_tag_card_relations_on_cardbag_tag_id"
 
+  create_table "cardbag_tags", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "course_id"
+    t.string   "name"
+    t.integer  "types"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "cardbag_tags", ["course_id"], :name => "index_carbag_tags_on_course_id"
+  add_index "cardbag_tags", ["user_id"], :name => "index_carbag_tags_on_user_id"
+
   create_table "chapters", :force => true do |t|
     t.integer  "course_id"
     t.string   "name"
@@ -107,6 +107,7 @@ ActiveRecord::Schema.define(:version => 20130916065853) do
     t.integer  "round_count"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "status",      :limit => 1, :default => 0
   end
 
   add_index "chapters", ["course_id"], :name => "index_chapters_on_course_id"
@@ -117,12 +118,14 @@ ActiveRecord::Schema.define(:version => 20130916065853) do
     t.text     "description"
     t.string   "img"
     t.integer  "types"
-    t.integer  "status"
+    t.integer  "status",      :limit => 1, :default => 0
     t.integer  "time_ratio"
     t.integer  "blood"
     t.integer  "max_score"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "round_time"
+    t.integer  "round_count"
   end
 
   create_table "everyday_tasks", :force => true do |t|
@@ -164,10 +167,11 @@ ActiveRecord::Schema.define(:version => 20130916065853) do
     t.text     "description"
     t.integer  "price"
     t.integer  "types"
-    t.integer  "question_types"
+    t.string   "question_types"
     t.string   "img"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "status",         :default => false
   end
 
   add_index "props", ["course_id"], :name => "index_props_on_course_id"
@@ -207,6 +211,8 @@ ActiveRecord::Schema.define(:version => 20130916065853) do
     t.integer  "max_score"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "course_id"
+    t.integer  "status",          :limit => 1, :default => 0
   end
 
   add_index "rounds", ["chapter_id"], :name => "index_rounds_on_chapter_id"

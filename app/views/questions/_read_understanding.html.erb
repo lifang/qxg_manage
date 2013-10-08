@@ -1,0 +1,12 @@
+<div class="question_content" onclick="toggleNext(this)">
+  <%= question.content %>
+</div>
+
+<div class="question_options" style="display: none">
+  <ul>
+    <% @branch_question_hash[question.id].each_with_index  do |branch_question, index| %>
+    <%= render :partial => "branch_#{Question::TYPE_NAMES.invert[branch_question.types]}", :locals => {:branch_question => branch_question, :index => index+1} %>
+    <% end %>
+  </ul>
+
+</div>

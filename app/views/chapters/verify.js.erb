@@ -1,0 +1,4 @@
+alert('<%= @notice %>')
+
+$("#chapter_<%= @chapter.id %>").prev().text("已审核");
+$("#chapter_<%= @chapter.id %>").remove();

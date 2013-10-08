@@ -16,9 +16,9 @@ development:
   pool: 5
   username: root
   password: comdo2012
-  host: localhost
+  host: 127.0.0.1
 
-# Warning: The database defined as "test" will be erased and
+# Warning: The database defined as "test" will be erased and             nx
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
@@ -28,7 +28,7 @@ test:
   database: qxg_manage_test
   pool: 5
   username: root
-  password:
+  password: comdo2012
   host: localhost
 
 production:
@@ -38,5 +38,5 @@ production:
   database: qxg_manage_production
   pool: 5
   username: root
-  password:
+  password: comdo2012
   host: localhost

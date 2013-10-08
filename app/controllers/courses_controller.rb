@@ -1,5 +1,6 @@
+#encoding: utf-8
 class CoursesController < ApplicationController
-
+  before_filter :sign?
   def index
     @courses = Course.all
   end
@@ -29,13 +30,21 @@ class CoursesController < ApplicationController
       render :edit
     end
   end
+  #TODO
+  def destroy
+    @course = Course.find_by_id params[:id]
+    @course.destroy
+    flash[:notice] = "删除成功"
+    redirect_to courses_path
+  end
 
   #审核
   def verify
     @course = Course.find_by_id params[:id]
     if @course.update_attribute(:status, true)
+      @notice = "审核成功"
     else
-      
+      @notice = "审核失败"
     end
   end
 end
