@@ -89,8 +89,12 @@ class Api::UsersController < ActionController::Base
       if Digest::SHA2.hexdigest(pwd) != user.password
         render :json => "error_password"
       else
-        user.update_attribute("email", email)
-        render :json => "success"
+        if User.find_by_email(email).present?
+          render :json => "error_email"
+        else
+          user.update_attribute("email", email)
+          render :json => "success"
+        end
       end
     end
   end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131008064416) do
+ActiveRecord::Schema.define(:version => 20131010070348) do
 
   create_table "achieve_counts", :force => true do |t|
     t.integer  "user_id"
@@ -64,6 +64,15 @@ ActiveRecord::Schema.define(:version => 20131008064416) do
 
   add_index "branch_questions", ["question_id"], :name => "index_branch_questions_on_question_id"
 
+  create_table "buy_cardbag_records", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "course_id"
+    t.integer  "num"
+    t.integer  "gold"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "buy_records", :force => true do |t|
     t.integer  "user_id"
     t.integer  "course_id"
@@ -79,6 +88,15 @@ ActiveRecord::Schema.define(:version => 20131008064416) do
   add_index "buy_records", ["prop_id"], :name => "index_buy_records_on_prop_id"
   add_index "buy_records", ["user_id"], :name => "index_buy_records_on_user_id"
 
+  create_table "card_tag_relations", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "course_id"
+    t.integer  "knowledge_card_id"
+    t.integer  "cardbag_tag_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "cardbag_tag_card_relations", :force => true do |t|
     t.integer  "cardbag_tag_id"
     t.integer  "card_id"
@@ -93,7 +111,7 @@ ActiveRecord::Schema.define(:version => 20131008064416) do
     t.integer  "user_id"
     t.integer  "course_id"
     t.string   "name"
-    t.integer  "types"
+    t.integer  "types",      :default => 0
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -224,7 +242,7 @@ ActiveRecord::Schema.define(:version => 20131008064416) do
     t.string   "remark"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "cardbag_tag_id"
+    t.integer  "course_id"
   end
 
   add_index "user_cards_relations", ["user_id"], :name => "index_user_cards_relations_on_user_id"
@@ -240,6 +258,7 @@ ActiveRecord::Schema.define(:version => 20131008064416) do
     t.integer  "achieve_point"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "experience_value"
   end
 
   add_index "user_course_relations", ["course_id"], :name => "index_user_course_relations_on_course_id"

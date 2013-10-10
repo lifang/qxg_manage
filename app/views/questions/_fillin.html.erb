@@ -1,5 +1,5 @@
 <div class="question_content" onclick="toggleNext(this)">
-  <%= question.content.gsub(/\[\[[text]*\]\]/, "___") %>
+  <%= question.content.gsub(/\[\[[^\[\[]*\]\]/, "___") %>
 </div>
 
 <div class="question_options" style="display: none">
