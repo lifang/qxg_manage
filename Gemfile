@@ -9,6 +9,7 @@ gem 'mysql2' , '0.3.10'
 gem "mini_magick", "3.5.0" #handle image
 gem 'carrierwave', "0.5.8" #upload image
 gem 'archive-zip'
+gem 'roo',"~> 1.12.1"
 gem 'remotipart', '~> 1.0' #ajax upload file
 
 
