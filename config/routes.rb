@@ -1,24 +1,4 @@
 QxgManage::Application.routes.draw do
-  namespace :api do
-    resources :chapters do
-      collection do
-        get :user_chapter,:user_achieve,:user_prop,:user_round,:user_rank,:user_card,:search_card,:list_card
-        post :used_prop,:save_card,:delete_card
-      end
-    end
-    resources :users do
-      collection do
-        get   :digest
-        post  :login, :regist, :set_password, :update_user_date, :upload_head_img
-      end
-    end
-    resources :user_manages do
-      get "selected_courses", "search_course", "search_single_course"
-      collection do
-        get "achieve_points_ranking"
-      end
-    end
-  end
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
@@ -68,18 +48,23 @@ QxgManage::Application.routes.draw do
   # See how all your routes lay out with "rake routes"
 
   namespace :api do
+    resources :chapters do
+      collection do
+        get :user_chapter,:user_achieve,:user_prop,:user_round,:user_rank,:user_card,:user_cards,:list_card
+        post :used_prop,:save_card,:delete_card
+      end
+    end
     resources :users do
       collection do
-      get :digest
-      post  :login, :regist, :set_password, :update_user_date, :upload_head_img
+        get   :digest
+        post  :login, :regist, :set_password, :update_user_date, :upload_head_img, :set_email
       end
     end
     resources :user_manages do
       collection do
         get "selected_courses", "search_course", "search_single_course", "props_list", "buy_prop",
-          "everyday_tasks", "set_task_day"
+          "everyday_tasks", "set_task_day","achieve_points_ranking"
       end
-      
     end
   end
 

@@ -4,7 +4,7 @@ class CreateCarbagTags < ActiveRecord::Migration
       t.integer :user_id
       t.integer :course_id
       t.string :name
-      t.integer :types
+      t.integer :types, :default => 0
 
       t.timestamps
     end
