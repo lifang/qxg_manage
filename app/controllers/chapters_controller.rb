@@ -125,8 +125,18 @@ class ChaptersController < ApplicationController
       #循环取出每一题
       start_line.upto(end_line).each do |line|
         que = oo.cell(line,'A').to_s
+        type = 0
+        error_info = ""
         #判断题型
-        distinguish_question_types que,line
+        result = distinguish_question_types que,line
+        result.each do |key,val|
+          if val.class == Fixnum
+            type = val
+          else
+            error_info = val[0].to_s
+          end
+        end
+        p "#{Question::TYPES[type]} #{error_info} "
       end
     end
 
@@ -137,6 +147,9 @@ class ChaptersController < ApplicationController
 
   #识别题型
   def distinguish_question_types que,line
+    que_tpye = -1 #题型标记
+    error_info = [] #错误信息
+
     count_a = 0	#[[]]计数
     result_a = []
 
@@ -189,11 +202,11 @@ class ChaptersController < ApplicationController
               count_h = count_h + 1 if t.match(/^@@/)
             end
             if(count_h == 1)
-              p "单选题"
+              que_tpye = Question::TYPE_NAMES[:single_choice] #单选题
             elsif(count_h > 1)
-              p "多选题"
-            else
-              p "第#{line}行：选择题没有答案"
+              que_tpye = Question::TYPE_NAMES[:multiple_choice] #多选题
+            else                        error_info
+              error_info << "第#{line}行：选择题没有答案"
             end
           elsif(count_e != 0 && count_f == 0)
             tmp = result_a[0].scan(/(?<=\[\[).*(?=\]\])/).to_a
@@ -202,17 +215,16 @@ class ChaptersController < ApplicationController
               count_g = result_a[0].scan(/\>\>/).length
             end
             if(count_g != 0)
-              p "连线题"
+              que_tpye = Question::TYPE_NAMES[:lineup] #连线题
 
               #if()
-              #p "第#{line}行：连线题对应关系不完整"
+              #error_info << "第#{line}行：连线题对应关系不完整"
               #end
             else
-              p "未知题型"
+              que_tpye = -1 #未知题型
+              error_info << "未知题型"
             end
           end
-          #p result_a[0].scan(/\|\|/)
-          #p
         elsif(count_a > 1)
           if(count_e == 0 && count_f == 0 && result_a[0].scan(/\;\;/).length == 0)
             if(count_d == 0)
@@ -224,28 +236,32 @@ class ChaptersController < ApplicationController
                 end
               end
               if count == result_a.length
-                p "拖拽题"
+                que_tpye = Question::TYPE_NAMES[:drag] # 拖拽题
               else
-                p "未知题型"
+                que_tpye = -1 #未知题型
+                error_info << "未知题型"
               end
             else
-              p "阅读理解"
+              que_tpye = Question::TYPE_NAMES[:read_understanding] # 阅读理解
             end
           else
-            p "未知题型"
+            que_tpye = -1 #未知题型
+            error_info << "未知题型"
           end
 
         end
       elsif(count_b != 0 && count_a == 0 && count_c == 0)
-        p "填空题"
+        que_tpye = Question::TYPE_NAMES[:input] #填空题
       elsif(count_c == 1 && count_a == 0 && count_b == 0)
-        p "口语题"
+        que_tpye = Question::TYPE_NAMES[:voice_input] #口语题
       end
       p "||total:#{count_e}  ;;total:#{count_f}  >>total:#{count_g}  @@total:#{count_h}"
       p "[[]]total:#{count_a}  (())total:#{count_b}  {{}}total:#{count_c} ENTER total:#{count_d}"
     else
-      p "未知题型"
+      que_tpye = -1 #未知题型
+      error_info << "未知题型"
     end
+    result = {"que_tpye" => que_tpye, "error_info" => error_info }
   end
 
   def destroy
