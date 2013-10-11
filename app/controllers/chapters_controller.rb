@@ -110,9 +110,9 @@ class ChaptersController < ApplicationController
       end_line = oo.last_row
       if end_line  > 0
         1.upto(end_line) do |line|
-          every_line = oo.cell(line,'B').to_s
-          if every_line.size > 0
-            if every_line == "Question" && start_line ==0
+          str = oo.cell(line,'A').to_s
+          if str.size > 0
+            if str == "Question" && start_line ==0
               start_line = line+1
               break
             end
@@ -122,26 +122,130 @@ class ChaptersController < ApplicationController
         end_line = 0
       end
 
-      count = 1
+      #循环取出每一题
       start_line.upto(end_line).each do |line|
-        p "-----------Question:#{count}------------"
-        every_question = oo.cell(line,'B')
-        p every_question
-        if every_question.scan(/\[\[[^\[\[]*[^\[\]]*\]\]/)
-          p every_question.scan(/\[\[[^\[\[]*[^\[\]]*\]\]/)
-        end
-
-        p "-----------Question:#{count}------------"
-        p ""
-        count=count+1
+        que = oo.cell(line,'A').to_s
+        #判断题型
+        distinguish_question_types que,line
       end
-
-
     end
 
     #resource_dir.each do |dir|
     #  p dir
     #end
+  end
+
+  #识别题型
+  def distinguish_question_types que,line
+    count_a = 0	#[[]]计数
+    result_a = []
+
+    count_b = 0	#(())计数
+    result_b = []
+
+    count_c = 0	#{{}}计数
+    result_c = []
+
+    count_d = 0	#excel回车符计数
+    result_c = []
+
+    #匹配[[]]
+    result_a = que.scan(/\[\[[^\[\[]*\]\]/)
+    count_a = result_a.length if result_a.length != 0
+    #p count_a
+
+    #匹配(())
+    result_b = que.scan(/\(\([^\(\(]*\)\)/)
+    count_b = result_b.length if result_b.length != 0
+    #p count_b
+
+    #匹配{{}}
+    result_c = que.scan(/\{\{[^\{\{]*\}\}/)
+    count_c = result_c.length if result_c.length != 0
+    #p count_c
+    #p que
+
+    #匹配excel回车标记
+    result_d = que.scan(%r{\n\s*})
+    count_d = result_d.length if result_d.length != 0
+
+    #p que.split(%r{\n\s*}) if double_bracket_d != 0
+
+    if(count_a != 0 || count_b != 0 || count_c != 0)
+      p "---------------------------------------------------"
+      count_e = 0		#||计数
+      count_f = 0		#;;计数
+      count_g = 0		#>>计数
+      count_h = 0 	#@@计数
+      if(count_a != 0 && count_b == 0 && count_c == 0)
+        if(result_a.length == 1)
+          count_e = result_a[0].scan(/\|\|/).length
+          count_f = result_a[0].scan(/\;\;/).length
+
+          if(count_e != 0 && count_f == 0 && (result_a[0].scan(/\>\>/).length) == 0)
+            tmp = result_a[0].scan(/(?<=\[\[).*(?=\]\])/).to_a
+            tmp = tmp[0].split(/\|\|/)
+            tmp.each do |t|
+              count_h = count_h + 1 if t.match(/^@@/)
+            end
+            if(count_h == 1)
+              p "单选题"
+            elsif(count_h > 1)
+              p "多选题"
+            else
+              p "第#{line}行：选择题没有答案"
+            end
+          elsif(count_e != 0 && count_f == 0)
+            tmp = result_a[0].scan(/(?<=\[\[).*(?=\]\])/).to_a
+            tmp = tmp[0].split(/\|\|/)
+            tmp.each do |t|
+              count_g = result_a[0].scan(/\>\>/).length
+            end
+            if(count_g != 0)
+              p "连线题"
+
+              #if()
+              #p "第#{line}行：连线题对应关系不完整"
+              #end
+            else
+              p "未知题型"
+            end
+          end
+          #p result_a[0].scan(/\|\|/)
+          #p
+        elsif(count_a > 1)
+          if(count_e == 0 && count_f == 0 && result_a[0].scan(/\;\;/).length == 0)
+            if(count_d == 0)
+
+              count=0
+              result_a.each do |e|
+                if e.match(/[\[]{2}[^\|\|]*[\]]{2}/)
+                  count = count + 1
+                end
+              end
+              if count == result_a.length
+                p "拖拽题"
+              else
+                p "未知题型"
+              end
+            else
+              p "阅读理解"
+            end
+          else
+            p "未知题型"
+          end
+
+        end
+      elsif(count_b != 0 && count_a == 0 && count_c == 0)
+        p "填空题"
+      elsif(count_c == 1 && count_a == 0 && count_b == 0)
+        p "口语题"
+      end
+      p "||total:#{count_e}  ;;total:#{count_f}  >>total:#{count_g}  @@total:#{count_h}"
+      p "[[]]total:#{count_a}  (())total:#{count_b}  {{}}total:#{count_c} ENTER total:#{count_d}"
+    else
+      p "未知题型"
+    end
   end
 
   def destroy
