@@ -21,7 +21,7 @@
                 <div id="question_<%= question.id %>" class="toggle_display">
                   名称： <%= question.knowledge_card.try(:name) %>
                   描述: <%= question.knowledge_card.try(:description) %>
-                  标签：<%= question.knowledge_card.system_tag %>
+                  <% if question.knowledge_card.system_tag.present?  %>标签：<%= question.knowledge_card.system_tag %> <% end %>
                   <%= link_to "移除知识卡片", remove_knowledge_card_path(question), :remote => true, :confirm => "确定移除知识卡片吗？" %>
                 </div>
               </div>

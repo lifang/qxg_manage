@@ -1,21 +1,23 @@
-<%= render "/shared/course_head" %>
-<div class="clear"></div>
-<div class="set_btn cf"><%= link_to "添加标签", new_course_cardbag_tag_path(@course), :remote => true, :class =>"green_btn" %></div>
+<h1><a>某课程</a>><span>标签、道具、章节</span></h1>
+<div class="m_con">
+  <%= render "/shared/course_head" %>
+  <div class="clear"></div>
+  <div class="set_btn cf"><%= link_to "添加标签", new_course_cardbag_tag_path(@course), :remote => true, :class =>"green_btn" %></div>
 
-<div class="searchDiv cf">
-  <%= form_for :tag, :url => search_course_cardbag_tags_path(@course), :method => :post, :remote => true do |f|%>
-    <span>名称：</span>
-    <input type="text" name="tag_name" id="search_tag"/>
-    <%= button_tag "查询",:type => "submit", :class => "green_btn" %>
-  <% end %>
+  <div class="searchDiv cf" style="width:88%;padding-bottom: 10px">
+    <%= form_for :tag, :url => search_course_cardbag_tags_path(@course), :method => :post, :remote => true do |f|%>
+      <span>名称：</span>
+      <input type="text" name="tag_name" id="search_tag"/>
+      <%= button_tag "查询",:type => "submit", :class => "green_btn" %>
+    <% end %>
+  </div>
+ 
+  <div class="tag_list">
+    <%= render "tag_list" %>
+  </div>
 </div>
-
-<div class="tag_list">
-  <%= render "tag_list" %>
-</div>
-
 <div style="display: none" class="second_content cf">
-  <span class="close" onclick="sConClose();return false">关闭</span>
+  <span class="close">关闭</span>
   <div class="second_view" id="tag_container">
   </div>
 </div>

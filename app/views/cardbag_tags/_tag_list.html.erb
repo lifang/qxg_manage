@@ -5,7 +5,7 @@
   </tr>
   <% @tags.each do |tag| %>
 
-    <tr>
+  <tr style="background: <%= cycle("", "#F2F6F6") %>">
       <td><%= tag.name %></td>
       <td>
         <%= link_to "编辑", edit_course_cardbag_tag_path(@course, tag), :remote => true, :class => "markInfo green_btn" %>

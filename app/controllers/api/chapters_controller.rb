@@ -1,6 +1,5 @@
 #encoding: utf-8
 class Api::ChaptersController < ApplicationController
-
   #章节列表
   def user_chapter
     chapters, rounds = Chapter.all,{}
@@ -16,6 +15,10 @@ class Api::ChaptersController < ApplicationController
 
   #我的道具
   def user_prop
+    #uid, course_id
+    #TODO
+    response.header['Access-Control-Allow-Origin'] = '*'
+    response.header['Content-Type'] = 'application/json'
     render :json => Prop.joins("inner join user_prop_relations u on props.id=u.prop_id").select("props.*,u.user_prop_num num").
       where("u.user_id=#{params[:uid]} and u.user_prop_num >=1 and course_id=#{params[:course_id]} ")
   end
@@ -54,10 +57,18 @@ class Api::ChaptersController < ApplicationController
   #收藏知识卡片
   def save_card
     #uid， card_id, course_id
-    user_card_relation = UserCardsRelation.create(:user_id=>params[:uid],:knowledge_card_id => params[:card_id], :course_id => params[:course_id])
+    response.header['Access-Control-Allow-Origin'] = '*'
+    response.header['Content-Type'] = 'text'
     user_course_relation = UserCourseRelation.find_by_user_id_and_course_id(params[:uid], params[:course_id])
-    ucr = user_course_relation.update_attribute(:cardbag_use_count, user_course_relation.cardbag_use_count - 1) if user_course_relation
-    render :json=>{:msg => user_card_relation && ucr ? "success" : "error"}
+    if user_course_relation && ((user_course_relation.cardbag_count.to_i - user_course_relation.cardbag_use_count.to_i) > 0)
+      user_card_relation = UserCardsRelation.create(:user_id=>params[:uid],:knowledge_card_id => params[:card_id], :course_id => params[:course_id])
+      ucr = user_course_relation.update_attribute(:cardbag_use_count, user_course_relation.cardbag_use_count + 1) if user_course_relation
+      render :text => user_card_relation && ucr ? "success" : "error"
+    else
+      render :text => "not_enough"
+    end
+    
+    
   end
 
   #返回收藏的知识卡片（卡包）
@@ -102,7 +113,7 @@ class Api::ChaptersController < ApplicationController
       render :json => {:msg => "added"} #卡片已经加在当前标签下
     else
       card_tag_relation = CardTagRelation.create({:user_id => params[:uid], :knowledge_card_id => params[:card_id], :course_id => params[:course_id], :cardbag_tag_id => params[:tag_id]})
-    render :json => {:msg => card_tag_relation ? "success" : "error"}
+      render :json => {:msg => card_tag_relation ? "success" : "error"}
     end
     
   end

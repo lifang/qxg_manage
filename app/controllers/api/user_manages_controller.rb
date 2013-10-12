@@ -125,7 +125,7 @@ class Api::UserManagesController < ActionController::Base
 
   #返回通讯录好友
   def contact_list
-    #参数 uid, phone_ids逗号分隔
+    #参数 uid, phones逗号分隔
     phones = params[:phones].split(",")
     in_app_user_phones = User.where(:phone => phones)
     not_in_app_phones = phones - in_app_user_phones.map(&:phone)
@@ -140,9 +140,9 @@ class Api::UserManagesController < ActionController::Base
   #返回微博好友
   def weibo_list
     #参数 uid， weibo_ids用逗号分隔
-    weibo_ids = params[:weibo_id].split(",").map(&:to_i)
+    weibo_ids = params[:weibo_ids].split(",")
     in_app_weibo_users = User.where(:weibo_id => weibo_ids)
-    not_in_app_weibo_ids = weibo_ids - in_app_weibo_users.map(&:weibo_ids)
+    not_in_app_weibo_ids = weibo_ids - in_app_weibo_users.map(&:weibo_id)
     weibo_user_ids = in_app_weibo_users.map(&:id)
     friend_ids = Friend.where(:user_id => params[:uid]).map(&:friend_id)
     added_friend_ids = weibo_user_ids & friend_ids

@@ -1,6 +1,6 @@
 <div>
   <%= index %>、
-  <%= branch_question.branch_content %>
+  <%= branch_question.branch_content.gsub(/\[\[[^\[\[]*\]\]/, "___") %>
 </div>
 
 <% branch_question.options.split(";||;").each do |option| %>

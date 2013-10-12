@@ -1,15 +1,9 @@
 <div>
-  <%= index %>
+  <%= index %>、
   <%= branch_question.branch_content %>
 </div>
 
-<div class="question_options" style="display: none">
-  <ul>
-    <% branch_question.options.split(";||;").each  do |option| %>
-      <li><input name="answer[]" type="checkbox"/>
-        <%= option %>
-      </li>
-    <% end %>
-  </ul>
-
-</div>
+<% branch_question.options.split(";||;").each do |option| %>
+  <input name="answer[]" type="checkbox"/>
+  <%= option %> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<% end %>
