@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131010070348) do
+ActiveRecord::Schema.define(:version => 20131011070434) do
 
   create_table "achieve_counts", :force => true do |t|
     t.integer  "user_id"
@@ -96,16 +96,6 @@ ActiveRecord::Schema.define(:version => 20131010070348) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
-
-  create_table "cardbag_tag_card_relations", :force => true do |t|
-    t.integer  "cardbag_tag_id"
-    t.integer  "card_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "cardbag_tag_card_relations", ["card_id"], :name => "index_cardbag_tag_card_relations_on_card_id"
-  add_index "cardbag_tag_card_relations", ["cardbag_tag_id"], :name => "index_cardbag_tag_card_relations_on_cardbag_tag_id"
 
   create_table "cardbag_tags", :force => true do |t|
     t.integer  "user_id"
