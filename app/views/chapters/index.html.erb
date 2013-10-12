@@ -2,13 +2,6 @@
 <div class="clear"></div>
 <div class="set_btn cf"><%= link_to "添加章节", new_course_chapter_path(@course), :remote => "true", :class =>"green_btn" %></div>
 
-<div id="import_chapter">
-  <%= form_tag({:action => :uploadfile}, :multipart => true) do %>
-    导入章节:<%= file_field_tag 'zip', :onchange => "check_filetype();" %>
-    <!--<button id="btn_upload" type="submit" disabled="true">上 传</button>-->
-    <button id="btn_upload" type="submit" >上 传</button>
-  <% end %>
-</div>
 <div class="clear"></div>
 <div class="m_con">
   <% @chapters.each do |chapter| %>

@@ -8,9 +8,6 @@ QxgManage::Application.routes.draw do
       get :verify #审核课程
     end
     resources :chapters do
-      collection do
-        post :uploadfile
-      end
       resources :rounds
     end
     resources :cardbag_tags do
@@ -29,6 +26,9 @@ QxgManage::Application.routes.draw do
   end
 
   resources :rounds do
+    collection do
+      post :uploadfile
+    end
     member do
       get :verify #审核关卡
     end
