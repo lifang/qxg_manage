@@ -51,7 +51,7 @@ QxgManage::Application.routes.draw do
     resources :chapters do
       collection do
         get :user_chapter,:user_achieve,:user_prop,:user_round,:user_rank,:user_card,:user_cards,:list_card
-        post :used_prop,:save_card,:delete_card
+        post :used_prop,:save_card,:delete_card,:add_tag_to_card,:add_remark_to_card
       end
     end
     resources :users do

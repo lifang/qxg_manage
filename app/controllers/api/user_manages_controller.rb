@@ -58,8 +58,8 @@ class Api::UserManagesController < ActionController::Base
     else
       UserPropRelation.create(:user_id => uid, :prop_id => pid, :user_prop_num => pcount)
     end
-      sp = UserPropRelation.find_by_user_id_and_prop_id(uid, pid)
-      render :json => sp
+    sp = UserPropRelation.find_by_user_id_and_prop_id(uid, pid)
+    render :json => sp
   end
 
   def achieve_points_ranking  #成就点数排行，根据user_id 和course_id ,查出包括自己跟好友的成就排行
@@ -76,14 +76,14 @@ class Api::UserManagesController < ActionController::Base
   end
 
   def everyday_tasks    #每日任务
-     uid = params[:uid].to_i
-     cid = params[:cid].to_i
-     et = EverydayTask.find_by_user_id_and_course_id(uid, cid)
-     if et.nil?
-       render :json => "error"
-     else
-       render :json => et.get_login_day
-     end
+    uid = params[:uid].to_i
+    cid = params[:cid].to_i
+    et = EverydayTask.find_by_user_id_and_course_id(uid, cid)
+    if et.nil?
+      render :json => "error"
+    else
+      render :json => et.get_login_day
+    end
   end
 
   def set_task_day  #修改连续天数
@@ -120,25 +120,35 @@ class Api::UserManagesController < ActionController::Base
     #参数 uid, friend_id
     f1 = Friend.create({:user_id => params[:uid], :friend_id => params[:friend_id]})
     f2 = Friend.create({:user_id => params[:friend_id], :friend_id => params[:uid]})
-    render :json => f2 ? "success" : "error"
+    render :json => { :msg => f1&&f2 ? "success" : "error"}
   end
 
- #返回通讯录好友
- def contact_list
-   #参数 uid
-   user = User.find_by_id(params[:uid])
-   friend_ids = user.friends.map(&:friend_id)
-   render :json => User.where(:id => friend_ids)
- end
+  #返回通讯录好友
+  def contact_list
+    #参数 uid, phone_ids逗号分隔
+    phones = params[:phones].split(",")
+    in_app_user_phones = User.where(:phone => phones)
+    not_in_app_phones = phones - in_app_user_phones.map(&:phone)
+    user_phone_ids = in_app_user_phones.map(&:id)
+    friend_ids = Friend.where(:user_id => params[:uid]).map(&:friend_id)
+    added_friend_ids = user_phone_ids & friend_ids
+    can_add_friend_ids = user_phone_ids - friend_ids
+    render :json => {:added_phone_friends => User.where(:id => added_friend_ids),
+      :can_add_phone_friends => User.where(:id => can_add_friend_ids), :not_opened_phones => not_in_app_phones}
+  end
 
- #返回微博好友
- def weibo_list
-   #参数 uid， weibo_ids用逗号分隔
-   weibo_ids = params[:weibo_id].split(",")
-   friend_ids = Friend.where(:user_id => params[:uid])
-   added_friend_ids = weibo_ids & friend_ids
-   can_add_friend_ids = weibo_ids - friend_ids
-   #not_involved_ids =
- end
+  #返回微博好友
+  def weibo_list
+    #参数 uid， weibo_ids用逗号分隔
+    weibo_ids = params[:weibo_id].split(",").map(&:to_i)
+    in_app_weibo_users = User.where(:weibo_id => weibo_ids)
+    not_in_app_weibo_ids = weibo_ids - in_app_weibo_users.map(&:weibo_ids)
+    weibo_user_ids = in_app_weibo_users.map(&:id)
+    friend_ids = Friend.where(:user_id => params[:uid]).map(&:friend_id)
+    added_friend_ids = weibo_user_ids & friend_ids
+    can_add_friend_ids = weibo_user_ids - friend_ids
+    render :json =>{:added_weibo_friends => User.where(:id => added_friend_ids),
+      :can_add_weibo_friends => User.where(:id => can_add_friend_ids), :not_opened_weibo_ids => not_in_app_weibo_ids}
+  end
   
 end
