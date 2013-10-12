@@ -57,6 +57,8 @@ class RoundsController < ApplicationController
   def uploadfile
     zipfile = params[:zip]
     base_url = "#{Rails.root}/public/qixueguan/tmp"
+    @error_infos = []
+
     if !zipfile.nil?
       user_id = 121
       time_now = Time.now().to_s.slice(0,19).gsub(/\:/,'-')
@@ -72,11 +74,16 @@ class RoundsController < ApplicationController
       end
 
       unzip base_url, user_id, zip_dir
-      read_excel base_url ,user_id ,zip_dir
+      @error_infos = read_excel base_url ,user_id ,zip_dir
       #read_question_data 121, dir, course_id, chapter_id, round_id
 
     end
-    redirect_to course_chapter_rounds_path(@course.id,@chapter.id)
+    render :json => "#{@error_infos}"
+    #respond_with(@error_infos) do |f|
+    #  f.html
+    #  f.js
+    #end
+    #redirect_to course_chapter_rounds_path(@course.id,@chapter.id)
   end
 
   #解压压缩包、获取excel文件名和资源目录
@@ -97,6 +104,7 @@ class RoundsController < ApplicationController
     path = "#{base_url}/user_#{user_id}/#{zip_dir}"
     excel_files =  []
     resource_dir = []
+    error_infos = []
 
     #获取excel文件和资源目录
     Dir.entries(path).each do |sub|
@@ -150,11 +158,13 @@ class RoundsController < ApplicationController
           end
         end
         p "#{Question::TYPES[type]} #{error_info} "
+        error_infos << error_info if !error_info.empty?
         # if 错误信息为空，则开始截取
 
       end
-    end
 
+    end
+    error_infos if error_infos.length != 0
     #resource_dir.each do |dir|
     #  p dir
     #end
@@ -164,6 +174,24 @@ class RoundsController < ApplicationController
   def distinguish_question_types(que,line)
     que_tpye = -1 #题型标记
     error_info = [] #错误信息
+
+    sybs = []
+    sybs << [ /\[\[|\]\]/,"[[","]]"] << [ /\(\(|\)\)/,"((","))"] << [ /\{\{|\}\}/,"{{","}}"]
+    sybs.each do |syb|
+      count = 0
+      arr = que.scan(syb[0])
+      p arr
+      l=arr.length.to_i-1
+
+      (0..l).each do |i|
+        p arr[i]
+        if arr[i+1] && arr[i] == arr[i+1]
+          count = count + 1
+        end
+      end
+      error_info << "第#{line}行：#{syb[1]}" + "……" + "#{syb[2]}符号不成对" if arr.length.to_i%2 != 0
+      error_info << "第#{line}行：#{syb[1]}" + "……" + "#{syb[2]}符号中不能有#{syb[1]}或#{syb[2]}" if count > 0
+    end
 
     count_a = 0	#[[]]计数
     result_a = []
@@ -237,7 +265,7 @@ class RoundsController < ApplicationController
               #end
             else
               que_tpye = -1 #未知题型
-              error_info << "未知题型"
+              error_info << "第#{line}行：未知题型"
             end
           end
         elsif(count_a > 1)
@@ -269,14 +297,14 @@ class RoundsController < ApplicationController
                 que_tpye = Question::TYPE_NAMES[:drag] # 拖拽题
               else
                 que_tpye = -1 #未知题型
-                error_info << "未知题型"
+                error_info << "第#{line}行：未知题型"
               end
             else
               que_tpye = Question::TYPE_NAMES[:read_understanding] # 阅读理解
             end
           else
             que_tpye = -1 #未知题型
-            error_info << "未知题型"
+            error_info << "第#{line}行：未知题型"
           end
 
         end
@@ -289,7 +317,7 @@ class RoundsController < ApplicationController
       p "[[]]total:#{count_a}  (())total:#{count_b}  {{}}total:#{count_c} ENTER total:#{count_d}"
     else
       que_tpye = -1 #未知题型
-      error_info << "未知题型"
+      error_info << "第#{line}行：未知题型"
     end
     result = {"que_tpye" => que_tpye, "error_info" => error_info }
   end

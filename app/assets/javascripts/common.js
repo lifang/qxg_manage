@@ -20,3 +20,17 @@ function toggleCard(obj, question_id){ //展开显示知识卡片
 function sConClose(){  // 隐藏弹出框
     $(".second_content").hide();
 }
+
+function file_validate(obj){
+    var reg =  /.*\.zip/
+    var file_name = ($(obj).val());
+    if(!reg.test(file_name))
+    {
+        $("#btn_upload").attr("disabled","true");
+        alert("请选择zip题库压缩包");
+        $(obj).val("");
+    }
+    else
+        $("#btn_upload").removeAttr("disabled");
+    end
+}
