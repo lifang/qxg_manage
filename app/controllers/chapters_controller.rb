@@ -137,6 +137,8 @@ class ChaptersController < ApplicationController
           end
         end
         p "#{Question::TYPES[type]} #{error_info} "
+        # if 错误信息为空，则开始截取
+
       end
     end
 
@@ -160,7 +162,7 @@ class ChaptersController < ApplicationController
     result_c = []
 
     count_d = 0	#excel回车符计数
-    result_c = []
+    result_d = []
 
     #匹配[[]]
     result_a = que.scan(/\[\[[^\[\[]*\]\]/)
@@ -231,11 +233,26 @@ class ChaptersController < ApplicationController
 
               count=0
               result_a.each do |e|
-                if e.match(/[\[]{2}[^\|\|]*[\]]{2}/)
+                p e
+                if e.scan(/(?<=\[\[).*(?=\]\])/)[0].to_s.scan(/\|\|/).length >= 1
                   count = count + 1
                 end
               end
               if count == result_a.length
+                c = 0
+                result_a.each do |e|
+                  p e
+                  if e.scan(/(?<=\[\[).*(?=\]\])/)[0].to_s.scan(/\@\@/).length >= 1
+                    c = c + 1
+                  end
+                end
+                if c == result_a.length
+                  que_tpye = Question::TYPE_NAMES[:fillin] # 完型填空
+                else
+                  que_tpye = -1 #未知题型
+                  error_info << "第#{line}行:完型填空题中有选项没有答案"
+                end
+              elsif(count == 0)
                 que_tpye = Question::TYPE_NAMES[:drag] # 拖拽题
               else
                 que_tpye = -1 #未知题型
