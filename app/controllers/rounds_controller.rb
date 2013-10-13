@@ -33,7 +33,6 @@ class RoundsController < ApplicationController
       @notice = "更新失败！ #{@round.errors.messages.values.flatten.join("<br/>")}"
       render :edit
     end
-   
   end
 
   def destroy
@@ -55,142 +54,171 @@ class RoundsController < ApplicationController
 
   #上传文件
   def uploadfile
+    course_id = params[:course_id]
+    chapter_id = params[:chapter_id]
+    user = User.find_all_by_email(session[:email])
     zipfile = params[:zip]
     base_url = "#{Rails.root}/public/qixueguan/tmp"
     @error_infos = []
 
     if !zipfile.nil?
-      user_id = 121
+      user_id = user[0].id
       time_now = Time.now().to_s.slice(0,19).gsub(/\:/,'-')
       if !File.directory? "#{base_url}/user_#{user_id}"
         Dir.mkdir "#{base_url}/user_#{user_id}"
       end
 
-      filename = zipfile.original_filename.split(".")
+      #重命名zip压缩包为“年-月-日_时-分-秒”
       zip_dir = time_now.slice(0,10) + "_" + time_now.slice(11,8)
-      zipfile.original_filename = zip_dir + "." +filename[1]
+      zipfile.original_filename = zip_dir + "." +  zipfile.original_filename.split(".").to_a[1]
+
+      #上传文件
       File.open(Rails.root.join("public", "qixueguan/tmp/user_#{user_id}", zipfile.original_filename), "wb") do |file|
         file.write(zipfile.read)
       end
 
-      unzip base_url, user_id, zip_dir
-      @error_infos = read_excel base_url ,user_id ,zip_dir
-      #read_question_data 121, dir, course_id, chapter_id, round_id
+      #解压压缩包
+      zip_url = "#{base_url}/user_#{user_id}"
+      if !File.directory? "#{zip_url}/#{zip_dir}"
+        Dir.mkdir "#{zip_url}/#{zip_dir}"
+      end
+      begin
+        Archive::Zip.extract "#{zip_url}/#{zip_dir}.zip","#{zip_url}/#{zip_dir}"
+      rescue
+      end
+      File.delete "#{zip_url}/#{zip_dir}.zip"
 
+      #excel文件与资源的根目录
+      path = "#{base_url}/user_#{user_id}/#{zip_dir}"
+
+      #获取excel文件数组和资源目录数组
+      all_files = get_file_and_dir path
+
+      #获取excel中题目的错误信息
+      @error_infos = read_excel path,all_files[:excels]
+      if !@error_infos.nil? && @error_infos.length != 0
+        render :json => "#{@error_infos}"
+        #respond_with(@error_infos) do |f|
+        #  f.html
+        #  f.js
+        #end
+      else #转移文件&插入数据&写入XML文件
+        redirect_to course_chapter_rounds_path(@course.id,@chapter.id)
+      end
     end
-    render :json => "#{@error_infos}"
-    #respond_with(@error_infos) do |f|
-    #  f.html
-    #  f.js
-    #end
-    #redirect_to course_chapter_rounds_path(@course.id,@chapter.id)
   end
 
   #解压压缩包、获取excel文件名和资源目录
   def unzip base_url, user_id, zip_dir
-    zip_url = "#{base_url}/user_#{user_id}"
-
-    if !File.directory? "#{zip_url}/#{zip_dir}"
-      Dir.mkdir "#{zip_url}/#{zip_dir}"
-    end
-    begin
-      Archive::Zip.extract "#{zip_url}/#{zip_dir}.zip","#{zip_url}/#{zip_dir}"
-    rescue
-    end
-    File.delete "#{zip_url}/#{zip_dir}.zip"
   end
 
-  def read_excel base_url ,user_id ,zip_dir
-    path = "#{base_url}/user_#{user_id}/#{zip_dir}"
+  def get_file_and_dir path
     excel_files =  []
-    resource_dir = []
-    error_infos = []
+    resource_dirs = []
 
     #获取excel文件和资源目录
     Dir.entries(path).each do |sub|
       if sub != '.' && sub != '..'
         if File.directory?("#{path}/#{sub}")
-          resource_dir << sub.to_s
+          resource_dirs << sub.to_s
           #get_file_list("#{path}/#{sub}")
         else
           excel_files << sub.to_s
         end
       end
     end
+    all_files = {:excels => excel_files.sort, :resource_dirs => resource_dirs}
+  end
 
+  #读取excel信息
+  def read_excel path, excel_files
+    error_infos = [] #错误信息的集合
+    questions = [] #单个关卡所有题目的集合
+    #p excel_files
     #循环每个execl文件
     excel_files.each do |excel|
-      p "#{path}/#{excel}"
-      oo = Roo::Excel.new("#{path}/#{excel}")
-      oo.default_sheet = oo.sheets.first
-      start_line = 0
-      end_line = 0
-      #questions = []
-      #
-      ##确定题目的开始行数
-      end_line = oo.last_row
-      if end_line  > 0
-        1.upto(end_line) do |line|
-          str = oo.cell(line,'A').to_s
-          if str.size > 0
-            if str == "Question" && start_line ==0
-              start_line = line+1
-              break
+      #p "#{path}/#{excel}"
+      begin
+        oo = Roo::Excel.new("#{path}/#{excel}")
+        oo.default_sheet = oo.sheets.first
+        start_line = 0
+        end_line = 0
+        #questions = []
+        #
+        ##确定题目的开始行数
+        end_line = oo.last_row
+        if end_line  > 0
+          1.upto(end_line) do |line|
+            str = oo.cell(line,'A').to_s
+            if str.size > 0
+              if str == "Question" && start_line ==0
+                start_line = line+1
+                break
+              end
             end
           end
+        else
+          end_line = 0
         end
-      else
-        end_line = 0
-      end
 
-      #循环取出每一题
-      start_line.upto(end_line).each do |line|
-        que = oo.cell(line,'A').to_s
-        type = 0
-        error_info = ""
-        #判断题型
-        result = distinguish_question_types que,line
-        result.each do |key,val|
-          if val.class == Fixnum
-            type = val
-          else
-            error_info = val[0].to_s
+        #循环取出每一题
+        start_line.upto(end_line).each do |line|
+          que = oo.cell(line,'A').to_s
+          type = -1
+          error_info = ""
+          #判断题型
+          result = distinguish_question_types excel,que,line
+          result.each do |key,val|
+            if val.class == Fixnum
+              type = val
+            else
+              error_info = val[0].to_s
+            end
+          end
+          error_infos << error_info if !error_info.empty?
+
+          if error_infos.length == 0 && type != -1
+            questions << split_question(que,type)
           end
         end
-        p "#{Question::TYPES[type]} #{error_info} "
-        error_infos << error_info if !error_info.empty?
-        # if 错误信息为空，则开始截取
-
+      rescue
+        error_infos << "#{excel}不是Excel文件"
+        excel_files.delete(excel)
+        #p excel_files
+        read_excel path,excel_files
       end
-
     end
-    error_infos if error_infos.length != 0
     #resource_dir.each do |dir|
     #  p dir
-    #end
+    #
+    questions.each do |e|
+      p e
+    end
+    error_infos if error_infos.length != 0
   end
 
   #识别题型
-  def distinguish_question_types(que,line)
+  def distinguish_question_types excel,que,line
     que_tpye = -1 #题型标记
     error_info = [] #错误信息
 
+    #判断题目中的双括号（包括(())、[[]]、{{}}）是否成对
     sybs = []
     sybs << [ /\[\[|\]\]/,"[[","]]"] << [ /\(\(|\)\)/,"((","))"] << [ /\{\{|\}\}/,"{{","}}"]
     sybs.each do |syb|
       count = 0
       arr = que.scan(syb[0])
-      p arr
+      #p arr
       l=arr.length.to_i-1
 
       (0..l).each do |i|
-        p arr[i]
+        #p arr[i]
         if arr[i+1] && arr[i] == arr[i+1]
           count = count + 1
         end
       end
-      error_info << "第#{line}行：#{syb[1]}" + "……" + "#{syb[2]}符号不成对" if arr.length.to_i%2 != 0
-      error_info << "第#{line}行：#{syb[1]}" + "……" + "#{syb[2]}符号中不能有#{syb[1]}或#{syb[2]}" if count > 0
+      error_info << "Excel文件：#{excel} 第#{line}行：#{syb[1]}" + "……" + "#{syb[2]}符号不成对" if arr.length.to_i%2 != 0
+      error_info << "Excel文件：#{excel} 第#{line}行：#{syb[1]}" + "……" + "#{syb[2]}符号中不能有#{syb[1]}或#{syb[2]}" if count > 0
     end
 
     count_a = 0	#[[]]计数
@@ -219,7 +247,6 @@ class RoundsController < ApplicationController
     result_c = que.scan(/\{\{[^\{\{]*\}\}/)
     count_c = result_c.length if result_c.length != 0
     #p count_c
-    #p que
 
     #匹配excel回车标记
     result_d = que.scan(%r{\n\s*})
@@ -253,16 +280,27 @@ class RoundsController < ApplicationController
             end
           elsif(count_e != 0 && count_f == 0)
             tmp = result_a[0].scan(/(?<=\[\[).*(?=\]\])/).to_a
+            #p tmp
             tmp = tmp[0].split(/\|\|/)
+            #p tmp
             tmp.each do |t|
-              count_g = result_a[0].scan(/\>\>/).length
+              count_g = count_g + t.scan(/\>\>/).length
             end
-            if(count_g != 0)
-              que_tpye = Question::TYPE_NAMES[:lineup] #连线题
+            if(count_g != 0 && count_g == tmp.length)
 
-              #if()
-              #error_info << "第#{line}行：连线题对应关系不完整"
-              #end
+              tmp.each do |t|
+                t = t.to_s.gsub(/file>>>/,"file>;=;").gsub(/>>/,";=;")
+                t = t.split(";=;")
+                if(t[0].to_s.size == 0 || t[1].to_s.size == 0)
+                  que_tpye = -1 #未知题型
+                  error_info << "第#{line}行：连线题对应关系不完整"
+                else
+                  que_tpye = Question::TYPE_NAMES[:lineup] #连线题
+                end
+              end
+            elsif(count_g != 0 && count_g > tmp.length)
+              que_tpye = -1 #未知题型
+              error_info << "第#{line}行：连线题每个选项只能有一个>>关系对应符"
             else
               que_tpye = -1 #未知题型
               error_info << "第#{line}行：未知题型"
@@ -274,7 +312,7 @@ class RoundsController < ApplicationController
 
               count=0
               result_a.each do |e|
-                p e
+                #p e
                 if e.scan(/(?<=\[\[).*(?=\]\])/)[0].to_s.scan(/\|\|/).length >= 1
                   count = count + 1
                 end
@@ -282,16 +320,22 @@ class RoundsController < ApplicationController
               if count == result_a.length
                 c = 0
                 result_a.each do |e|
-                  p e
-                  if e.scan(/(?<=\[\[).*(?=\]\])/)[0].to_s.scan(/\@\@/).length >= 1
+                  e = e.scan(/(?<=\[\[).*(?=\]\])/)[0].to_s
+                  if e.scan(/\@\@/).length == 1
                     c = c + 1
                   end
                 end
                 if c == result_a.length
                   que_tpye = Question::TYPE_NAMES[:fillin] # 完型填空
+                elsif c > result_a.length
+                  que_tpye = -1 #未知题型
+                  error_info << "第#{line}行:完型填空题中某个选项有多个答案"
+                elsif c < result_a.length
+                  que_tpye = -1 #未知题型
+                  error_info << "第#{line}行:完型填空题中某个选项没有答案"
                 else
                   que_tpye = -1 #未知题型
-                  error_info << "第#{line}行:完型填空题中有选项没有答案"
+                  error_info << "第#{line}行:未知题型"
                 end
               elsif(count == 0)
                 que_tpye = Question::TYPE_NAMES[:drag] # 拖拽题
@@ -313,13 +357,76 @@ class RoundsController < ApplicationController
       elsif(count_c == 1 && count_a == 0 && count_b == 0)
         que_tpye = Question::TYPE_NAMES[:voice_input] #口语题
       end
-      p "||total:#{count_e}  ;;total:#{count_f}  >>total:#{count_g}  @@total:#{count_h}"
-      p "[[]]total:#{count_a}  (())total:#{count_b}  {{}}total:#{count_c} ENTER total:#{count_d}"
+      #p "||total:#{count_e}  ;;total:#{count_f}  >>total:#{count_g}  @@total:#{count_h}"
+      #p "[[]]total:#{count_a}  (())total:#{count_b}  {{}}total:#{count_c} ENTER total:#{count_d}"
     else
       que_tpye = -1 #未知题型
       error_info << "第#{line}行：未知题型"
     end
     result = {"que_tpye" => que_tpye, "error_info" => error_info }
+  end
+
+  #处理题目中的大题，小题与选项
+  def split_question que, type
+    p Question::TYPES[type]
+    question = {} #大题的哈希
+    content = "" #大题题面
+    question_types = type #大题类型
+    branch_questions = [] #小题数组
+    branch_content = "" #小题内容
+    branch_question_types = -1 #小题类型
+    options = "" #选项
+    answer = ""  #答案
+    card_name = "" #知识卡片名称
+    description = "" #知识卡片描述
+    card_types = "" #知识卡片标签
+
+
+    if type == Question::TYPE_NAMES[:single_choice]          #单选题截取方法
+      branch_question_types = type
+      options = que.scan(/\[\[[^\[\[]*\]\]/)[0].to_s.scan(/(?<=\[\[).*(?=\]\])/).to_a[0].to_s.gsub(/\|\|/,";||;")
+      options.split(";||;").each do |e|
+        if e.to_s.match(/^@@.*/)
+          answer = e.to_s.scan(/[^\@\@].*/)[0].to_s
+        end
+      end
+      options = options.gsub(/@@/,"")
+      content = que.gsub(/\[\[[^\[\[]*\]\]/,"[[text]]")
+      branch_questions << {:branch_content => branch_content, :branch_question_types => branch_question_types,
+      :options => options, :answer => answer}
+    elsif type == Question::TYPE_NAMES[:multiple_choice]
+      branch_question_types = type
+      options = que.scan(/\[\[[^\[\[]*\]\]/)[0].to_s.scan(/(?<=\[\[).*(?=\]\])/).to_a[0].to_s.gsub(/\|\|/,";||;")
+      c = 0
+      options.split(";||;").each do |e|
+        if e.match(/^\@\@.*/)
+          if c != 0
+            answer = answer +";||;"
+          end
+          answer = answer + e.gsub(/\@\@/,"")
+          c = c + 1
+        end
+      end
+      options = options.gsub(/@@/,"")
+      content = que.gsub(/\[\[[^\[\[]*\]\]/,"[[text]]")
+      branch_questions << {:branch_content => branch_content, :branch_question_types => branch_question_types,
+                         :options => options, :answer => answer}
+    elsif type == Question::TYPE_NAMES[:fillin]   #完型填空题
+
+    elsif type == Question::TYPE_NAMES[:sortby]   #排序题
+
+    elsif type == Question::TYPE_NAMES[:lineup]   #连线题
+
+    elsif type == Question::TYPE_NAMES[:voice_input]  #语音输入题
+
+    elsif type == Question::TYPE_NAMES[:read_understanding] #阅读理解题
+
+    elsif type == Question::TYPE_NAMES[:drag]     #拖拽题
+
+    elsif type == Question::TYPE_NAMES[:input]    #填空题
+
+    end
+    question = {:content => content, :question_types => question_types, :branch_questions => branch_questions}
   end
 
   private
