@@ -1,5 +1,5 @@
 <% if @round.errors.any? %>
   alert("<%= @notice.html_safe() %>");
 <% end %>
-$("#round_container").html("<h1>编辑关卡</h1>" + '<%= j (render 'form') %>');
+$("#round_container").html("<h1>关卡编辑</h1>" + '<%= j (render 'form') %>');
 $("#round_container").parent(".second_content").show()

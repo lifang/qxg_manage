@@ -15,16 +15,17 @@
           <span class="cpt_title"><%= chapter.name %></span>
           <span style="margin-left:30px">关卡数目：<%= chapter.round_count || 0  %></span>
         </div>
-       
       </div>
-      <div class="action">
-        
-        是否通过审核：<span><%= Course::STATUS_NAME[chapter.status] %></span>
-        <%= verify_button(chapter) if chapter.status==0 %>
+      <div>
+        <div class="action">
+          是否通过审核：<span><%= Course::STATUS_NAME[chapter.status] %></span>
+          <%= verify_button(chapter) if chapter.status==0 %>
+        </div>
         <br/>
-        <br/>
-        <%= link_to "编辑", edit_course_chapter_path(@course, chapter),:remote => "true", :class => "chapterInfo grey_btn" %>
-        <%= link_to "进入章节", course_chapter_rounds_path(@course, chapter), :class => "chapterEnter green_btn" %>
+        <div class="action">
+          <%= link_to "编辑", edit_course_chapter_path(@course, chapter),:remote => "true", :class => "chapterInfo grey_btn" %>
+          <%= link_to "进入章节", course_chapter_rounds_path(@course, chapter), :class => "chapterEnter green_btn" %>
+        </div>
       </div>
     </div>
 
@@ -37,7 +38,7 @@
 
 </div>
 <div style="display: none" class="second_content cf">
-  <span class="close" onclick="sConClose();return false">关闭</span>
+  <span class="close">关闭</span>
   <div class="second_view" id="chapter_container">
   </div>
 </div>

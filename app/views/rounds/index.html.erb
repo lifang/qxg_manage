@@ -15,27 +15,28 @@
     <% end %>
   </div>
 
-  <div class="passList">
-    <% @rounds.each do |round| %>
+  <% @rounds.each do |round| %>
+    <div class="passList">
       <div class="pass_box con_box cf">
         <%= link_to "删除", course_chapter_round_path(@course, @chapter, round), :method => :delete, :confirm => "删除关卡将删除关卡所有相关记录，确认删除吗？", :class => "close", :title => "删除" %>
 
         <label><%= round.name %></label>
         <p class="passEnter">题目数量：<%= round.questions_count || 0 %></p>
         <p class="passEnter">是否通过审核：<span><%= Course::STATUS_NAME[round.status] %></span>
-        <%= verify_button(round) if round.status==0 %></p>
+          <%= verify_button(round) if round.status==0 %></p>
         <br/>
         <%= link_to "进入关卡", round_questions_path(round),:class => "green_btn passEnter" %>
 
       </div>
-    <% end %>
-  </div>
+    </div>
+  <% end %>
+
 </div>
 
 <div class="second_content cf" style="display:none;"></div>
 
 <div style="display: none"  class="second_content cf">
-  <span class="close" onclick="sConClose();return false">关闭</span>
+  <span class="close">关闭</span>
   <div class="second_view" id="round_container">
   </div>
 </div>

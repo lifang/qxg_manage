@@ -1,6 +1,14 @@
-<%#
-# To change this template, choose Tools | Templates
-# and open the template in the editor.
-%>
+<div class="question_content" onclick="toggleNext(this)">
+  <%= question.content.gsub(/\[\[[^\[\[]*\]\]/, "___") %>
+</div>
 
-<%= "_drag.html" %>
+<div class="question_options" style="display: none">
+
+    <% @branch_question_hash[question.id][0].answer.split(";||;").each  do |answer| %>
+
+  <%= answer %> &nbsp;&nbsp;&nbsp;&nbsp;
+
+    <% end %>
+
+
+</div>

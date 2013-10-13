@@ -63,7 +63,8 @@ QxgManage::Application.routes.draw do
     resources :user_manages do
       collection do
         get "selected_courses", "search_course", "search_single_course", "props_list", "buy_prop",
-          "everyday_tasks", "set_task_day","achieve_points_ranking"
+          "everyday_tasks", "set_task_day","achieve_points_ranking","add_friend"
+        post "contact_list", "weibo_list"
       end
     end
   end

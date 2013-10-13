@@ -2,6 +2,21 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+$(function(){
+    // 隐藏弹出框
+    $(".close").click(function(){
+        $(".second_content").hide();
+    });
+
+    $("tr").each(function(){
+        var table = $(this).parents("table");
+        var i = table.find("tr").index($(this));
+        if(i % 2 ==0 && i != 0){
+            $(this).css("background","#F2F6F6");
+        }
+    });
+
+});
 
 function toggleNext(obj){   //展开，显示题目选项
     if($(obj).next().css("display")=="none"){
@@ -17,9 +32,6 @@ function toggleCard(obj, question_id){ //展开显示知识卡片
     $("#question_" + question_id).toggle();
 }
 
-function sConClose(){  // 隐藏弹出框
-    $(".second_content").hide();
-}
 
 function file_validate(obj){
     var reg =  /.*\.zip/
@@ -33,4 +45,5 @@ function file_validate(obj){
     else
         $("#btn_upload").removeAttr("disabled");
     end
+
 }

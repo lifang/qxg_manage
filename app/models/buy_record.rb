@@ -1,3 +1,4 @@
+#encoding: utf-8
 class BuyRecord < ActiveRecord::Base
   
   TYPES = {0 => "购买", 1 => "使用"}

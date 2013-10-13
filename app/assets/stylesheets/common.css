@@ -10,11 +10,31 @@
    TODO customize this sample style
    Syntax recommendation http://www.w3.org/TR/REC-CSS2/
 */
-
+/* amanda added css*/
 root { 
     display: block;
 }
 
 .toggle_display{
     display:none
+}
+.second_content form .prop_question_type{
+    background-color: #EDF0F1;
+    border: 1px solid #CBD5D9;
+    display: inline-block;
+    font-size: 14px;
+    margin-bottom: 10px;
+    width: 250px;
+    margin-left: 130px;
+}
+.clear{ clear: both; }
+.theTabs li span a{
+    color: white;
+}
+.pass_box a.passEnter{
+    display: block;
+    margin-left: 95px;
+}
+.pass_box p.passEnter{
+    margin-left: 10px;
 }

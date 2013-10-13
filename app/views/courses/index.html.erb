@@ -21,13 +21,14 @@
           </dl>
         </div>
       </div>
-      <div class="action">
-        是否通过审核：<span><%= Course::STATUS_NAME[course.status] %></span>
-        <%= verify_button(course) if course.status==0 %>
-        <br/>
-        <br/>
-        <%= link_to "编辑", edit_course_path(course.id),:remote => "true", :class => "grey_btn" %>
-        <%= link_to "进入课程", course_chapters_path(course.id), :class => "green_btn" %>
+      <div>
+        <div class="action">是否通过审核：<span><%= Course::STATUS_NAME[course.status] %></span>
+          <%= verify_button(course) if course.status==0 %>
+        </div>
+        <div class="action">
+          <%= link_to "编辑", edit_course_path(course.id),:remote => "true", :class => "grey_btn" %>
+          <%= link_to "进入课程", course_chapters_path(course.id), :class => "green_btn" %>
+        </div>
       </div>
     </div>
 
@@ -35,7 +36,7 @@
 </div>
 
 <div style="display: none"  class="second_content cf">
-  <span class="close" onclick="sConClose();return false">关闭</span>
+  <span class="close">关闭</span>
   <div class="second_view" id="course_container">
   </div>
 </div>
