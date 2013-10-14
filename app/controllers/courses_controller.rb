@@ -25,8 +25,10 @@ class CoursesController < ApplicationController
   def update
     @course = Course.find_by_id params[:id]
     if @course.update_attributes(params[:course])
-      redirect_to courses_path
+      @notice = "更新成功！"
+      render :success
     else
+      @notice = "更新失败！ #{@course.errors.messages.values.flatten.join("<br/>")}"
       render :edit
     end
   end

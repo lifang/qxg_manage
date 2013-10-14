@@ -1,2 +1,6 @@
-$("#course_container").html("<h1>课程编辑</h1>" + '<%= j (render 'form') %>');
+<% if @course.errors.any? %>
+<% p @notice.html_safe() %>
+  alert("<%= @notice %>");
+<% end %>
+$("#course_container").html("<h1>课程编辑</h1>" + '<%= @notice.try(:html_safe) %>' + '<%= j (render 'form') %>');
 $("#course_container").parent(".second_content").show()

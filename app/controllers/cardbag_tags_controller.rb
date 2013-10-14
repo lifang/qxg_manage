@@ -17,7 +17,7 @@ class CardbagTagsController < ApplicationController
   def create
     @tag = @course.cardbag_tags.create(params[:cardbag_tag])
     if @tag.save
-      flash[:notice] = "创建成功"
+      @notice = "创建成功"
       render :success
     else
       @notice = "创建失败！ #{@tag.errors.messages.values.flatten.join("<br/>")}"
@@ -32,7 +32,7 @@ class CardbagTagsController < ApplicationController
   def update
     @tag = CardbagTag.find_by_id(params[:id])
     if @tag.update_attributes(params[:cardbag_tag])
-      flash[:notice] = "更新成功"
+      @notice = "更新成功"
       render :success
     else
       @notice = "创建失败！ #{@tag.errors.messages.values.flatten.join("<br/>")}"
