@@ -430,15 +430,6 @@ class RoundsController < ApplicationController
       branch_question_types = type
       options = que.scan(/\[\[[^\[\[]*\]\]/)[0].to_s.scan(/(?<=\[\[).*(?=\]\])/).to_a[0].to_s.gsub(/\|\|/,";||;").gsub(/file>>>/,"file>;=;").gsub(/>>/,";=;")
       p options
-      # p e
-      # if e.match(/^\@\@.*/)
-      #    if c != 0
-      #      answer = answer +";||;"
-      #    end
-      #    answer = answer + e.gsub(/\@\@/,"")
-      #    c = c + 1
-      #  end
-      #options = options.gsub(/@@/,"").gsub(/^;\|\|;/,"").gsub(/;\|\|;$/,"")
       answer =options
       content = que.gsub(/\[\[[^\[\[]*\]\]/,"[[text]]")
       branch_questions << {:branch_content => branch_content, :branch_question_types => branch_question_types,
