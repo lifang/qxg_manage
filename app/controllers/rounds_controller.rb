@@ -428,9 +428,8 @@ class RoundsController < ApplicationController
                            :options => options, :answer => answer}
     elsif type == Question::TYPE_NAMES[:lineup]   #连线题
       branch_question_types = type
-      options = que.scan(/\[\[[^\[\[]*\]\]/)[0].to_s.scan(/(?<=\[\[).*(?=\]\])/).to_a[0].to_s.gsub(/\|\|/,";||;")
+      options = que.scan(/\[\[[^\[\[]*\]\]/)[0].to_s.scan(/(?<=\[\[).*(?=\]\])/).to_a[0].to_s.gsub(/\|\|/,";||;").gsub(/file>>>/,"file>;=;").gsub(/>>/,";=;")
       p options
-      #options.split(";||;").each do |e|
       # p e
       # if e.match(/^\@\@.*/)
       #    if c != 0
@@ -439,11 +438,11 @@ class RoundsController < ApplicationController
       #    answer = answer + e.gsub(/\@\@/,"")
       #    c = c + 1
       #  end
-      #end
       #options = options.gsub(/@@/,"").gsub(/^;\|\|;/,"").gsub(/;\|\|;$/,"")
-      #content = que.gsub(/\[\[[^\[\[]*\]\]/,"[[text]]")
-      #branch_questions << {:branch_content => branch_content, :branch_question_types => branch_question_types,
-      #                     :options => options, :answer => answer}
+      answer =options
+      content = que.gsub(/\[\[[^\[\[]*\]\]/,"[[text]]")
+      branch_questions << {:branch_content => branch_content, :branch_question_types => branch_question_types,
+                           :options => options, :answer => answer}
     elsif type == Question::TYPE_NAMES[:fillin]   #完型填空题
 
     elsif type == Question::TYPE_NAMES[:sortby]   #排序题
