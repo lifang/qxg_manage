@@ -254,109 +254,114 @@ class RoundsController < ApplicationController
 
     #p que.split(%r{\n\s*}) if double_bracket_d != 0
 
+    #  p "---------------------------------------------------"
+    #  count_e = 0		#||计数
+    #  count_f = 0		#;;计数
+    #  count_g = 0		#>>计数
+    #  count_h = 0 	#@@计数
+
     if(count_a != 0 || count_b != 0 || count_c != 0)
-      p "---------------------------------------------------"
-      count_e = 0		#||计数
-      count_f = 0		#;;计数
-      count_g = 0		#>>计数
-      count_h = 0 	#@@计数
-      if(count_a != 0 && count_b == 0 && count_c == 0)
-        if(result_a.length == 1)
-          count_e = result_a[0].scan(/\|\|/).length
-          count_f = result_a[0].scan(/\;\;/).length
-
-          if(count_e != 0 && count_f == 0 && (result_a[0].scan(/\>\>/).length) == 0)
-            tmp = result_a[0].scan(/(?<=\[\[).*(?=\]\])/).to_a
-            tmp = tmp[0].split(/\|\|/)
-            tmp.each do |t|
-              count_h = count_h + 1 if t.match(/^@@/)
-            end
-            if(count_h == 1)
-              que_tpye = Question::TYPE_NAMES[:single_choice] #单选题
-            elsif(count_h > 1)
-              que_tpye = Question::TYPE_NAMES[:multiple_choice] #多选题
-            else                        error_info
-            error_info << "第#{line}行：选择题没有答案"
-            end
-          elsif(count_e != 0 && count_f == 0)
-            tmp = result_a[0].scan(/(?<=\[\[).*(?=\]\])/).to_a
-            #p tmp
-            tmp = tmp[0].split(/\|\|/)
-            #p tmp
-            tmp.each do |t|
-              count_g = count_g + t.scan(/\>\>/).length
-            end
-            if(count_g != 0 && count_g == tmp.length)
-
-              tmp.each do |t|
-                t = t.to_s.gsub(/file>>>/,"file>;=;").gsub(/>>/,";=;")
-                t = t.split(";=;")
-                if(t[0].to_s.size == 0 || t[1].to_s.size == 0)
-                  que_tpye = -1 #未知题型
-                  error_info << "第#{line}行：连线题对应关系不完整"
-                else
-                  que_tpye = Question::TYPE_NAMES[:lineup] #连线题
-                end
-              end
-            elsif(count_g != 0 && count_g > tmp.length)
+        if(count_a == 1 && count_b == 0 && count_c == 0) #当只有一对[[]]时
+            #可能题型：选择题、排序题、连线题、
+            p "#{que}"
+            tmp = result_a[0].to_s.scan(/(?<=\[\[).*(?=\]\])/).to_a[0].to_s
+            count_e = tmp.scan(/\|\|/).length
+            p count_e
+            count_f = tmp.scan(/\;\;/).length
+            p count_f
+            if(count_e == 0 && count_f == 0) #当选项中没有||和;;分隔符
               que_tpye = -1 #未知题型
-              error_info << "第#{line}行：连线题每个选项只能有一个>>关系对应符"
-            else
-              que_tpye = -1 #未知题型
-              error_info << "第#{line}行：未知题型"
-            end
-          end
-        elsif(count_a > 1)
-          if(count_e == 0 && count_f == 0 && result_a[0].scan(/\;\;/).length == 0)
-            if(count_d == 0)
-
-              count=0
-              result_a.each do |e|
-                #p e
-                if e.scan(/(?<=\[\[).*(?=\]\])/)[0].to_s.scan(/\|\|/).length >= 1
-                  count = count + 1
-                end
-              end
-              if count == result_a.length
+              error_info << "文件'#{excel}'第#{line}行：未知题型"
+            elsif(count_e != 0 && count_f == 0) #当只有||分隔符 单选题、多选题、没有答案、连线题
+                count = 0
                 c = 0
-                result_a.each do |e|
-                  e = e.scan(/(?<=\[\[).*(?=\]\])/)[0].to_s
-                  if e.scan(/\@\@/).length == 1
+                d = 0
+                tmp.split(/\|\|/).to_a.each do |e|
+                  p e
+                  if e.to_s.match(/^@@.+/)
+                    count = count + 1
+                  end
+                  if e.to_s.rstrip.match(/^@@$/)
                     c = c + 1
                   end
+                  if e.to_s.gsub(/file>>>/,"file>;=;").gsub(/>>/,";=;").match(/;=;/)
+                    d = d + 1
+                  end
                 end
-                if c == result_a.length
-                  que_tpye = Question::TYPE_NAMES[:fillin] # 完型填空
-                elsif c > result_a.length
-                  que_tpye = -1 #未知题型
-                  error_info << "第#{line}行:完型填空题中某个选项有多个答案"
-                elsif c < result_a.length
-                  que_tpye = -1 #未知题型
-                  error_info << "第#{line}行:完型填空题中某个选项没有答案"
-                else
-                  que_tpye = -1 #未知题型
-                  error_info << "第#{line}行:未知题型"
-                end
-              elsif(count == 0)
-                que_tpye = Question::TYPE_NAMES[:drag] # 拖拽题
-              else
-                que_tpye = -1 #未知题型
-                error_info << "第#{line}行：未知题型"
-              end
-            else
-              que_tpye = Question::TYPE_NAMES[:read_understanding] # 阅读理解
-            end
-          else
-            que_tpye = -1 #未知题型
-            error_info << "第#{line}行：未知题型"
-          end
+                p "c#{c}"
+                p "d#{d}"
+                p "count#{count}"
+                if count == 0
+                  p "d#{d}"
+                  p tmp.split(/\|\|/).length
+                  if d != 0 && d == tmp.split(/\|\|/).length
+                    g = 0
+                    tmp.split(/\|\|/).to_a.each do |e|
+                      e = e.gsub(/file>>>/,"file>;=;").to_s.gsub(/>>/,";=;").split(";=;")
+                       if e.length != 2
+                         g = g + 1
+                       else
+                          p  e[0].to_s.strip.empty?
+                          p  e[1].to_s.strip.empty?
+                          if e[0].to_s.strip.empty? || e[1].to_s.strip.empty?
+                            g = g + 1
+                          end
+                       end
+                    end
 
+                    p "g:#{g}"
+                    if g != 0
+                      que_tpye = -1 #未知题型
+                      error_info << "文件'#{excel}'第#{line}行：连线题对应关系不正确"
+                    else
+                      que_tpye = Question::TYPE_NAMES[:lineup] #连线题
+                    end
+                  elsif d != 0 && d < tmp.split(/\|\|/).length
+                    que_tpye = -1 #未知题型
+                    error_info << "文件'#{excel}'第#{line}行：连线题对应关系不正确"
+                  elsif d == 0
+                    que_tpye = -1 #未知题型
+                    error_info << "文件'#{excel}'第#{line}行：选择题的没有答案或答案为空"
+                  end
+                elsif count == 1
+                  if c != 0
+                    que_tpye = -1 #未知题型
+                    error_info << "文件'#{excel}'第#{line}行：选择题的没有答案或有答案为空"
+                  else
+                    que_tpye = Question::TYPE_NAMES[:single_choice] #单选题
+                  end
+                elsif count > 1
+                  if c != 0
+                    que_tpye = -1 #未知题型
+                    error_info << "文件'#{excel}'第#{line}行：选择题的没有答案或有答案为空"
+                  else
+                    que_tpye = Question::TYPE_NAMES[:multiple_choice] #多选题
+                  end
+                end
+            elsif(count_e == 0 && count_f != 0) #当只有;;分隔符 排序题
+                count = 0
+                tmp.split(/\;\;/).to_a.each do |e|
+                   if e.to_s.strip.size == 0
+                      count = count + 1
+                   end
+                end
+
+                if count != 0 #当排序题选项为空时
+                  que_tpye = -1 #未知题型
+                  error_info << "文件'#{excel}'第#{line}行：排序题的选项不能为空"
+                else
+                  que_tpye = Question::TYPE_NAMES[:sortby] #排序题
+                end
+            end
         end
-      elsif(count_b != 0 && count_a == 0 && count_c == 0)
-        que_tpye = Question::TYPE_NAMES[:input] #填空题
-      elsif(count_c == 1 && count_a == 0 && count_b == 0)
-        que_tpye = Question::TYPE_NAMES[:voice_input] #口语题
-      end
+
+    #
+    #              que_tpye = Question::TYPE_NAMES[:fillin] # 完型填空
+    #            que_tpye = Question::TYPE_NAMES[:drag] # 拖拽题
+    #          que_tpye = Question::TYPE_NAMES[:read_understanding] # 阅读理解
+    #    que_tpye = Question::TYPE_NAMES[:input] #填空题
+    #    que_tpye = Question::TYPE_NAMES[:voice_input] #口语题
+    #  end
       #p "||total:#{count_e}  ;;total:#{count_f}  >>total:#{count_g}  @@total:#{count_h}"
       #p "[[]]total:#{count_a}  (())total:#{count_b}  {{}}total:#{count_c} ENTER total:#{count_d}"
     else
@@ -390,11 +395,11 @@ class RoundsController < ApplicationController
           answer = e.to_s.scan(/[^\@\@].*/)[0].to_s
         end
       end
-      options = options.gsub(/@@/,"")
+      options = options.gsub(/@@/,"").gsub(/^;\|\|;/,"").gsub(/;\|\|;$/,"")
       content = que.gsub(/\[\[[^\[\[]*\]\]/,"[[text]]")
       branch_questions << {:branch_content => branch_content, :branch_question_types => branch_question_types,
       :options => options, :answer => answer}
-    elsif type == Question::TYPE_NAMES[:multiple_choice]
+    elsif type == Question::TYPE_NAMES[:multiple_choice]   #多选题
       branch_question_types = type
       options = que.scan(/\[\[[^\[\[]*\]\]/)[0].to_s.scan(/(?<=\[\[).*(?=\]\])/).to_a[0].to_s.gsub(/\|\|/,";||;")
       c = 0
@@ -407,16 +412,48 @@ class RoundsController < ApplicationController
           c = c + 1
         end
       end
-      options = options.gsub(/@@/,"")
+      options = options.gsub(/@@/,"").gsub(/^;\|\|;/,"").gsub(/;\|\|;$/,"")
       content = que.gsub(/\[\[[^\[\[]*\]\]/,"[[text]]")
       branch_questions << {:branch_content => branch_content, :branch_question_types => branch_question_types,
                          :options => options, :answer => answer}
     elsif type == Question::TYPE_NAMES[:fillin]   #完型填空题
 
     elsif type == Question::TYPE_NAMES[:sortby]   #排序题
-
+      branch_question_types = type
+      options = que.scan(/\[\[[^\[\[]*\]\]/)[0].to_s.scan(/(?<=\[\[).*(?=\]\])/).to_a[0].to_s.gsub(/\;\;/,";||;").gsub(/;\|\|;$/,"")
+      p options
+      answer =options
+      content = que.gsub(/\[\[[^\[\[]*\]\]/,"[[text]]")
+      branch_questions << {:branch_content => branch_content, :branch_question_types => branch_question_types,
+                           :options => options, :answer => answer}
     elsif type == Question::TYPE_NAMES[:lineup]   #连线题
+      branch_question_types = type
+      options = que.scan(/\[\[[^\[\[]*\]\]/)[0].to_s.scan(/(?<=\[\[).*(?=\]\])/).to_a[0].to_s.gsub(/\|\|/,";||;")
+      p options
+      #options.split(";||;").each do |e|
+      # p e
+      # if e.match(/^\@\@.*/)
+      #    if c != 0
+      #      answer = answer +";||;"
+      #    end
+      #    answer = answer + e.gsub(/\@\@/,"")
+      #    c = c + 1
+      #  end
+      #end
+      #options = options.gsub(/@@/,"").gsub(/^;\|\|;/,"").gsub(/;\|\|;$/,"")
+      #content = que.gsub(/\[\[[^\[\[]*\]\]/,"[[text]]")
+      #branch_questions << {:branch_content => branch_content, :branch_question_types => branch_question_types,
+      #                     :options => options, :answer => answer}
+    elsif type == Question::TYPE_NAMES[:fillin]   #完型填空题
 
+    elsif type == Question::TYPE_NAMES[:sortby]   #排序题
+      branch_question_types = type
+      options = que.scan(/\[\[[^\[\[]*\]\]/)[0].to_s.scan(/(?<=\[\[).*(?=\]\])/).to_a[0].to_s.gsub(/\;\;/,";||;").gsub(/;\|\|;$/,"")
+      p options
+      answer =options
+      content = que.gsub(/\[\[[^\[\[]*\]\]/,"[[text]]")
+      branch_questions << {:branch_content => branch_content, :branch_question_types => branch_question_types,
+                           :options => options, :answer => answer}
     elsif type == Question::TYPE_NAMES[:voice_input]  #语音输入题
 
     elsif type == Question::TYPE_NAMES[:read_understanding] #阅读理解题
