@@ -108,10 +108,7 @@ class RoundsController < ApplicationController
     end
   end
 
-  #解压压缩包、获取excel文件名和资源目录
-  def unzip base_url, user_id, zip_dir
-  end
-
+  #获取excel文件和资源目录
   def get_file_and_dir path
     excel_files =  []
     resource_dirs = []
@@ -261,7 +258,7 @@ class RoundsController < ApplicationController
     #  count_h = 0 	#@@计数
 
     if(count_a != 0 || count_b != 0 || count_c != 0)
-        if(count_a == 1 && count_b == 0 && count_c == 0) #当只有一对[[]]时
+        if count_a == 1 && count_b == 0 && count_c == 0 #当只有一对[[]]时
             #可能题型：选择题、排序题、连线题、
             p "#{que}"
             tmp = result_a[0].to_s.scan(/(?<=\[\[).*(?=\]\])/).to_a[0].to_s
@@ -353,6 +350,14 @@ class RoundsController < ApplicationController
                   que_tpye = Question::TYPE_NAMES[:sortby] #排序题
                 end
             end
+        elsif count_a > 1 && count_b == 0 && count_c == 0 && result_d == 0
+          p "第#{line}行：完形填空、拖拽题"
+        #elsif count_a > 1 && count_b == 0 && count_c == 0 && result_d !=  0 #不正确
+        #  p "第#{line}行：阅读理解"
+        elsif count_a == 0 && count_b >= 1 && count_c == 0
+          p "第#{line}行：填空题"
+        elsif count_a == 0 && count_b > 0  && count_c == 0
+          p "第#{line}行：填空题"
         end
 
     #
@@ -434,8 +439,6 @@ class RoundsController < ApplicationController
       content = que.gsub(/\[\[[^\[\[]*\]\]/,"[[text]]")
       branch_questions << {:branch_content => branch_content, :branch_question_types => branch_question_types,
                            :options => options, :answer => answer}
-    elsif type == Question::TYPE_NAMES[:fillin]   #完型填空题
-
     elsif type == Question::TYPE_NAMES[:sortby]   #排序题
       branch_question_types = type
       options = que.scan(/\[\[[^\[\[]*\]\]/)[0].to_s.scan(/(?<=\[\[).*(?=\]\])/).to_a[0].to_s.gsub(/\;\;/,";||;").gsub(/;\|\|;$/,"")
