@@ -3,6 +3,7 @@ class RoundsController < ApplicationController
   before_filter :sign?, :get_course_chapter
   
   def index
+    @notice_info = ["sssss","ssss","dddd"]
     @rounds = Round.where({:course_id => params[:course_id], :chapter_id => params[:chapter_id]})
   end
 
@@ -96,11 +97,12 @@ class RoundsController < ApplicationController
         @error_infos << "zip压缩包不存在"
     end #if !zipfile.nil?
 
+    @notice_info = ""
     #判断错误信息是否为空
     if !@error_infos.nil? && @error_infos.length != 0
-      @notice = @error_infos
+      @notice_info = @error_infos
     else #转移文件&插入数据&写入XML文件
-      @notice = "导入完成！"
+      @notice_info = "导入完成！"
     end #if !@error_infos.nil? && @error_infos.length != 0
   end
 

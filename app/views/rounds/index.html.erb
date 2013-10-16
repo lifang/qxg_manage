@@ -9,6 +9,9 @@
   <div id="upload_bar">
       <%= render 'uploadzip' %>
   </div>
+  <div id="error_bar" style="width:100%; height:auto;">
+    <% render :partial => 'error_infos'%>
+  </div>
 
   <% @rounds.each do |round| %>
     <div class="passList">

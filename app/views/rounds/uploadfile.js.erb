@@ -1,8 +1,6 @@
-<% if  @notice.class == Array %>
-<% @notice.each do |e|  %>
-    alert('<%= e %>');
-<% end %>
+<% if @notice_info.class == Array %>
+$("#error_bar").html('<%= j (render :partial => 'error_infos') %>');
 <% else %>
-    alert(<%= @notice %>);
+    alert('<%= @notice_info %>');
 <% end %>
 $("#upload_bar").html('<%= j (render :partial => 'uploadzip') %>');
