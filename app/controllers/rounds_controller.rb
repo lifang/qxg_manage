@@ -65,9 +65,9 @@ class RoundsController < ApplicationController
 
         #解压压缩包
         zip_url = "#{base_url}/user_#{user_id}"
-        if unzip(zip_url, zip_dir) == false
+        if unzip(zip_url, zip_dir) == false         #解压失败，返回错误提示信息
            @error_infos << "zip压缩包不正确，请上传正确的压缩包"
-        else
+        else                                        #解压成功，则继续验证
             #excel文件与资源的根目录
             path = "#{base_url}/user_#{user_id}/#{zip_dir}"
 
@@ -88,7 +88,7 @@ class RoundsController < ApplicationController
     if !@error_infos.nil? && @error_infos.length != 0
       @notice_info = @error_infos
     else #转移文件&插入数据&写入XML文件
-      @notice_info = "导入完成！"
+      @notice_info =  ["导入完成！"]
     end #if !@error_infos.nil? && @error_infos.length != 0
   end
 
