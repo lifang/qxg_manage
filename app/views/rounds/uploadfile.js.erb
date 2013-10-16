@@ -1,0 +1,9 @@
+<% if  @notice.class == Array %>
+<% @notice.each do |e|  %>
+    alert('<%= e %>');
+<% end %>
+<% else %>
+    alert(<%= @notice %>);
+<% end %>
+location.reload();
+$('#zip').val("");
