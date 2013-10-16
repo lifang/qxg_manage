@@ -1,59 +1,40 @@
 <div class="wrap">
   <%= render "/shared/head" %>
   <div class="main">
-    <h1><%= link_to @course.name, course_chapters_path(@course.id) %>> 标签、道具、章节</h1>
-    <%= render "/shared/course_head" %>
-    <div class="clear"></div>
-    <div class="set_btn cf"><%= link_to "添加章节", new_course_chapter_path(@course), :remote => "true", :class =>"green_btn" %></div>
+    <h1><%= link_to @course.name, course_chapters_path(@course.id) %>><%= link_to @chapter.name, course_chapter_rounds_path(@course.id, @chapter.id) %></h1>
 
-    <div class="clear"></div>
-    <div id="upload_bar">
-      <%= render 'uploadzip' %>
-    </div>
-    <div id="error_bar" style="width:100%; height:auto;">
-      <% render :partial => 'error_infos'%>
-    </div>
     <div class="m_con">
-      <% @chapters.each do |chapter| %>
+      <div id="upload_bar">
+        <%= render 'uploadzip' %>
+      </div>
+      <div id="error_bar" style="width:100%; height:auto;">
+        <% render :partial => 'error_infos'%>
+      </div>
 
-          <div class="cpt_box con_box cf">
-            <%= link_to "删除", course_chapter_path(@course, chapter), :method => :delete, :confirm => '删除章节将删除章节所有相关记录，确定删除吗？', :class => "close", :title => "删除" %>
+      <% @rounds.each do |round| %>
+          <div class="passList">
+            <div class="pass_box con_box cf">
+              <%= link_to "删除", course_chapter_round_path(@course, @chapter, round), :method => :delete, :confirm => "删除关卡将删除关卡所有相关记录，确认删除吗？", :class => "close", :title => "删除" %>
 
-            <div class="imgText">
-              <%= image_tag chapter.img.thumb.url, :class => "leftImg", :style =>"width:80px;height:123px" %>
-              <div class="rightText">
-                <span class="cpt_title" title="<%= chapter.name %>"><%= chapter.name.truncate(8, separator: ' ') %></span>
-                <span style="margin-left:30px">关卡数目：<%= chapter.round_count || 0  %></span>
-              </div>
-            </div>
-            <div>
-              <div class="action">
-                是否通过审核：<span><%= Course::STATUS_NAME[chapter.status] %></span>
-                <%= verify_button(chapter) if chapter.status==0 %>
-              </div>
+              <label title="<%= round.name %>"><%= round.name.truncate(8, separator: ' ') %></label>
+              <p class="passEnter">题目数量：<%= round.questions_count || 0 %></p>
+              <p class="passEnter">是否通过审核：<span><%= Course::STATUS_NAME[round.status] %></span>
+                <%= verify_button(round) if round.status==0 %></p>
               <br/>
-              <div class="action">
-                <%= link_to "编辑", edit_course_chapter_path(@course, chapter),:remote => "true", :class => "chapterInfo grey_btn" %>
-                <%= link_to "进入章节", course_chapter_rounds_path(@course, chapter), :class => "chapterEnter green_btn" %>
-              </div>
+              <%= link_to "进入关卡", round_questions_path(round),:class => "green_btn passEnter" %>
+
             </div>
           </div>
-
-          <div class="chapterDetail"></div>
-          <div class="chapterDetail"></div>
-          <div class="chapterDetail"></div>
-
       <% end %>
     </div>
   </div>
 </div>
 
-
 <div class="second_bg"></div>
 <div class="second_box">
   <div style="display: none" class="second_content">
     <span class="close">关闭</span>
-    <div class="second_view" id="chapter_container">
+    <div class="second_view" id="round_container">
     </div>
   </div>
 </div>
