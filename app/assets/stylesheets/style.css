@@ -333,19 +333,17 @@ h1 a { cursor: pointer;}
 
 
 /*弹窗*/
+.second_box { width:100%; height:100%; z-index:99; position:absolute; top:0;display: none}
+.second_bg { width:100%; height:100%; z-index:98; position:absolute; top:0; background: #fff; opacity: 0.5;display: none}
 .second_content {
     background-color: #FCFCFC;
     border: 1px solid #CBD5D9;
     border-radius: 5px 5px 5px 5px;
-	width: 450px;
-	overflow: auto;
-	position: absolute;
-	top: 150px;
-	left: 380px;
+	width: 520px;
+	margin: 100px auto;
     padding: 10px;
-    z-index: 99;
+	position: relative;
 }
-
 .second_content .close {
     overflow: hidden;
     position: absolute;
@@ -356,6 +354,7 @@ h1 a { cursor: pointer;}
 .second_content h1 { text-align:center;}
 .second_content .form_row { width:100%; overflow:hidden;}
 
+/*
 .second_content label {
     float: left;
     margin-right: 30px;
@@ -363,14 +362,14 @@ h1 a { cursor: pointer;}
     width: 100px;
 	display:block;
 }
-
-.second_content input,.second_content textarea,.second_content select {
+*/
+.second_content input[type="file"],.second_content input[type="text"],.second_content textarea,.second_content select {
     border: 1px solid #CBD5D9;
     display: block;
     float: left;
     margin-bottom: 10px;
     width: 250px;
-	margin-right:50px;
+/*	margin-right:50px;*/
 	padding:3px;
 }
 

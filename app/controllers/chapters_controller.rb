@@ -16,10 +16,10 @@ class ChaptersController < ApplicationController
   def create
     @chapter = @course.chapters.create(params[:chapter])
     if @chapter.save
-      flash[:notice] = "创建成功！"
+      flash[:notice] = "添加成功！"
       render :success
     else
-      @notice = "创建失败！ #{@chapter.errors.messages.values.flatten.join("<br/>")}"
+      @notice = "添加失败！\\n #{@chapter.errors.messages.values.flatten.join("\\n")}"
       render :new
     end
   end
@@ -34,7 +34,7 @@ class ChaptersController < ApplicationController
       flash[:notice] = "更新成功！"
       render :success
     else
-      @notice = "更新失败！ #{@chapter.errors.messages.values.flatten.join("<br/>")}"
+      @notice = "更新失败！\\n #{@chapter.errors.messages.values.flatten.join("\\n")}"
       render :edit
     end
   end

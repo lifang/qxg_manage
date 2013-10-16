@@ -17,10 +17,10 @@ class CardbagTagsController < ApplicationController
   def create
     @tag = @course.cardbag_tags.create(params[:cardbag_tag])
     if @tag.save
-      @notice = "创建成功"
+      @notice = "添加成功"
       render :success
     else
-      @notice = "创建失败！ #{@tag.errors.messages.values.flatten.join("<br/>")}"
+      @notice = "添加失败！\\n #{@tag.errors.messages.values.flatten.join("<\\n>")}"
       render :new
     end
   end
@@ -35,7 +35,7 @@ class CardbagTagsController < ApplicationController
       @notice = "更新成功"
       render :success
     else
-      @notice = "创建失败！ #{@tag.errors.messages.values.flatten.join("<br/>")}"
+      @notice = "创建失败！\\n #{@tag.errors.messages.values.flatten.join("<\\n>")}"
       render :edit
     end
   end

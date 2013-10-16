@@ -8,13 +8,8 @@
     <META http-equiv="Access-Control-Allow-Origin" content="*">
   </head>
   <body>
-    <div class="wrap">
-      <%= render "/shared/head" %>
-      <div style="color:green"><%= flash[:notice] %></div>
-      <div class="main">
-        <%= yield %>
-      </div>
-    </div>
+    <%= yield %>
+    
     <div class="foot"></div>
   </body>
 </html>

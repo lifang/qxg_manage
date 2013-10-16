@@ -31,9 +31,9 @@
 
   <body>
     <div class="login">
-      <div class="title">
-        <p><strong>齐学馆后台管理系统</strong></p>
-      </div>
+      <div class="title cf">
+		<h1>齐学馆后台管理系统</h1>
+	</div>
       <div>
         <%= form_for :user, :url=>"/login", :method => "post", :html =>{:id => "loginForm"} do %>
           <input class="name" name="user_email" type="text" required style="color:#ddd;background-image:url(/assets/username.png);" placeholder="邮箱" />

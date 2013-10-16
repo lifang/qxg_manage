@@ -16,8 +16,10 @@ class CoursesController < ApplicationController
   def create
     @course = Course.create(params[:course])
     if @course.save
-      redirect_to courses_path
+      @notice = "添加成功！"
+      render :success
     else
+       @notice = "添加失败！\\n #{@course.errors.messages.values.flatten.join("<\\n>")}"
       render :new
     end
   end
@@ -28,7 +30,7 @@ class CoursesController < ApplicationController
       @notice = "更新成功！"
       render :success
     else
-      @notice = "更新失败！ #{@course.errors.messages.values.flatten.join("<br/>")}"
+      @notice = "更新失败！\\n #{@course.errors.messages.values.flatten.join("<\\n>")}"
       render :edit
     end
   end

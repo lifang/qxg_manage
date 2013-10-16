@@ -17,13 +17,7 @@
           <td>
             <% if question.knowledge_card.present? %>
               <div class="question_<%= question.id %>">
-                <a href="javascript:void(0)" class="knowledgeCard green_btn" onclick="toggleCard(this, <%= question.id %>)">知识卡片</a>
-                <div id="question_<%= question.id %>" class="toggle_display">
-                  名称： <%= question.knowledge_card.try(:name) %>
-                  描述: <%= question.knowledge_card.try(:description) %>
-                  <% if question.knowledge_card.system_tag.present?  %>标签：<%= question.knowledge_card.system_tag %> <% end %>
-                  <%= link_to "移除知识卡片", remove_knowledge_card_path(question), :remote => true, :confirm => "确定移除知识卡片吗？" %>
-                </div>
+                <%= link_to "知识卡片", course_knowledge_card_path(@course, question.knowledge_card)+"?question_id=#{question.id}", :remote => true, :class => "knowledgeCard green_btn"%>
               </div>
             <% end %>
 

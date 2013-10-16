@@ -5,6 +5,8 @@
 $(function(){
     // 隐藏弹出框
     $(".close").click(function(){
+        $(".second_box").hide();
+	$(".second_bg").hide();
         $(".second_content").hide();
     });
 
@@ -17,6 +19,10 @@ $(function(){
     });
 
 });
+
+function handleUpload(obj){
+    $(obj).parents(".fileBox").find(".fileText_1").val($(obj).val());
+}
 
 function toggleNext(obj){   //展开，显示题目选项
     if($(obj).next().css("display")=="none"){
@@ -46,4 +52,10 @@ function file_validate(obj){
         $("#btn_upload").removeAttr("disabled");
     end
 
+}
+
+function show_tag(obj){
+    obj.parent(".second_content").show();
+    obj.parents(".second_box").show();
+    obj.parents(".second_box").prev().show();
 }

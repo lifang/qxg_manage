@@ -1,19 +1,25 @@
 <%= form_for [@course,@chapter],:html =>{:id => "chapterForm"},:remote => true do |f| %>
-  <div>
-    <label class="required">名称</label>
+  <div class="form_row">
+    <label class="required label">名称</label>
     <%= f.text_field :name, :class => "required" %>
   </div>
-  <div>
-    <label>图片</label>
-
-    <%= f.file_field :img %>
+  <div class="form_row">
+    <label class="label">图片</label>
+    <div class="fileBox">
+      <input type="text" name="temp_input" class="fileText_1" />
+      <input type="button" class="fileBtn_1 green_btn" value="浏览..." />
+      <%= f.file_field :img, :class => "file_1", :onchange => "handleUpload(this)" %>
+    </div>
   </div>
-  <%= button_tag "提交",:type => "submit", class: "green_btn" %>
-<% end %>
-<script>
-  $(document).ready(function(){
-    $('label.required').append('&nbsp;<strong>*</strong>&nbsp;');
+  <div class="form_row">
+    <label class="label">&nbsp;</label>
+    <%= button_tag "提交",:type => "submit", class: "green_btn" %>
+    </div>
+  <% end %>
+  <script>
+    $(document).ready(function(){
+      $('label.required').append('&nbsp;<strong>*</strong>&nbsp;');
 
-    $("#chapterForm").validate();  //课程表单验证
-  })
-</script>
+      $("#chapterForm").validate();  //课程表单验证
+    })
+  </script>

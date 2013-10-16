@@ -14,10 +14,10 @@ class PropsController < ApplicationController
     params[:prop][:question_types] = params[:prop][:question_types].join(",")
     @prop = @course.props.create(params[:prop])
     if @prop.save
-      flash[:notice] = "创建成功!"
+      @notice = "添加成功!"
       render :success
     else
-      @notice = "创建失败！ #{@prop.errors.messages.values.flatten.join("<br/>")}"
+      @notice = "添加失败！ #{@prop.errors.messages.values.flatten.join("<br/>")}"
       render :new
     end
   end
@@ -30,7 +30,7 @@ class PropsController < ApplicationController
     params[:prop][:question_types] = params[:prop][:question_types].join(",")
     @prop = Prop.find_by_id(params[:id])
     if @prop.update_attributes(params[:prop])
-      flash[:notice] = "更新成功!"
+      @notice = "更新成功!"
       render :success
     else
       @notice = "更新失败！ #{@prop.errors.messages.values.flatten.join("<br/>")}"

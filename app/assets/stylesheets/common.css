@@ -27,14 +27,34 @@ root {
     width: 250px;
     margin-left: 130px;
 }
+.second_content form .prop_question_type input[type="checkbox"]{
+   margin-right: 0px
+}
 .clear{ clear: both; }
 .theTabs li span a{
     color: white;
 }
 .pass_box a.passEnter{
-    display: block;
     margin-left: 95px;
 }
 .pass_box p.passEnter{
     margin-left: 10px;
 }
+.second_content .form_row label.label{
+    float: left;
+    margin-right: 30px;
+    text-align: right;
+    width: 100px;
+    display: block;
+}
+.second_content .form_row label.error{
+    color:red
+}
+.second_content input,.second_content textarea,.second_content select{
+    margin-right: 20px
+}
+.second_content .fileBox input.fileText_1{
+    width: 200px;
+    margin-right: 5px
+}
+.second_content .fileBox { margin-bottom: 10px; margin-right: 50px;width:300px}

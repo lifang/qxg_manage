@@ -2,4 +2,4 @@
   alert('<%= @notice.html_safe %>')
 <% end %>
 $("#tag_container").html("<h1>标签添加</h1>" + '<%= j (render 'form') %>');
-$("#tag_container").parent(".second_content").show()
+show_tag($("#tag_container"));

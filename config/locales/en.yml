@@ -5,4 +5,5 @@ en:
   hello: "Hello world"
   errors:
     messages:
-      extension_white_list_error: "You are not allowed to upload %{extension} files, allowed types: %{allowed_types}"
+      mini_magick_processing_error: "上传文件类型错误，接受的类型为jpg jpeg png"
+      extension_white_list_error: "上传文件类型错误，接受的类型为jpg jpeg png"

@@ -19,8 +19,7 @@ class Api::ChaptersController < ApplicationController
     #TODO
     response.header['Access-Control-Allow-Origin'] = '*'
     response.header['Content-Type'] = 'application/json'
-    render :json => Prop.joins("inner join user_prop_relations u on props.id=u.prop_id").select("props.*,u.user_prop_num num").
-      where("u.user_id=#{params[:uid]} and u.user_prop_num >=1 and course_id=#{params[:course_id]} ")
+    render :json => Prop.my_props(params[:uid],params[:course_id])
   end
 
   #关卡列表
@@ -77,6 +76,7 @@ class Api::ChaptersController < ApplicationController
     knowledge_cards = KnowledgeCard.joins(:user_cards_relations).select("*")
     .where(:user_cards_relations => {:user_id=>params[:uid],:course_id => params[:course_id]})
 
+    tags = CardbagTag.find_by_sql("select id,name,user_id,course_id,types from cardbag_tags where (course_id=1 and user_id is null) or (course_id=1 and user_id =2)")
     
     tag_cards = CardTagRelation.joins(:cardbag_tag).where(:course_id => params[:course_id],
       :knowledge_card_id => knowledge_cards.map(&:id))
@@ -85,7 +85,7 @@ class Api::ChaptersController < ApplicationController
     tag_card_hash = tag_cards.group_by { |re| re.knowledge_card_id }
      
     knowledge_cards.each{|card| card[:tag_ids] = (tag_card_hash[card.id] && tag_card_hash[card.id].map(&:id)) || []}
-    render :json =>{:cards => knowledge_cards, :tags => tag_cards}
+    render :json =>{:cards => knowledge_cards, :tags => tags}
   end
 
 
@@ -121,16 +121,32 @@ class Api::ChaptersController < ApplicationController
   #知识卡片添加备注
   def add_remark_to_card
     #参数 uid， course_id, card_id, remark
-    user_card_relation = UserCradsRelation.where(:course_id  => params[:course_id], :user_id => params[:uid],
+    user_card_relation = UserCardsRelation.where(:course_id  => params[:course_id], :user_id => params[:uid],
       :knowledge_card_id => params[:card_id])[0]
     render :json => {:msg => user_card_relation && user_card_relation.update_attribute(:remark, params[:remark].strip) ? "success" : "error"}
   end
 
-  #用户自定义标签
+  #用户自定义添加标签
   def user_add_tag
     #参数uid, tag_name, course_id
     cardbag_tag = CardbagTag.create({:name => params[:tag_name],:user_id => params[:uid], :course_id => params[:course_id], :types => CardbagTag::TYPE_NAME[:user]})
-    render :json => {:msg => cardbag_tag ? "success" : "error"}
+    render :json => {:msg => cardbag_tag ? "success" : "error", :tag_id => cardbag_tag.id}
+  end
+
+   #用户自定义修改标签
+  def user_update_tag
+    #参数tag_id, tag_name
+    cardbag_tag = CardbagTag.find_by_id(params[:tag_id])
+    ct = cardbag_tag.update_attribute(:name, params[:tag_name])
+    render :json => {:msg => ct ? "success" : "error"}
+  end
+
+  #用户自定义删除标签
+  def user_del_tag
+    #参数tag_id
+    cardbag_tag = CardbagTag.find_by_id(params[:tag_id])
+    ct = cardbag_tag.destroy
+    render :json => {:msg => ct ? "success" : "error"}
   end
 
   #购买卡槽
