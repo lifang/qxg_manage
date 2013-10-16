@@ -5,5 +5,4 @@
 <% else %>
     alert(<%= @notice %>);
 <% end %>
-location.reload();
-$('#zip').val("");
+$("#upload_bar").html('<%= j (render :partial => 'uploadzip') %>');

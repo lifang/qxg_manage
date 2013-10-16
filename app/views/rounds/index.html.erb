@@ -6,13 +6,8 @@
 <div class="set_btn cf"><%= link_to "添加关卡(这个真实情况没有添加功能)", new_course_chapter_round_path(@course, @chapter), :remote => true, :class =>"green_btn"%></div>
 
 <div class="m_con">
-  <div id="passUp">
-    <%= form_tag({:action => :uploadfile}, :multipart => true ,:remote => "true" ) do %>
-        导入题库:<%= file_field_tag 'zip', :onchange => "file_validate(this);" %>
-        <button id="btn_upload" class="green_btn" type="submit" disabled="true" onchange="file_validate(this)" >上 传</button>
-        <input type="hidden" name="course_id" value="<%= @course.id %>" />
-        <input type="hidden" name="chapter_id" value="<%= @chapter.id %>" />
-    <% end %>
+  <div id="upload_bar">
+      <%= render 'uploadzip' %>
   </div>
 
   <% @rounds.each do |round| %>
