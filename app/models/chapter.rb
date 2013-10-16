@@ -7,10 +7,12 @@ class Chapter < ActiveRecord::Base
   mount_uploader :img, AvatarUploader
   
   STATUS_NAME = { 0 => "未审核", 1 => "已审核"}
+  STATUS = {:not_verified => 0, :verified => 1}
 
   validates :name, uniqueness: { scope: :course_id,
     message: "同一课程下章节名称已存在！" }
 
+  scope :verified, where(:status => STATUS[:verified])
   after_destroy :remove_img
   def remove_img
     img_full_path_str = (Rails.root.to_s + "/public" + self.img.url)

@@ -1,9 +1,12 @@
 <%= form_for [@course, @tag] , :html => {:id => "tagForm" }, :remote => true do |f| %>
-  <div>
-    <label class="required">名称：</label>
+  <div class="form_row">
+    <label class="required label">名称：</label>
     <%= f.text_field :name, :required => true %>
   </div>
+<div class="form_row">
+  <label class="label">&nbsp;</label>
   <%= button_tag "提交",:type =>"submit", :class => "green_btn" %>
+</div>
 <% end %>
 <script>
   $(document).ready(function(){

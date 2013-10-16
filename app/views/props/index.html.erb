@@ -1,42 +1,52 @@
-<%= render "/shared/course_head" %>
-<div class="clear"></div>
-<div class="set_btn cf"><%= link_to "添加", new_course_prop_path(@course), :remote => true , :class =>"green_btn"%></div>
+<div class="wrap">
+  <%= render "/shared/head" %>
+  <div class="main">
+    <h1><%= link_to @course.name, course_chapters_path(@course.id) %>> 标签、道具、章节</h1>
+    <div class="m_con">
+      <%= render "/shared/course_head" %>
+      <div class="clear"></div>
+      <div class="set_btn cf"><%= link_to "添加", new_course_prop_path(@course), :remote => true , :class =>"green_btn"%></div>
 
-<div>
-  <table>
-    <tr>
+      <div>
+        <table>
+          <tr>
+            <th>名称</th>
+            <th>描述</th>
+            <th>金币</th>
+            <th>适应题型</th>
+            <th>道具类型</th>
+            <th>操作</th>
+          </tr>
+          <% @props.each do |prop| %>
+            <tr>
+              <td class="prop_name"><%= image_tag prop.img.thumb.url, :style => "width:30px; height:30px;" %><%= prop.name %></td>
+              <td><%= prop.description %></td>
+              <td><%= prop.price %></td>
+              <td><%= prop.question_types.split(",").map{|type| Question::TYPES[type.to_i]}.join("、") %></td>
+              <td><%= Prop::TYPES[prop.types] %></td>
+              <td>
+                <% unless prop.status %>
+                  <%= link_to "编辑", edit_course_prop_path(@course, prop), :remote => true, :class => "propInfo green_btn" %>
+                  <%= link_to "删除", course_prop_path(@course, prop), :method => :delete, :confirm => "确定删除吗？",:class => "green_btn" %>
+                <% else %>
+                  已删除
+                <% end %>
+              </td>
+            </tr>
 
-      <th>名称</th>
-      <th>描述</th>
-      <th>金币</th>
-      <th>适应题型</th>
-      <th>道具类型</th>
-      <th>操作</th>
-    </tr>
-    <% @props.each do |prop| %>
-      <tr>
-        <td class="prop_name"><%= image_tag prop.img.thumb.url, :style => "width:30px; height:30px;" %><%= prop.name %></td>
-        <td><%= prop.description %></td>
-        <td><%= prop.price %></td>
-        <td><%= prop.question_types.split(",").map{|type| Question::TYPES[type.to_i]}.join("、") %></td>
-        <td><%= Prop::TYPES[prop.types] %></td>
-        <td>
-          <% unless prop.status %>
-            <%= link_to "编辑", edit_course_prop_path(@course, prop), :remote => true, :class => "propInfo green_btn" %>
-            <%= link_to "删除", course_prop_path(@course, prop), :method => :delete, :confirm => "确定删除吗？",:class => "green_btn" %>
-          <% else %>
-            已删除
           <% end %>
-        </td>
-      </tr>
 
-    <% end %>
-
-  </table>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>
 
-<div style="display: none;width:500px" class="second_content cf">
-  <span class="close">关闭</span>
-  <div class="second_view" id="prop_container">
+<div class="second_bg"></div>
+<div class="second_box">
+  <div style="display: none;width:500px" class="second_content cf">
+    <span class="close">关闭</span>
+    <div class="second_view" id="prop_container">
+    </div>
   </div>
 </div>

@@ -1,25 +1,28 @@
 <%= form_for [@course,@chapter,@round], :html => {:id => "round_form"}, :remote => true do |f| %>
-  <div>
-    <label class="required">关卡名称：</label>
+  <div class="form_row">
+    <label class="required label">关卡名称：</label>
     <%= f.text_field :name, :required => true %>
   </div>
-  <div>
-    <label class="required">关卡总分：</label>
+  <div class="form_row">
+    <label class="required label">关卡总分：</label>
     <%= f.text_field :max_score, :required => true, :digits => true, :value => @round.new_record? ?  @course.max_score : @round.max_score %>
   </div>
-  <div>
-    <label class="required">关卡血量：</label>
+  <div class="form_row">
+    <label class="required label">关卡血量：</label>
     <%= f.text_field :blood, :required => true, :digits => true, :value => @round.new_record? ?  @course.blood : @round.blood %>
   </div>
-  <div>
-    <label class="required">规定时间：</label>
+  <div class="form_row">
+    <label class="required label">规定时间：</label>
     <%= f.text_field :round_time, :required => true, :digits => true, :value => @round.new_record? ?  @course.round_time : @round.round_time %>
   </div>
-  <div>
-    <label class="required">时间比例：</label>
+  <div class="form_row">
+    <label class="required label">时间比例：</label>
     <%= f.text_field :time_ratio, :required => true,:digits => true, :min => 0, :max => 100, :value => @round.new_record? ?  @course.time_ratio : @round.time_ratio %>
   </div>
+<div class="form_row">
+  <label class="label">&nbsp;</label>
   <%= button_tag "提交", :type => "submit", :class => "green_btn" %>
+</div>
 <% end %>
 <script>
   $(document).ready(function(){

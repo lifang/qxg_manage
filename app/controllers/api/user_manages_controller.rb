@@ -26,8 +26,9 @@ class Api::UserManagesController < ActionController::Base
 
   def selected_courses  #用户已选择的课程
     uid = params[:uid].to_i
-    courses = UserCourseRelation.find_by_sql("select c.id id, c.name name, c.press press, ucr.gold gold, ucr.level level,
-                                              c.description description, c.types types, c.round_count round_count
+    courses = UserCourseRelation.find_by_sql("select c.id course_id, c.name name, c.press press, ucr.gold gold, ucr.level level,
+                                              c.description description, c.types types, c.round_count round_count, ucr.cardbag_count,
+                                              ucr.cardbag_use_count
                                               from user_course_relations ucr
                                               inner join courses c on ucr.course_id=c.id
                                               where ucr.user_id=#{uid}")
@@ -75,15 +76,42 @@ class Api::UserManagesController < ActionController::Base
     render :json => achieve_points_arr
   end
 
-  def everyday_tasks    #每日任务
+  #  def everyday_tasks    #每日任务
+  #    uid = params[:uid].to_i
+  #    cid = params[:cid].to_i
+  #    et = EverydayTask.find_by_user_id_and_course_id(uid, cid)
+  #    if et.nil?
+  #      render :json => "error"
+  #    else
+  #      render :json => et.get_login_day
+  #    end
+  #  end
+
+  def course_to_chapter
+    #参数uid， cid
     uid = params[:uid].to_i
     cid = params[:cid].to_i
     et = EverydayTask.find_by_user_id_and_course_id(uid, cid)
-    if et.nil?
-      render :json => "error"
-    else
-      render :json => et.get_login_day
+    login_day = et && et.get_login_day  || 0  #每日任务登录天数
+
+    props = Prop.find_by_sql("select p.id prop_id, p.name prop_name, p.description, p.price, p.types, p.question_types,
+ p.img, upr.user_prop_num, upr.user_id user_id from props p left join user_prop_relations upr on p.id=upr.prop_id
+left join users u on u.id = upr.user_id
+ and u.id=#{uid} and upr.user_prop_num >=1 and p.course_id=#{cid} and p.status = #{Prop::STATUS_NAME[:normal]}") #道具列表(包含我的道具)
+ 
+    chapters = (Course.find_by_id(cid)).chapters.verified.select("id,name,img,round_count")
+
+    chapter_num = chapters.count
+    complete_arr = []
+    chapters.each do |chapter|
+      rs = RoundScore.where(:user_id => uid, :chapter_id => chapter.id) #章节所有关卡全部完成
+      three_stars = RoundScore.where(:user_id => uid, :chapter_id => chapter.id, :star => Round::STAR[:three_star]) #章节所有关卡满星
+      chapter[:all_complete] = (chapter.round_count == rs.count) ? 1 : 0
+      chapter[:all_3_star] = (chapter.round_count == three_stars.count) ? 1 : 0
+      complete_arr <<  chapter
     end
+    render :json =>{:every_day_task => login_day, :props => props, :chapter_num => chapter_num, :chapters => complete_arr}
+    
   end
 
   def set_task_day  #修改连续天数

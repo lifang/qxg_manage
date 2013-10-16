@@ -6,8 +6,8 @@ class KnowledgeCardsController < ApplicationController
   end
 
   def show
-#    @knowledga_card = KnowledgeCard.find_by_id(params[:id])
-#    @question_id = params[:question_id]
+    @knowledge_card = KnowledgeCard.find_by_id(params[:id])
+    @question = Question.find_by_id params[:question_id]
   end
 
   

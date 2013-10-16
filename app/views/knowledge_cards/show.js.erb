@@ -1,1 +1,2 @@
-$("#question_<%= @question_id %>").html("<%= j (render "show") %>")
+$("#knowledge_card_container").html("<%= j (render :partial => "show") %>")
+show_tag($("#knowledge_card_container"))
