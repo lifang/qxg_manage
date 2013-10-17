@@ -130,7 +130,8 @@ class RoundsController < ApplicationController
           que = oo.cell(line,'A').to_s
           type = -1
           error_info = ""
-          #判断题型
+
+          #判断题型,题目信息错误验证
           result = distinguish_question_types excel,que,line
           result.each do |key,val|
             if val.class == Fixnum

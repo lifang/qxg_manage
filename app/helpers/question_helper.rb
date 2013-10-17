@@ -7,6 +7,7 @@ module QuestionHelper
     end
     begin
       Archive::Zip.extract "#{zip_url}/#{zip_dir}.zip","#{zip_url}/#{zip_dir}"
+      File.delete "#{zip_url}/#{zip_dir}.zip"
       return true
     rescue
       File.delete "#{zip_url}/#{zip_dir}.zip"
@@ -35,24 +36,58 @@ module QuestionHelper
   end
 
   #判断题目中的双括号（包括(())、[[]]、{{}}）是否成对、及是否存在包含关系 未完成
-  def brackets_validate
-    #判断题目中的双括号（包括(())、[[]]、{{}}）是否成对
-    sybs = []
-    sybs << [ /\[\[|\]\]/,"[[","]]"] << [ /\(\(|\)\)/,"((","))"] << [ /\{\{|\}\}/,"{{","}}"]
-    sybs.each do |syb|
-      count = 0
-      arr = que.scan(syb[0])
-      #p arr
-      l=arr.length.to_i-1
+  def brackets_validate que
+    #按顺序取出题目中所有的双括号及多括号，放入数组
+    double_brackets = que.scan(/\[\[|\]\]|\{\{|\}\}|\(\(|\)\)/)
+    length  =  double_brackets.length
+    status = []  #值为0和1, 1表示括号有问题, 0表示括号没有问题
+    if que.scan(/\[\[{2,}|\]\]{2,}|\{\{{2,}|\}\}{2,}|\(\({2,}|\)\){2,}/).length != 0
+      status = 1
+    elsif length%2 != 0
+      status = 1
+    elsif length%2 == 0
+      length = double_brackets.length
+      result = []
 
-      (0..l).each do |i|
-        #p arr[i]
-        if arr[i+1] && arr[i] == arr[i+1]
+      (0..(length-1)).each do |i|
+        if i%2==0 && i < length
+          e = double_brackets[i].to_s
+          f = double_brackets[i+1].to_s
+          if e.scan(/\(\(/).length == 1
+            if f.scan(/\)\)/).length == 1
+                result << true
+            else
+                result << false
+             end
+          elsif e.scan(/\[\[/).length == 1
+              if f.scan(/\]\]/).length == 1
+                result << true
+              else
+                result << false
+              end
+          elsif e.scan(/\{\{/).length == 1
+              if f.scan(/\}\}/).length == 1
+                result << true
+              else
+                result << false
+              end
+          else
+              result << false
+          end
+        end
+      end  #(0..(length-1)).each do |i|
+      count = 0
+      result.each do |e|
+        if e ==false
           count = count + 1
         end
       end
-      error_info << "Excel文件：#{excel} 第#{line}行：#{syb[1]}" + "……" + "#{syb[2]}符号不成对" if arr.length.to_i%2 != 0
-      error_info << "Excel文件：#{excel} 第#{line}行：#{syb[1]}" + "……" + "#{syb[2]}符号中不能有#{syb[1]}或#{syb[2]}" if count > 0
+    end #if que.scan(/\[\[{2,}|\]\]{2,}|\{\{{2,}|\}\}{2,}|\(\({2,}|\)\){2,}/).length != 0
+
+    if count == 0
+      return 0
+    else
+      return 1
     end
   end
 
@@ -60,6 +95,9 @@ module QuestionHelper
   def distinguish_question_types excel,que,line
     que_tpye = -1 #题型标记
     error_info = [] #错误信息
+    if brackets_validate(que) == 1
+        error_info << "文件'#{excel}'第#{line}行：双括号配对不完整、双括号存在嵌套或存在两个以上的连续括号"
+    end
 
     count_a = 0	#[[]]计数
     result_a = []
