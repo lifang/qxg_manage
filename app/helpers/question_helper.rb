@@ -182,89 +182,94 @@ module QuestionHelper
           end
         end
       elsif count_a > 1 && count_b == 0 && count_c == 0 && result_d.length == 0  #拖拽题和完形填空题
-        tmp = []
-        result_a.each do |r|
-          tmp << r.scan(/(?<=\[\[).*(?=\]\])/).to_a[0].to_s
-        end
-        p tmp
-        #length = tmp.length - 1
-        #(0..length).each do |i|
-        #  tmp[i] = tmp[i].to_s.scan(/(?<=\[\[).*(?=\]\])/).to_a[0].to_s
-        #end
-        result = []
-        #循环匹配一个[[]]中的内容，看每个[[]]里有几个||符号
-        tmp.each do |e|
-          result <<  e.to_s.scan("||").length
-        end
-
-        count_zero = 0
-        count_one = 0
-        result.each do |e|
-          if e >= 1
-            count_one = count_one + 1  #对有||的选项计数
-          else
-            count_zero = count_zero + 1 #对没有有||的选项计数
+          tmp = []
+          result_a.each do |r|
+            tmp << r.scan(/(?<=\[\[).*(?=\]\])/).to_a[0].to_s
           end
-        end
-        p result
-        #p count_one
-        #p count_zero
-        if count_one == 0 && count_zero != 0 && count_zero == result.length  #拖拽题
-          p "第#{line}行：拖拽题"
-        elsif count_zero == 0 && count_one != 0 && count_one == result.length #完型填空题
-          result = [] #统计每个选项里的答案数,即@@个数
+          p tmp
+          #length = tmp.length - 1
+          #(0..length).each do |i|
+          #  tmp[i] = tmp[i].to_s.scan(/(?<=\[\[).*(?=\]\])/).to_a[0].to_s
+          #end
+          result = []
+          #循环匹配一个[[]]中的内容，看每个[[]]里有几个||符号
           tmp.each do |e|
-            g = 0 #统计一个选项中的答案个数，即@@个数
-            e.gsub(/^\|\|/,"").split("||").each do |x|
-              if x.to_s.lstrip.match(/^@@/)
-                 g = g + 1
-              end
-              p "x = " + x if x.to_s.lstrip.match(/^@@/)
-            end
-            result << g
+            result <<  e.to_s.scan("||").length
           end
-          p  result
-          count_zero = 0 #计数完形填空中没有答案的选项个数
-          count_one_more = 0  #计数完形填空中超过一个答案的选项个数
+
+          count_zero = 0
+          count_one = 0
           result.each do |e|
-            if e == 0
-              count_zero = count_zero + 1
-            elsif e > 1
-              count_one_more = count_one_more + 1
+            if e >= 1
+              count_one = count_one + 1  #对有||的选项计数
             else
+              count_zero = count_zero + 1 #对没有有||的选项计数
             end
           end
-          if count_zero == 0 && count_one_more == 0
-            p "第#{line}行：完形填空"
-          elsif count_zero != 0 || count_one_more != 0
-            error_info << "第#{line}行：完形填空完型填空题中的某个选项没答案或有多个答案"
+          p result
+          #p count_one
+          #p count_zero
+          if count_one == 0 && count_zero != 0 && count_zero == result.length  #拖拽题
+            que_tpye = Question::TYPE_NAMES[:drag] # 拖拽题
+            p "第#{line}行：拖拽题"
+          elsif count_zero == 0 && count_one != 0 && count_one == result.length #完型填空题
+            result = [] #统计每个选项里的答案数,即@@个数
+            tmp.each do |e|
+              g = 0 #统计一个选项中的答案个数，即@@个数
+              e.gsub(/^\|\|/,"").split("||").each do |x|
+                if x.to_s.lstrip.match(/^@@/)
+                   g = g + 1
+                end
+                p "x = " + x if x.to_s.lstrip.match(/^@@/)
+              end
+              result << g
+            end
+            p  result
+            count_zero = 0 #计数完形填空中没有答案的选项个数
+            count_one_more = 0  #计数完形填空中超过一个答案的选项个数
+            result.each do |e|
+              if e == 0
+                count_zero = count_zero + 1
+              elsif e > 1
+                count_one_more = count_one_more + 1
+              else
+              end
+            end
+            if count_zero == 0 && count_one_more == 0
+              que_tpye = Question::TYPE_NAMES[:fillin] # 完型填空
+              p "第#{line}行：完形填空"
+            elsif count_zero != 0 || count_one_more != 0
+              error_info << "第#{line}行：完形填空完型填空题中的某个选项没答案或有多个答案"
+            end
+          else
+            error_info << "第#{line}行：完形填空题的每个选项[[……]]中至少有一个必须有'||'或拖拽题的每个选项[[……]]中都不能有'||'"
           end
-        else
-          error_info << "第#{line}行：完形填空题的每个选项[[……]]中至少有一个必须有'||'或拖拽题的每个选项[[……]]中都不能有'||'"
-        end
-      #elsif count_a > 1 && count_b == 0 && count_c == 0 && result_d !=  0 #不正确
-      #  p "第#{line}行：阅读理解"
-      #elsif count_a == 0 && count_b >= 1 && count_c == 0
-      #  p "第#{line}行：填空题"
-      #elsif count_a == 0 && count_b > 0  && count_c == 0
-      #  p "第#{line}行：填空题"
       elsif count_b >= 1 && count_a == 0 && count_c == 0
         que_tpye = Question::TYPE_NAMES[:input] #填空题
-      elsif count_c == 1 && count_a == 0 && count_b == 0   # 综合题
-        tmp =  que.split(%r{\n\s*})
-
-        tmp.each do |e|
-          p distinguish_question_types excel, e, line
-        end
-        que_tpye = Question::TYPE_NAMES[:read_understanding] # 综合题
+       p "填空题"
+      elsif count_c != 0 && count_a == 0 && count_b == 0   #口语题
+          que_tpye = Question::TYPE_NAMES[:voice_input] # 口语题
+           p "口语题"
+          tmp =  que.scan(/(?<=\{\{).*(?=\}\})/)
+          p tmp
+      elsif count_d != 0   # 综合题
+          tmp =  que.split(%r{\n\s*})
+          p tmp
+          result = []
+          tmp.each do |e|
+             types = distinguish_question_types(excel, e, line)
+             result <<  types["que_tpye"]
+            #p distinguish_question_types excel, e, line
+          end
+          result.each  do |e|
+            p e
+            p Question::TYPES[e.to_i]
+          end
+          #que_tpye = Question::TYPE_NAMES[:read_understanding] # 综合题
       end
-     #              que_tpye = Question::TYPE_NAMES[:fillin] # 完型填空
-     #       que_tpye = Question::TYPE_NAMES[:voice_input] #口语题
-     #      que_tpye = Question::TYPE_NAMES[:drag] # 拖拽题
-
     else
       que_tpye = -1 #未知题型
-      error_info << "第#{line}行：未知题型"
+      error_info << "第#{line}行：非题干"
     end
     #p "||total:#{count_e}  ;;total:#{count_f}  >>total:#{count_g}  @@total:#{count_h}"
     p "[[]]total:#{count_a}  (())total:#{count_b}  {{}}total:#{count_c} ENTER total:#{count_d}"
