@@ -138,7 +138,7 @@ module QuestionHelper
 
     if(count_a != 0 || count_b != 0 || count_c != 0)   #[[]]、(())、{{}}的数量不能都为0
       if count_a == 1 && count_b == 0 && count_c == 0 #当只有一对[[]]时
-                                                      #可能题型：选择题、排序题、连线题、
+        #可能题型：选择题、排序题、连线题、
         tmp = result_a[0].to_s.scan(/(?<=\[\[).*(?=\]\])/).to_a[0].to_s
         count_e = tmp.scan(/\|\|/).length
         count_f = tmp.scan(/\;\;/).length
@@ -168,8 +168,6 @@ module QuestionHelper
                 if e.length != 2
                   g = g + 1
                 else
-                  #p  e[0].to_s.strip.empty?
-                  #p  e[1].to_s.strip.empty?
                   if e[0].gsub(/^||/,"").to_s.strip.empty? || e[1].gsub(/^||/,"").to_s.strip.empty?
                     g = g + 1
                   end
@@ -224,11 +222,7 @@ module QuestionHelper
           result_a.each do |r|
             tmp << r.scan(/(?<=\[\[).*(?=\]\])/).to_a[0].to_s
           end
-          p tmp
-          #length = tmp.length - 1
-          #(0..length).each do |i|
-          #  tmp[i] = tmp[i].to_s.scan(/(?<=\[\[).*(?=\]\])/).to_a[0].to_s
-          #end
+
           result = []
           #循环匹配一个[[]]中的内容，看每个[[]]里有几个||符号
           tmp.each do |e|
@@ -244,9 +238,7 @@ module QuestionHelper
               count_zero = count_zero + 1 #对没有有||的选项计数
             end
           end
-          p result
-          #p count_one
-          #p count_zero
+
           if count_one == 0 && count_zero != 0 && count_zero == result.length  #拖拽题
             que_tpye = Question::TYPE_NAMES[:drag] # 拖拽题
             p "第#{line}行：拖拽题"
