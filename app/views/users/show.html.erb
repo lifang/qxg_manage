@@ -1,0 +1,46 @@
+<div class="wrap">
+  <%= render "/shared/head" %>
+
+  <div class="main">
+    <h1><a>用户中心</a>><span>用户详情</span></h1>
+    <div class="m_con">
+      <div class="userInfo2">
+        <%= image_tag @user.img %>
+        
+        <dl>
+          <dd>昵称</dd><dt><%= @user.name %></dt>
+          <dd>邮箱</dd><dt><%= @user.email %></dt>
+        </dl>
+      </div>
+
+      <table>
+        <tr>
+          <th>课程名</th>
+          <th>用户等级</th>
+          <th>金币</th>
+          <th>卡包</th>
+          <th>道具</th>
+          <th>成就点数</th>
+        </tr>
+        <%  %>
+        <tr>
+          <td>1</td>
+          <td>1</td>
+          <td>1</td>
+          <td>1</td>
+          <td>1</td>
+          <td>1</td>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>1</td>
+          <td>1</td>
+          <td>1</td>
+          <td>1</td>
+          <td>1</td>
+        </tr>
+      </table>
+    </div>
+
+  </div>
+</div>

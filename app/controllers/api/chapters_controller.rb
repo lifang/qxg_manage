@@ -133,7 +133,7 @@ class Api::ChaptersController < ApplicationController
     render :json => {:msg => cardbag_tag ? "success" : "error", :tag_id => cardbag_tag.id}
   end
 
-   #用户自定义修改标签
+  #用户自定义修改标签
   def user_update_tag
     #参数tag_id, tag_name
     cardbag_tag = CardbagTag.find_by_id(params[:tag_id])
@@ -161,7 +161,9 @@ class Api::ChaptersController < ApplicationController
   #添加错题
   def add_wrong_question
     #uid, course_id, question_id,wrong_time
-    umq = UserMistakeQuestion.create({:user_id => params[:uid], :course_id => params[:course_id], :question_id => params[:question_id], :wrong_time => params[:wrong_time]})
-    render :json => {:msg => umq ? "success" : "error"}
+    response.header['Access-Control-Allow-Origin'] = '*'
+    response.header['Content-Type'] = 'application/json'
+    umq = UserMistakeQuestion.create({:user_id => params[:uid], :course_id => params[:course_id], :question_id => params[:question_id], :wrong_time => Time.now})
+    render :text => umq ? "success" : "error"
   end
 end

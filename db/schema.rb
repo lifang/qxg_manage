@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131011070434) do
+ActiveRecord::Schema.define(:version => 20131016085244) do
 
   create_table "achieve_counts", :force => true do |t|
     t.integer  "user_id"
@@ -204,6 +204,7 @@ ActiveRecord::Schema.define(:version => 20131011070434) do
     t.datetime "day"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "star",       :limit => 1
   end
 
   add_index "round_scores", ["chapter_id"], :name => "index_round_scores_on_chapter_id"
@@ -286,7 +287,7 @@ ActiveRecord::Schema.define(:version => 20131011070434) do
     t.boolean  "sex"
     t.string   "img"
     t.string   "phone"
-    t.integer  "weibo_id"
+    t.string   "weibo_id"
     t.datetime "weibo_time"
     t.integer  "types"
     t.datetime "created_at"
