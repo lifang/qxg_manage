@@ -96,13 +96,13 @@ class Api::UserManagesController < ActionController::Base
 
     props = Prop.find_by_sql("select p.id prop_id, p.name prop_name, p.description, p.price, p.types, p.question_types,
   upr.user_prop_num, upr.user_id user_id from props p left join user_prop_relations upr on p.id=upr.prop_id
-left join users u on u.id = upr.user_id
- and upr.user_id=#{uid} and upr.user_prop_num >=1 and p.course_id=#{cid} and p.status = #{Prop::STATUS_NAME[:normal]}") #道具列表(包含我的道具)
+left join users u on u.id = upr.user_id and upr.user_prop_num >=1 where  p.course_id=#{cid} and p.status = #{Prop::STATUS_NAME[:normal]}
+ and ( upr.user_id=#{uid} || upr.user_id is null) ") #道具列表(包含我的道具)
 
     props.map{|prop|
       prop[:logo] = prop.img.thumb.url
     }
-    props = props.select{|p| p.user_id == uid || p.user_id == nil}
+#    props = props.select{|p| p.user_id == uid || p.user_id == nil}
     chapters = (Course.find_by_id(cid)).chapters.verified.select("id,name,round_count")
 
     chapter_num = chapters.count
