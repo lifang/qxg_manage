@@ -1,0 +1,7 @@
+<%= form_tag({:action => :uploadfile}, :multipart => true ,:remote => "true" ) do %>
+    导入题库:<%= file_field_tag 'zip', :onchange => "file_validate(this);" %>
+    <button id="btn_upload" class="green_btn" type="submit" disabled="true" onchange="file_validate(this)" >上 传</button>
+    <input type="hidden" name="course_id" value="<%= @course.id %>" />
+    <input type="hidden" name="chapter_id" value="<%= @chapter.id %>" />
+    <input type="hidden" name="round_id" value="<%= @round.id %>" />
+<% end %>
