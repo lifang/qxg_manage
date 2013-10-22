@@ -14,8 +14,8 @@
     <div class="nav">
       <div class="menu cf">
         <ul>
-          <li><a href="/courses" class="course_hover">课程</a></li>
-          <li><a href="#" class="<%= controller_name=="users" ? "hover" : ""%>">用户</a></li>
+          <li><a href="/courses" class="<%= controller_name!="users" ? "hover" : ""%>">课程</a></li>
+          <li><a href="/users" class="<%= controller_name=="users" ? "hover" : ""%>">用户</a></li>
         </ul>
       </div>
     </div>

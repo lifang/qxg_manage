@@ -1,0 +1,28 @@
+<div class="wrap">
+  <%= render "/shared/head" %>
+  <div class="main">
+    <h1>用户中心</h1>
+    <div class="m_con">
+      <div class="userList">
+        <table>
+          <tr>
+            <th>用户</th>
+            <th>邮箱</th>
+            <th>操作</th>
+          </tr>
+          <% @users.each do |user| %>
+          <tr>
+            <td><%= user.name %></td>
+            <td><%= user.email %></td>
+            <td>
+              <%= link_to "详细", user, :class=>"green_btn userDetail" %>
+            </td>
+          </tr>
+          <% end %>
+          
+        </table>
+      </div>
+      <div class="pager"></div>
+    </div>
+  </div>
+</div>

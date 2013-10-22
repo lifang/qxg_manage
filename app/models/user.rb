@@ -8,7 +8,7 @@ class User < ActiveRecord::Base
     :ADMIN => 0,
     :NORMAL => 1
   }
-
+  scope :signed_user, where(:types => TYPES[:NORMAL])
 
   def encrypt_password(pwd)
     self.password = Digest::SHA2.hexdigest(pwd)

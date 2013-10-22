@@ -12,7 +12,7 @@ class Prop < ActiveRecord::Base
 
   def self.my_props(uid,cid)
     props = Prop.joins("inner join user_prop_relations u on props.id=u.prop_id").select("props.*,u.user_prop_num num").
-      where("u.user_id=#{uid} and u.user_prop_num >=1 and course_id=#{cid} ")
+      where("u.user_id=#{uid} and u.user_prop_num >=1 and course_id=#{cid} and status = #{STATUS_NAME[:normal]} ")
     props
   end
 end

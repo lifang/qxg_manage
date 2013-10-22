@@ -24,8 +24,27 @@ class Api::ChaptersController < ApplicationController
 
   #关卡列表
   def user_round
-    render :json => Round.joins("inner join round_scores r on rounds.id=r.round_id").where(:chapter_id =>params[:chapter_id],:"r.user_id"=>params[:uid]).
-      select("name,r.star,rounds.id").inject(Hash.new){|hash,round| hash[round.id] = round;hash}
+    #uid, chapter_id
+    uid = params[:uid].to_i
+    chapter_id = params[:chapter_id].to_i
+    rounds = Round.find_by_sql("SELECT r.id, r.chapter_id, r.name, r.questions_count, r.round_time, r.time_ratio, r.blood,
+ r.max_score, rs.score score, rs.star from rounds r LEFT JOIN round_scores rs on r.id=rs.round_id AND rs.user_id =#{uid} where
+r.chapter_id = #{chapter_id}  ORDER BY rs.score DESC")
+
+    round_range = RoundScore.find_by_sql(["select u.name u_name, u.id uid, u.img img, rs.score score, rs.round_id round_id from round_scores rs inner join rounds r on r.id = rs.round_id
+      inner join users u on u.id = rs.user_id where rs.round_id in (?) order by rs.score desc", rounds.map(&:id)]).group_by{|rs| rs.round_id}
+   rs_hash = {}
+   round_range.each do |round_id, users|
+     temp_users = users[0..2]
+     if temp_users.map(&:uid).include?(uid)
+       rs_hash[round_id] = temp_users
+     else
+       rs_hash[round_id] = temp_users + users.select{|u| u.uid == uid}
+     end
+   end
+
+    
+    render :json => {:rounds => rounds, :round_range => rs_hash}
   end
 
   #关卡排名
@@ -46,11 +65,16 @@ class Api::ChaptersController < ApplicationController
 
   #使用道具
   def used_prop
-    prop = Prop.find_by_id(params[:prop_id])
-    prop_use_record = BuyRecord.create({:user_id => params[:uid], :prop_id => params[:prop_id], :count => 1, :gold => prop.gold, :types => BuyRecord::TYPE_NAME[:use]}) if prop
-    user_prop = UserPropRelation.where(:user_id => params[:uid],:prop_id => params[:prop_id]).first
-    up = user_prop.update_attributes(:user_prop_num => user_prop.user_prop_num-1) if user_prop
-    render :json=>{:msg => prop_use_record&&up ? "success" : "error"}
+    #prop_id, uid
+    response.header['Access-Control-Allow-Origin'] = '*'
+    response.header['Content-Type'] = 'text'
+    Prop.transaction do
+      prop = Prop.find_by_id(params[:prop_id])
+      prop_use_record = BuyRecord.create({:user_id => params[:uid], :prop_id => params[:prop_id], :count => 1, :gold => prop.price, :types => BuyRecord::TYPE_NAME[:use]}) if prop
+      user_prop = UserPropRelation.where(:user_id => params[:uid],:prop_id => params[:prop_id]).first
+      up = user_prop.update_attributes(:user_prop_num => user_prop.user_prop_num-1) if user_prop
+      render :text => prop_use_record&&up ? "success" : "error"
+    end
   end
 
   #收藏知识卡片
@@ -102,7 +126,25 @@ class Api::ChaptersController < ApplicationController
 
   #保存关卡得分、成就、经验、等级信息
   def change_info
+    #uid, round_id, chapter_id, score, star, experience,level,gold #achieve_point(暂时不要)
+    #新建记录 => round_scores, 更新记录 => user_course_relations
+    RoundScore.transaction do
+      round_score = RoundScore.find_by_round_id(params[:round_id]) if params[:round_id]
+      chapter = Chapter.find_by_id params[:chapter_id] if params[:chapter_id]
+      course = chapter.course if chapter
+      if round_score
+        round_score.update_attributes({:score => params[:score], :star => params[:star]})
+      else
+        round_score = RoundScore.create(:user_id => params[:uid], :chapter_id => params[:chapter_id], :round_id => params[:round],
+          :score => params[:score], :star => params[:star], :day => Time.now)
+      end
+user_course_relarion = UserCourseRelation.find_by_user_id_and_course_id(params[:uid], params[:course_id])
+    end
+  end
 
+  #保存成就点数
+  def save_achieve
+    #参数 uid, cid
   end
 
   #知识卡片添加标签
@@ -133,7 +175,7 @@ class Api::ChaptersController < ApplicationController
     render :json => {:msg => cardbag_tag ? "success" : "error", :tag_id => cardbag_tag.id}
   end
 
-   #用户自定义修改标签
+  #用户自定义修改标签
   def user_update_tag
     #参数tag_id, tag_name
     cardbag_tag = CardbagTag.find_by_id(params[:tag_id])
@@ -161,7 +203,9 @@ class Api::ChaptersController < ApplicationController
   #添加错题
   def add_wrong_question
     #uid, course_id, question_id,wrong_time
-    umq = UserMistakeQuestion.create({:user_id => params[:uid], :course_id => params[:course_id], :question_id => params[:question_id], :wrong_time => params[:wrong_time]})
-    render :json => {:msg => umq ? "success" : "error"}
+    response.header['Access-Control-Allow-Origin'] = '*'
+    response.header['Content-Type'] = 'application/json'
+    umq = UserMistakeQuestion.create({:user_id => params[:uid], :course_id => params[:course_id], :question_id => params[:question_id], :wrong_time => Time.now})
+    render :text => umq ? "success" : "error"
   end
 end
