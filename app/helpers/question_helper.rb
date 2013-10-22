@@ -11,9 +11,7 @@ module QuestionHelper
   #上传文件
   def upload base_url, user_id, zip_dir, zipfile
     path = "#{base_url}/user_#{user_id}"
-    if !File.directory? path
-      Dir.mkdir path
-    end
+    Dir.mkdir path if !File.directory? path
 
     #重命名zip压缩包为“年-月-日_时-分-秒”
     zipfile.original_filename = zip_dir + "." +  zipfile.original_filename.split(".").to_a[1]
@@ -33,9 +31,7 @@ module QuestionHelper
   #解压zip题库压缩包
   def unzip zip_url, zip_dir
     path = "#{zip_url}/#{zip_dir}"
-    if !File.directory? "#{zip_url}/#{zip_dir}"
-      Dir.mkdir path
-    end
+    Dir.mkdir path if !File.directory? "#{zip_url}/#{zip_dir}"
     begin
       Archive::Zip.extract "#{path}.zip","#{path}"
       File.delete "#{path}.zip"
@@ -66,32 +62,32 @@ module QuestionHelper
     all_files = {:excels => excel_files.sort, :resource_dirs => resource_dirs}
   end
 
-  #验证excel文件和资源目录
-  def validate_file_and_dir files_and_dirs, number
-    excels = files_and_dirs[:excels]
-    dirs = files_and_dirs[:resource_dirs]
-    error_info = [] #
-    case number
-      when "one"
-        if excels.length == 1
-          if dirs.length  > 1
-            error_info << "只能有一个资源目录"
-          elsif dirs.length == 1
-              if excels[0].to_s.split(".")[0].to_s != dirs[0].to_s
-                error_info << "资源目录与excel不对应"
-              else
-                error_info = []
-              end
-          else
-            error_info = []
-          end
-        else
-          error_info << "只能有一个excel"
-        end
-      when "more"
-    end
-    error_info
-  end
+  ##验证excel文件和资源目录
+  #def validate_file_and_dir files_and_dirs, number
+  #  excels = files_and_dirs[:excels]
+  #  dirs = files_and_dirs[:resource_dirs]
+  #  error_info = [] #
+  #  case number
+  #    when "one"
+  #      if excels.length == 1
+  #        if dirs.length  > 1
+  #          error_info << "只能有一个资源目录"
+  #        elsif dirs.length == 1
+  #            if excels[0].to_s.split(".")[0].to_s != dirs[0].to_s
+  #              error_info << "资源目录与excel不对应"
+  #            else
+  #              error_info = []
+  #            end
+  #        else
+  #          error_info = []
+  #        end
+  #      else
+  #        error_info << "只能有一个excel"
+  #      end
+  #    when "more"
+  #  end
+  #  error_info
+  #end
 
   #读取一个excel中的题目
   def read_excel path, excel_files
@@ -106,7 +102,6 @@ module QuestionHelper
       #p result #一个excel的结果集
       all_round_questions << result
       #p all_round_questions
-
       #p "all_error_infos#{all_error_infos}"
     end
     if all_error_infos.length != 0
@@ -205,7 +200,7 @@ module QuestionHelper
                 result << true
             else
                 result << false
-             end
+            end
           elsif e.scan(/\[\[/).length == 1
               if f.scan(/\]\]/).length == 1
                 result << true
@@ -225,9 +220,7 @@ module QuestionHelper
       end  #(0..(length-1)).each do |i|
       count = 0
       result.each do |e|
-        if e ==false
-          count = count + 1
-        end
+        count = count + 1 if e ==false
       end
     end #if que.scan(/\[\[{2,}|\]\]{2,}|\{\{{2,}|\}\}{2,}|\(\({2,}|\)\){2,}/).length != 0
 
@@ -319,15 +312,9 @@ module QuestionHelper
       c = 0
       d = 0
       tmp.split(/\|\|/).to_a.each do |e|
-        if e.to_s.match(/^@@.+/)
-          count = count + 1
-        end
-        if e.to_s.rstrip.match(/^@@$/)
-          c = c + 1
-        end
-        if e.to_s.gsub(/file>>>/,"file>;=;").gsub(/>>/,";=;").match(/;=;/)
-          d = d + 1
-        end
+        count = count + 1 if e.to_s.match(/^@@.+/)
+        c = c + 1 if e.to_s.rstrip.match(/^@@$/)
+        d = d + 1 if e.to_s.gsub(/file>>>/, "file>;=;").gsub(/>>/, ";=;").match(/;=;/)
       end
       #p "#{count}count"
       if count == 0
@@ -338,9 +325,7 @@ module QuestionHelper
             if e.length != 2
               g = g + 1
             else
-              if e[0].gsub(/^||/,"").to_s.strip.empty? || e[1].gsub(/^||/,"").to_s.strip.empty?
-                g = g + 1
-              end
+              g = g + 1 if e[0].gsub(/^||/, "").to_s.strip.empty? || e[1].gsub(/^||/, "").to_s.strip.empty?
             end
           end
 
@@ -379,9 +364,7 @@ module QuestionHelper
     elsif(count_e == 0 && count_f != 0) #当只有;;分隔符 排序题
       count = 0
       tmp.split(/\;\;/).to_a.each do |e|
-        if e.to_s.strip.size == 0
-          count = count + 1
-        end
+        count = count + 1 if e.to_s.strip.size == 0
       end
       if count != 0 #当排序题选项为空时
         que_tpye = -1 #未知题型
@@ -454,9 +437,7 @@ module QuestionHelper
     end
     count = 0
     types.each  do |e|
-      if(e == -1 || e > 8)
-        count = count + 1
-      end
+      count = count + 1 if (e == -1 || e > 8)
     end
 
     if count == 0
@@ -480,9 +461,7 @@ module QuestionHelper
     tmp.each do |e|
       g = 0 #统计一个选项中的答案个数，即@@个数
       e.gsub(/^\|\|/,"").split("||").each do |x|
-        if x.to_s.lstrip.match(/^@@/)
-          g = g + 1
-        end
+        g = g + 1 if x.to_s.lstrip.match(/^@@/)
         #p "x = " + x if x.to_s.lstrip.match(/^@@/)
       end
       result << g
@@ -527,9 +506,7 @@ module QuestionHelper
       branch_question_types = type
       options = que.scan(/\[\[[^\[\[]*\]\]/)[0].to_s.scan(/(?<=\[\[).*(?=\]\])/).to_a[0].to_s.gsub(/\|\|/,";||;")
       options.split(";||;").each do |e|
-        if e.to_s.match(/^@@.*/)
-          answer = e.to_s.scan(/[^\@\@].*/)[0].to_s
-        end
+        answer = e.to_s.scan(/[^\@\@].*/)[0].to_s if e.to_s.match(/^@@.*/)
       end
       options = options.gsub(/@@/,"").gsub(/^;\|\|;/,"").gsub(/;\|\|;$/,"")
       content = que.gsub(/\[\[[^\[\[]*\]\]/,"[[text]]")
@@ -560,9 +537,7 @@ module QuestionHelper
       result.each do |e|
         e = e.scan(/(?<=\[\[).*(?=\]\])/)[0].to_s.gsub(/\|\|/,";||;")
         e.split(";||;").to_a.each do |x|
-          if x.lstrip.match(/^@@.+/)
-            all_answers << x.gsub(/^@@/,"").to_s
-          end
+          all_answers << x.gsub(/^@@/, "").to_s if x.lstrip.match(/^@@.+/)
         end
         all_options <<  e.gsub(/@@/,"")
       end
@@ -621,9 +596,7 @@ module QuestionHelper
       que.scan(/\[\[[^\[\[]*\]\]/).to_a.each  do  |e|
         e = e.scan(/(?<=\[\[).*(?=\]\])/).to_a[0].to_s
         p e
-        if c > 0
-          options = options + ";||;"
-        end
+        options = options + ";||;" if c > 0
         options = options + e
         c = c +1
       end
@@ -637,9 +610,7 @@ module QuestionHelper
       que.scan(/\(\([^\(\(]*\)\)/).to_a.each  do  |e|
         e = e.scan(/(?<=\(\().*(?=\)\))/).to_a[0].to_s
         p e
-        if c > 0
-          options = options + ";||;"
-        end
+        options = options + ";||;" if c > 0
         options = options + e
         c = c +1
       end
@@ -718,9 +689,7 @@ module QuestionHelper
         tmp = ""
         c = 0
         branch_ques.each do |e|
-          if c > 0
-            tmp = tmp + ","
-          end
+          tmp = tmp + "," if c > 0
           tmp = tmp + e.to_json
           c = c + 1
         end
@@ -730,16 +699,16 @@ module QuestionHelper
         one_json_question << que
 
       end
+
+      question_total = Question.count("round_id=#{round.id}")
       str = ""
       str = str + "{\"course_id\" : \"#{course_id}\",\n  \"chapter_id\" : \"#{chapter_id}\",\n
-      \"round_id\" : \"#{round.id}\",\n \"round_time\" : \"#{round.round_time}\",\n
+      \"round_id\" : \"#{round.id}\",\n \"round_time\" : \"#{round.round_time}\",\n \"question_total\":\"#{question_total}\",
       \"round_score\" : \"#{round.max_score}\",  \"percent_time_correct\" : \"#{round.time_ratio}\",\n
       \"blood\" : \"#{round.blood}\",\"questions\" :["
       tag = 0
       one_json_question.each do |e|
-        if tag > 0
-          str = str + "\n,\n"
-        end
+        str = str + "\n,\n" if tag > 0
         str = str + e
         tag = tag + 1
       end
@@ -748,17 +717,11 @@ module QuestionHelper
         f.write(str)
       end
       course_dir = "#{Rails.root}/public/qixueguan/Course_#{course.id}"
-      if !File.directory? course_dir
-        Dir.mkdir course_dir
-      end
+      Dir.mkdir course_dir if !File.directory? course_dir
       chapter_dir = course_dir + "/Chapter_#{chapter_id}"
-      if !File.directory? chapter_dir
-        Dir.mkdir chapter_dir
-      end
+      Dir.mkdir chapter_dir if !File.directory? chapter_dir
       round_dir = chapter_dir + "/Round_#{round.id}"
-      if !File.directory? round_dir
-        Dir.mkdir round_dir
-      end
+      Dir.mkdir round_dir if !File.directory? round_dir
       p round_dir
       FileUtils.mv "#{path}/questions.js", round_dir
 
@@ -768,24 +731,14 @@ module QuestionHelper
       if Dir.exist? resource_dir
         files = []
         Dir.entries(resource_dir).each do |sub|
-          if sub != '.' && sub != '..'
-            #if File.directory?("#{path}/#{sub}")
-              #resource_dirs << sub.to_s
-              #get_file_list("#{path}/#{sub}")
-            #else
-            if File.file?("#{resource_dir}/#{sub}")
-              files << sub
-            end
-          end
+          files << sub if File.file?("#{resource_dir}/#{sub}") if sub != '.' && sub != '..'
         end
         p files
         files.each do |file|
           FileUtils.mv "#{resource_dir}/#{file}", round_dir
         end
       end
-      if File.exist? "#{chapter_dir}/Round_#{round.id}.zip"
-        File.delete "#{chapter_dir}/Round_#{round.id}.zip"
-      end
+      File.delete "#{chapter_dir}/Round_#{round.id}.zip" if File.exist? "#{chapter_dir}/Round_#{round.id}.zip"
       Archive::Zip.archive("#{chapter_dir}/Round_#{round.id}.zip", round_dir)
       p "====================================="
     end
