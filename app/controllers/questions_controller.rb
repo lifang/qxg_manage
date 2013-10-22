@@ -17,20 +17,20 @@ class QuestionsController < ApplicationController
    redirect_to round_questions_path(@round)
   end
 
-  #导入一个关卡的题库
+  #导入多个关卡的题库
   def uploadfile
     course_id = params[:course_id]
     chapter_id = params[:chapter_id]
-    round_id = params[:round_id]
     user_id = User.find_all_by_email(session[:email])[0].id
     zip_file = params[:zip]
     @error_infos = [] #错误信息
     base_url = "#{Rails.root}/public/qixueguan/tmp"
-    p "course_id#{course_id},chapter_id#{chapter_id},round_id#{round_id}"
-
+    p "course_id#{course_id},chapter_id#{chapter_id}"
+    path = ""
     if !zip_file.nil?
       zip_dir = rename_zip
       p zip_dir
+      path = base_url + "/user_#{user_id}/"+ zip_dir
       if upload(base_url, user_id, zip_dir, zip_file) == false
         @error_infos << "上传失败"
       else
@@ -45,22 +45,21 @@ class QuestionsController < ApplicationController
           #获取excel文件数组和资源目录数组
           files_and_dirs = get_file_and_dir path
           excels = files_and_dirs[:excels]
-          res_dir = files_and_dirs[:resource_dirs]
-          #验证资源目录和excel
-          number = "one" #验证的控制参数：单个关卡导入参数为“one”，多个关卡导入参数为“more”
-          result = validate_file_and_dir files_and_dirs,number
-          if result.length != 0
-            result.each do  |e|
-              @error_infos << e.to_s
-            end
+          if excels.length > 1
+            @error_infos << "只能导入一个关卡的题目"
+            FileUtils.remove_dir path
           else
+            res_dirs = files_and_dirs[:resource_dirs]
+
             #获取excel中题目的错误信息
             read_excel_result  = read_excel path, excels
-            p "read_excel_result#{read_excel_result}"
+
+            #p "read_excel_result#{read_excel_result}"
             #p read_excel_result[:all_round_questions]
+            #p read_excel_result[:error_infos]
             if read_excel_result[:error_infos].length != 0
               read_excel_result[:error_infos].each do |e|
-                p e
+                @error_infos << e
               end
             end
           end
@@ -69,12 +68,13 @@ class QuestionsController < ApplicationController
     else
       @error_infos << "zip压缩包不存在"
     end
-    p @error_infos
+    p "@error_info#{@error_infos}"
     @notice_info = ""
                       #判断错误信息是否为空
     if !@error_infos.nil? && @error_infos.length != 0
       @notice_info = @error_infos
     else #转移文件&插入数据&写入XML文件
+      import_data read_excel_result[:all_round_questions], course_id, chapter_id, path
       @notice_info =  ["导入完成！"]
     end
   end

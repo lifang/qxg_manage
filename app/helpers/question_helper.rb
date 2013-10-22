@@ -1,4 +1,6 @@
 #encoding: utf-8
+require 'rake/file_utils'
+require 'archive/zip'
 module QuestionHelper
   #以时间重名名压缩包
   def rename_zip
@@ -57,7 +59,7 @@ module QuestionHelper
           resource_dirs << sub.to_s
           #get_file_list("#{path}/#{sub}")
         else
-          excel_files << sub.to_s
+          excel_files << sub.to_s if sub.to_s.split(".")[1]== "xls"
         end
       end
     end
@@ -166,7 +168,7 @@ module QuestionHelper
 
       #判断题型,题目信息错误验证
       result = distinguish_question_types excel,que,line
-      p "result#{result}"
+      #p "result#{result}"
       error_info = result[:error_info]
       type = result[:que_tpye]
       error_infos << error_info if !error_info.empty?
@@ -177,7 +179,7 @@ module QuestionHelper
       end
     end
     #p "error_infos#{error_infos}"
-    return_info = {:round => round, :round_score => round_score, :round_time => round_time, :time_correct_percent => time_correct_percent, :blood => blood, :error_infos => error_infos, :questions => questions}
+    return_info = {:round => round, :round_score => round_score, :round_time => round_time, :time_correct_percent => time_correct_percent, :blood => blood, :excel => excel, :error_infos => error_infos, :questions => questions}
   end
 
   #判断题目中的双括号（包括(())、[[]]、{{}}）是否成对、及是否存在包含关系 未完成
@@ -650,8 +652,9 @@ module QuestionHelper
   end
 
   #导入数据
-  def import_data all_round_questions, course_id, chapter_id
+  def import_data all_round_questions, course_id, chapter_id, path
     all_round_questions.each do |e|
+      excel = e[:excel].to_s
       json_file = ""
       round_name = e[:round].to_s.strip
       round_score = e[:round_score].to_i
@@ -665,32 +668,42 @@ module QuestionHelper
       if round
         if !round_name.strip.empty? && round_score != 0 && round_time != 0 && time_correct_percent != 0 && blood != 0
 
-          course.update_attributes(:max_score => round_score, :time_ratio => time_correct_percent, :round_time => round_time, :blood => blood )
-          round.update_attributes(:max_score => round_score, :time_ratio => time_correct_percent, :round_time => round_time, :blood => blood )
+          course.update_attributes(:max_score => round_score, :time_ratio => time_correct_percent,
+                                   :round_time => round_time, :blood => blood )
+          round.update_attributes(:max_score => round_score, :time_ratio => time_correct_percent,
+                                  :round_time => round_time, :blood => blood )
 
         else
-          round = Round.create(:name => round_name, :max_score => course.max_score, :time_ratio => course.time_ratio, :round_time => course.round_time, :blood => course.blood , :chapter_id => chapter_id, :course_id => course.id)
+          round = Round.create(:name => round_name, :max_score => course.max_score,
+                               :time_ratio => course.time_ratio, :round_time => course.round_time,
+                               :blood => course.blood , :chapter_id => chapter_id, :course_id => course.id)
         end
       else
         if !round_name.strip.empty? && round_score != 0 && round_time != 0 && time_correct_percent != 0 && blood != 0
-          round = Round.create(:name => round_name, :max_score => round_score, :time_ratio => time_correct_percent, :round_time => round_time, :blood => blood )
+          round = Round.create(:name => round_name, :max_score => round_score,
+                               :time_ratio => time_correct_percent, :round_time => round_time,
+                               :blood => blood, :chapter_id => chapter_id, :course_id => course.id)
         else
-
-
-          Round.create(:name => round_name, :max_score => course.max_score, :time_ratio => course.time_ratio, :round_time => course.round_time, :blood => course.blood )
+          round = Round.create(:name => round_name, :max_score => course.max_score,
+                               :time_ratio => course.time_ratio, :round_time => course.round_time,
+                               :blood => course.blood, :chapter_id => chapter_id, :course_id => course.id)
         end
       end
+      p round
       p course
-      p "questions#{questions}"
+      #p "questions#{questions}"
       one_json_question = []
       questions.each do |x|
-        p x
-        result = split_question x[:que].to_s, x[:type]
-        p "result#{result}"
-        knowledge_card = KnowledgeCard.create(:name => x[:card_name].to_s, :types => x[:card_types], :description => x[:card_description].to_s, :course_id => course.id)
+        #p x
+        result = split_question x[:que], x[:type]
+        p " "
+        p "result:    #{result}"
+        p " "
+        #p "card_types#{x[:card_types]}"
+        knowledge_card = KnowledgeCard.create(:name => x[:card_name].to_s, :types => x[:card_types].to_s, :description => x[:card_description].to_s, :course_id => course.id)
 
         question = Question.create(:knowledge_card_id => knowledge_card.id, :content => result[:content], :types => result[:question_types], :round_id => round.id)
-        p question
+        #p question
         branch_questions =[]
         result[:branch_questions].each do |i|
           branch_questions << BranchQuestion.create(:question_id => question.id, :branch_content => i[:branch_content], :types => i[:branch_question_types], :options => i[:options], :answer => i[:answer] )
@@ -698,14 +711,84 @@ module QuestionHelper
 
         branch_ques = []
         branch_questions.each do |y|
-          branch_ques <<  {:branch_question_id => y.id, :branch_content=> y.branch_content, :branch_question_types => y.types,:options => y.options,:answer => y.answer}.to_json
+          branch_ques <<  {:branch_question_id => "#{y.id}", :branch_content=> y.branch_content, :branch_question_types => "#{y.types}",:options => y.options,:answer => y.answer}
         end
-        p "#{branch_ques}"
-        one_json_question << {}
+        p "branch_ques#{branch_ques}"
+
+        tmp = ""
+        c = 0
+        branch_ques.each do |e|
+          if c > 0
+            tmp = tmp + ","
+          end
+          tmp = tmp + e.to_json
+          c = c + 1
+        end
+        p "content#{question.content}"
+        que = "{\"question_id\":\"#{question.id.to_s}\",\"content\":\"#{question.content.to_s}\",\"question_types\":\"#{question.types}\",\"branch_questions\": [#{tmp.gsub(/\"/,"\"").to_s}],\"card_id\":\"#{knowledge_card.id}\",\"card_name\": \"#{knowledge_card.name}\", \"description\": \"#{knowledge_card.description}\",\"card_types\" : \"#{knowledge_card.types}\"}"
+
+        one_json_question << que
+
       end
+      str = ""
+      str = str + "{\"course_id\" : \"#{course_id}\",\n  \"chapter_id\" : \"#{chapter_id}\",\n
+      \"round_id\" : \"#{round.id}\",\n \"round_time\" : \"#{round.round_time}\",\n
+      \"round_score\" : \"#{round.max_score}\",  \"percent_time_correct\" : \"#{round.time_ratio}\",\n
+      \"blood\" : \"#{round.blood}\",\"questions\" :["
+      tag = 0
+      one_json_question.each do |e|
+        if tag > 0
+          str = str + "\n,\n"
+        end
+        str = str + e
+        tag = tag + 1
+      end
+      str = str + "]}"
+      File.open("#{path}/questions.js", 'wb') do |f|
+        f.write(str)
+      end
+      course_dir = "#{Rails.root}/public/qixueguan/Course_#{course.id}"
+      if !File.directory? course_dir
+        Dir.mkdir course_dir
+      end
+      chapter_dir = course_dir + "/Chapter_#{chapter_id}"
+      if !File.directory? chapter_dir
+        Dir.mkdir chapter_dir
+      end
+      round_dir = chapter_dir + "/Round_#{round.id}"
+      if !File.directory? round_dir
+        Dir.mkdir round_dir
+      end
+      p round_dir
+      FileUtils.mv "#{path}/questions.js", round_dir
+
+      resource_dir = "#{path}/#{excel.split(".")[0]}"
+      p resource_dir
+      p Dir.exist? resource_dir
+      if Dir.exist? resource_dir
+        files = []
+        Dir.entries(resource_dir).each do |sub|
+          if sub != '.' && sub != '..'
+            #if File.directory?("#{path}/#{sub}")
+              #resource_dirs << sub.to_s
+              #get_file_list("#{path}/#{sub}")
+            #else
+            if File.file?("#{resource_dir}/#{sub}")
+              files << sub
+            end
+          end
+        end
+        p files
+        files.each do |file|
+          FileUtils.mv "#{resource_dir}/#{file}", round_dir
+        end
+      end
+      if File.exist? "#{chapter_dir}/Round_#{round.id}.zip"
+        File.delete "#{chapter_dir}/Round_#{round.id}.zip"
+      end
+      Archive::Zip.archive("#{chapter_dir}/Round_#{round.id}.zip", round_dir)
       p "====================================="
-
     end
+    FileUtils.remove_dir("#{path}")
   end
-
 end
