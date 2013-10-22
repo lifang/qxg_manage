@@ -76,16 +76,11 @@ class Api::UserManagesController < ActionController::Base
     render :json => achieve_points_arr
   end
 
-  #  def everyday_tasks    #每日任务
-  #    uid = params[:uid].to_i
-  #    cid = params[:cid].to_i
-  #    et = EverydayTask.find_by_user_id_and_course_id(uid, cid)
-  #    if et.nil?
-  #      render :json => "error"
-  #    else
-  #      render :json => et.get_login_day
-  #    end
-  #  end
+    def everyday_tasks    #每日任务选题
+     #uid, course_id
+     wrong_questions = UserMistakeQuestion.joins(:question).where(:user_id => params[:uid], :course_id => params[:course_id]).select("questions.*")
+     render :json =>{:questions => wrong_questions}
+    end
 
   def course_to_chapter
     #参数uid， cid
