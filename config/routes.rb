@@ -34,7 +34,7 @@ QxgManage::Application.routes.draw do
     end
     resources :questions do
       collection do
-        post :search
+        post :search, :uploadfile
       end
       resources :branch_questions
     end
