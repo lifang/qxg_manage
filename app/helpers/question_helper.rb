@@ -694,7 +694,7 @@ module QuestionHelper
           c = c + 1
         end
         p "content#{question.content}"
-        que = "{\"question_id\":\"#{question.id.to_s}\",\"content\":\"#{question.content.to_s}\",\"question_types\":\"#{question.types}\",\"branch_questions\": [#{tmp.gsub(/\"/,"\"").to_s}],\"card_id\":\"#{knowledge_card.id}\",\"card_name\": \"#{knowledge_card.name}\", \"description\": \"#{knowledge_card.description}\",\"card_types\" : \"#{knowledge_card.types}\"}"
+        que = "{\"question_id\":#{question.id},\"content\":\"#{question.content}\",\"question_types\":\"#{question.types}\",\"branch_questions\": [#{tmp.gsub(/\"/,"\"").to_s}],\"card_id\":\"#{knowledge_card.id}\",\"card_name\": \"#{knowledge_card.name}\", \"description\": \"#{knowledge_card.description}\",\"card_types\" : #{knowledge_card.types}}"
 
         one_json_question << que
 
@@ -702,8 +702,8 @@ module QuestionHelper
 
       question_total = Question.count("round_id=#{round.id}")
       str = ""
-      str = str + "{\"course_id\" : \"#{course_id}\",\n  \"chapter_id\" : \"#{chapter_id}\",\n
-      \"round_id\" : \"#{round.id}\",\n \"round_time\" : \"#{round.round_time}\",\n \"question_total\":\"#{question_total}\",
+      str = str + "{\"course_id\" : #{course_id},\n  \"chapter_id\" : #{chapter_id},\n
+      \"round_id\" : #{round.id},\n \"round_time\" : \"#{round.round_time}\",\n \"question_total\":\"#{question_total}\",
       \"round_score\" : \"#{round.max_score}\",  \"percent_time_correct\" : \"#{round.time_ratio}\",\n
       \"blood\" : \"#{round.blood}\",\"questions\" :["
       tag = 0

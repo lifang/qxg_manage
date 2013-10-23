@@ -48,7 +48,6 @@ class RoundsController < ApplicationController
     zip_file = params[:zip]
     @error_infos = [] #错误信息
     base_url = "#{Rails.root}/public/qixueguan/tmp"
-    p "course_id#{course_id},chapter_id#{chapter_id}"
     path = ""
     if !zip_file.nil?
       zip_dir = rename_zip
@@ -81,7 +80,6 @@ class RoundsController < ApplicationController
               @error_infos << e
             end
           end
-                                                    #end
         end
       end
     else
