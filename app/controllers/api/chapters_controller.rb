@@ -33,16 +33,16 @@ r.chapter_id = #{chapter_id}  ORDER BY rs.score DESC")
 
     round_range = RoundScore.find_by_sql(["select u.name u_name, u.id uid, u.img img, rs.score score, rs.round_id round_id from round_scores rs inner join rounds r on r.id = rs.round_id
       inner join users u on u.id = rs.user_id where rs.round_id in (?) order by rs.score desc", rounds.map(&:id)]).group_by{|rs| rs.round_id}
-   rs_hash = {}
+    rs_hash = {}
    
-   round_range.each do |round_id, users|
-     temp_users = users[0..2]
-     if temp_users.map(&:uid).include?(uid)
-       rs_hash[round_id] = temp_users
-     else
-       rs_hash[round_id] = temp_users + users.select{|u| u.uid == uid}
-     end
-   end
+    round_range.each do |round_id, users|
+      temp_users = users[0..2]
+      if temp_users.map(&:uid).include?(uid)
+        rs_hash[round_id] = temp_users
+      else
+        rs_hash[round_id] = temp_users + users.select{|u| u.uid == uid}
+      end
+    end
 
     has_score_rounds = rs_hash.keys
     render :json => {:rounds => rounds, :round_range => rs_hash, :round_ids => has_score_rounds}
@@ -139,13 +139,18 @@ r.chapter_id = #{chapter_id}  ORDER BY rs.score DESC")
         round_score = RoundScore.create(:user_id => params[:uid], :chapter_id => params[:chapter_id], :round_id => params[:round],
           :score => params[:score], :star => params[:star], :day => Time.now)
       end
-user_course_relarion = UserCourseRelation.find_by_user_id_and_course_id(params[:uid], params[:course_id])
+      user_course_relarion = UserCourseRelation.find_by_user_id_and_course_id(params[:uid], course.id)
+      user_course_relarion.update_attributes({:gold => user_course_relarion.gold.to_i + params[:gold].to_i,
+          :level => user_course_relarion.level.to_i + params[:level].to_i}) if user_course_relarion
+      render :json => {:msg => "success"}
     end
   end
 
   #保存成就点数
+  #TODO
   def save_achieve
     #参数 uid, cid
+     user_course_relarion = UserCourseRelation.find_by_user_id_and_course_id(params[:uid], params[:cid])
   end
 
   #知识卡片添加标签

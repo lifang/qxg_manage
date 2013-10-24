@@ -53,14 +53,16 @@ class Api::UserManagesController < ActionController::Base
     uid = params[:uid].to_i
     pid = params[:pid].to_i
     pcount = params[:pcount].to_i
-    selected_prop = UserPropRelation.find_by_user_id_and_prop_id(uid, pid)
-    if selected_prop
-      selected_prop.update_attribute("user_prop_num", selected_prop.user_prop_num + pcount)
-    else
-      UserPropRelation.create(:user_id => uid, :prop_id => pid, :user_prop_num => pcount)
+    UserPropRelation.transaction do
+      selected_prop = UserPropRelation.find_by_user_id_and_prop_id(uid, pid)
+      if selected_prop
+        selected_prop.update_attribute("user_prop_num", selected_prop.user_prop_num + pcount)
+      else
+        UserPropRelation.create(:user_id => uid, :prop_id => pid, :user_prop_num => pcount)
+      end
+      sp = UserPropRelation.find_by_user_id_and_prop_id(uid, pid)
+      render :json => sp
     end
-    sp = UserPropRelation.find_by_user_id_and_prop_id(uid, pid)
-    render :json => sp
   end
 
   def achieve_points_ranking  #成就点数排行，根据user_id 和course_id ,查出包括自己跟好友的成就排行
@@ -76,12 +78,82 @@ class Api::UserManagesController < ActionController::Base
     render :json => achieve_points_arr
   end
 
-    def everyday_tasks    #每日任务选题
-     #uid, course_id
-     wrong_questions = UserMistakeQuestion.joins(:question).where(:user_id => params[:uid], :course_id => params[:course_id]).select("questions.*")
-     render :json =>{:questions => wrong_questions}
+  def everyday_tasks    #每日任务选题
+    #uid, course_id
+    response.header['Access-Control-Allow-Origin'] = '*'
+    response.header['Content-Type'] = 'text'
+    status = 0
+    wrong_questions = Question.includes(:branch_questions).joins(:user_mistake_questions).where(:user_mistake_questions => {:user_id => params[:uid], :course_id => params[:course_id]}).select("questions.*")
+    questions = []
+    if wrong_questions.length < 20
+      round_questions = Question.includes(:branch_questions).joins(:round => :round_scores).where(:round_scores =>{:user_id => params[:uid]}, :rounds => {:course_id => params[:course_id]}).select("questions.*").order("round_scores.updated_at asc")
+      #      if(wrong_questions + round_questions).length < 20
+      #        #questions = wrong_questions
+      #        status = 1 #用户暂无任务，请先完成更多的关卡挑战
+      #      else
+      rs_question = round_questions[0 ..(20 - wrong_questions.length - 1)]
+      questions = wrong_questions + rs_question
+      rs_question.map{|q| q && q.round.round_scores.where(:round_scores => {:user_id => params[:uid]}).update_all(updated_at: Time.now) }
+      #      end
+    else
+      questions = wrong_questions[20]
     end
+    questions_arr = []
+    questions.each{|question|
+      q_hash = {}
+      q_hash[:question_id] = question.id
+      q_hash[:round_id] = question.round_id
+      q_hash[:chapter_id] = question.round.chapter_id
+      q_hash[:course_id] = question.round.course_id
+      q_hash[:content] = question.content
+      q_hash[:question_types] = question.types
+      q_hash[:prefix] = "#{question.round.course_id}/#{question.round.chapter_id}/#{question.round_id}/"
+      q_hash[:branch_questions] = []
+      question.branch_questions.each do |bq|
+        bq_hash = {}
+        bq_hash[:branch_question_id] = bq.id
+        bq_hash[:branch_content] = bq.branch_content
+        bq_hash[:branch_question_types] = bq.types
+        bq_hash[:options] = bq.options
+        bq_hash[:answer] = bq.answer
+        q_hash[:branch_questions] << bq_hash
+      end
+      q_hash[:card_id] = question.knowledge_card.try(:id)
+      q_hash[:card_name] = question.knowledge_card.try(:name)
+      q_hash[:card_description] = question.knowledge_card.try(:description)
+      questions_arr << q_hash
+    }
+    render :json =>{:questions => questions_arr, :status => status, :blood => EverydayTask::BLOOD, :question_count => EverydayTask::QUESTION_COUNT }
+  end
 
+  #每日任务做完后,1，更新登录天数, 更新金币
+  def after_everyday_tasks
+    #uid, course_id, gold
+    uid = params[:uid].to_i
+    cid = params[:course_id].to_i
+    et = EverydayTask.find_by_user_id_and_course_id(uid, cid)
+    login_day = et && et.get_login_day  || 0  #每日任务登录天数
+    login_day = login_day + 1
+    user_course_relarion = UserCourseRelation.find_by_user_id_and_course_id(uid, cid)
+    user_course_relarion.update_attributes(:gold, user_course_relarion.gold.to_i + params[:gold].to_i) if user_course_relarion
+    render :json => {:staus => 0}
+  end
+
+  #每日任务，删除错题库中答对的题目
+  def remove_wrong_questions
+    #uid, course_id, question_id, flag(0 错误 1 正确)
+    flag = params[:flag].to_i
+    response.header['Access-Control-Allow-Origin'] = '*'
+    response.header['Content-Type'] = 'text'
+    umq = UserMistakeQuestion.find_by_uid_and_question_id(params[:uid], params[:question_id])
+    if flag == 0 && umq.blank?
+      UserMistakeQuestion.create({:user_id => params[:uid], :question_id => params[:question_id], :course_id => params[:course_id], :wrong_time => Time.now()})
+    elsif flag==1 && umq.present?
+      umq.destroy
+    end
+    render :text => ""
+  end
+  
   def course_to_chapter
     #参数uid， cid
     uid = params[:uid].to_i
@@ -97,7 +169,7 @@ left join users u on u.id = upr.user_id and upr.user_prop_num >=1 where  p.cours
     props.map{|prop|
       prop[:logo] = prop.img.thumb.url
     }
-#    props = props.select{|p| p.user_id == uid || p.user_id == nil}
+    #    props = props.select{|p| p.user_id == uid || p.user_id == nil}
     chapters = (Course.find_by_id(cid)).chapters.verified.select("id,name,round_count")
 
     chapter_num = chapters.count
