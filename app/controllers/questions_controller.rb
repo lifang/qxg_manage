@@ -21,6 +21,7 @@ class QuestionsController < ApplicationController
   def uploadfile
     course_id = params[:course_id]
     chapter_id = params[:chapter_id]
+    round_id = params[:round_id]
     user_id = User.find_all_by_email(session[:email])[0].id
     zip_file = params[:zip]
     @error_infos = [] #错误信息
@@ -48,19 +49,41 @@ class QuestionsController < ApplicationController
             @error_infos << "只能导入一个关卡的题目"
             FileUtils.remove_dir path
           else
-            res_dirs = files_and_dirs[:resource_dirs]
-
-            #获取excel中题目的错误信息
-            read_excel_result  = read_excel path, excels
-
-            #p "read_excel_result#{read_excel_result}"
-            #p read_excel_result[:all_round_questions]
-            #p read_excel_result[:error_infos]
-            if read_excel_result[:error_infos].length != 0
-              read_excel_result[:error_infos].each do |e|
-                @error_infos << e
-              end
+            begin
+              oo = Roo::Excel.new("#{path}/#{excels[0]}")
+              oo.default_sheet = oo.sheets.first
+                #p oo
+            rescue
+              @error_infos << "#{excels[0]}不是Excel文件"
+              FileUtils.remove_dir path
+              #      excel_files.delete(excel)
+              #      read_excel path,excel_files
             end
+            excel_round = Round.find_by_name_and_chapter_id_and_course_id(oo.cell(2,'A').to_s.strip,chapter_id,course_id)
+
+            if !round.nil?
+              if round.id != round_id
+                @error_infos << "该题包中excel文件不属于该关卡，请导入正确的题包"
+                FileUtils.remove_dir path
+              else
+                res_dirs = files_and_dirs[:resource_dirs]
+
+                #获取excel中题目的错误信息
+                read_excel_result  = read_excel path, excels
+
+                #p "read_excel_result#{read_excel_result}"
+                #p read_excel_result[:all_round_questions]
+                #p read_excel_result[:error_infos]
+                if read_excel_result[:error_infos].length != 0
+                  read_excel_result[:error_infos].each do |e|
+                    @error_infos << e
+                  end
+                end
+              end
+            else
+              @error_infos << "没找到对应的关卡"
+            end
+
           end
         end
       end

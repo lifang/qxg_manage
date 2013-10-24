@@ -1,6 +1,2 @@
-<% if @notice_info.class == Array %>
 $("#error_bar").html('<%= j (render :partial => 'error_infos') %>');
-<% else %>
-    alert('<%= @notice_info %>');
-<% end %>
 $("#upload_bar").html('<%= j (render :partial => 'uploadzip') %>');

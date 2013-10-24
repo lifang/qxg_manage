@@ -9,16 +9,27 @@ module QuestionHelper
   end
 
   #上传文件
-  def upload base_url, user_id, zip_dir, zipfile
-    path = "#{base_url}/user_#{user_id}"
-    Dir.mkdir path if !File.directory? path
+  def upload path, zip_dir, zipfile
+    #创建目录
+    url = "/"
+    count = 0
+    path.split("/").each  do |e|
+      if e.size > 0
+        url = url + "/" if count > 0
+        url = url + "#{e}"
+        if !Dir.exist? url
+          Dir.mkdir url
+        end
+        count = count +1
+      end
+    end
 
     #重命名zip压缩包为“年-月-日_时-分-秒”
     zipfile.original_filename = zip_dir + "." +  zipfile.original_filename.split(".").to_a[1]
 
     #上传文件
     begin
-      if File.open(Rails.root.join("public", "qixueguan/tmp/user_#{user_id}", zipfile.original_filename), "wb") do |file|
+      if File.open("#{path}/#{zipfile.original_filename}", "wb") do |file|
         file.write(zipfile.read)
       end
         return true
@@ -29,37 +40,40 @@ module QuestionHelper
   end
 
   #解压zip题库压缩包
-  def unzip zip_url, zip_dir
-    path = "#{zip_url}/#{zip_dir}"
-    Dir.mkdir path if !File.directory? "#{zip_url}/#{zip_dir}"
+  def unzip zip_url
+    Dir.mkdir zip_url if !File.directory? zip_url
     begin
-      Archive::Zip.extract "#{path}.zip","#{path}"
-      File.delete "#{path}.zip"
+      Archive::Zip.extract "#{zip_url}.zip","#{zip_url}"
+      File.delete "#{zip_url}.zip"
       return true
     rescue
-      File.delete "#{path}.zip"
-      Dir.delete "#{path}"
+      File.delete "#{zip_url}.zip"
+      Dir.delete "#{zip_url}"
       return false
     end
   end
 
   #获取excel文件和资源目录
-  def get_file_and_dir(path)
-    excel_files =  []
-    resource_dirs = []
+  def get_excels_and_dirs(path)
+    excels =  []
+    dirs = []
 
     #获取excel文件和资源目录
     Dir.entries(path).each do |sub|
       if sub != '.' && sub != '..'
         if File.directory?("#{path}/#{sub}")
-          resource_dirs << sub.to_s
-          #get_file_list("#{path}/#{sub}")
+          dirs << sub.to_s
         else
-          excel_files << sub.to_s if sub.to_s.split(".")[1]== "xls"
+          excels << sub.to_s if sub.to_s.split(".")[1]== "xls"
         end
       end
     end
-    all_files = {:excels => excel_files.sort, :resource_dirs => resource_dirs}
+    if excels.length == 0
+      excels = []
+    else
+      excels.sort!
+    end
+    all_files = {:excels => excels, :dirs => dirs}
   end
 
   ##验证excel文件和资源目录
@@ -694,7 +708,7 @@ module QuestionHelper
           c = c + 1
         end
         p "content#{question.content}"
-        que = "{\"question_id\":#{question.id},\"content\":\"#{question.content}\",\"question_types\":\"#{question.types}\",\"branch_questions\": [#{tmp.gsub(/\"/,"\"").to_s}],\"card_id\":\"#{knowledge_card.id}\",\"card_name\": \"#{knowledge_card.name}\", \"description\": \"#{knowledge_card.description}\",\"card_types\" : #{knowledge_card.types}}"
+        que = "{\"question_id\":#{question.id},\"content\":\"#{question.content}\",\"question_types\":#{question.types},\"branch_questions\": [#{tmp.gsub(/\"/,"\"").to_s}],\"card_id\":\"#{knowledge_card.id}\",\"card_name\": \"#{knowledge_card.name}\", \"description\": \"#{knowledge_card.description}\",\"card_types\" : #{knowledge_card.types}}"
 
         one_json_question << que
 
@@ -703,9 +717,9 @@ module QuestionHelper
       question_total = Question.count("round_id=#{round.id}")
       str = ""
       str = str + "{\"course_id\" : #{course_id},\n  \"chapter_id\" : #{chapter_id},\n
-      \"round_id\" : #{round.id},\n \"round_time\" : \"#{round.round_time}\",\n \"question_total\":\"#{question_total}\",
-      \"round_score\" : \"#{round.max_score}\",  \"percent_time_correct\" : \"#{round.time_ratio}\",\n
-      \"blood\" : \"#{round.blood}\",\"questions\" :["
+      \"round_id\" : #{round.id},\n \"round_time\" : \"#{round.round_time}\",\n \"question_total\":#{question_total},
+      \"round_score\" : #{round.max_score},  \"percent_time_correct\" : #{round.time_ratio},\n
+      \"blood\" : #{round.blood},\"questions\" :["
       tag = 0
       one_json_question.each do |e|
         str = str + "\n,\n" if tag > 0

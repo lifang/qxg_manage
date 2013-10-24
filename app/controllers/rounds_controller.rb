@@ -4,7 +4,6 @@ class RoundsController < ApplicationController
   before_filter :sign?, :get_course_chapter
   
   def index
-    @notice_info = ["sssss","ssss","dddd"]
     @rounds = Round.where({:course_id => params[:course_id], :chapter_id => params[:chapter_id]})
   end
 
@@ -40,60 +39,54 @@ class RoundsController < ApplicationController
     end
   end
 
-  #导入多个关卡的题库
+  #导入多个关卡
   def uploadfile
-    course_id = params[:course_id]
-    chapter_id = params[:chapter_id]
-    user_id = User.find_all_by_email(session[:email])[0].id
-    zip_file = params[:zip]
-    @error_infos = [] #错误信息
-    base_url = "#{Rails.root}/public/qixueguan/tmp"
-    path = ""
-    if !zip_file.nil?
-      zip_dir = rename_zip
-      p zip_dir
-      path = base_url + "/user_#{user_id}/"+ zip_dir
-      if upload(base_url, user_id, zip_dir, zip_file) == false
-        @error_infos << "上传失败"
+      course_id = params[:course_id]
+      chapter_id = params[:chapter_id]
+      user = User.find_by_email(session[:email])
+      zip_file = params[:file]
+      @error_infos =[]
+
+      if zip_file.nil?
+        @error_infos << "zip压缩包不存在"
       else
-        #解压压缩包
-        zip_url = "#{base_url}/user_#{user_id}"
-        if unzip(zip_url, zip_dir) == false         #解压失败，返回错误提示信息
-          @error_infos << "zip压缩包不正确，请上传正确的压缩包"
-        else                                        #解压成功，则继续验证
-                                                    #excel文件与资源的根目录
-          path = "#{zip_url}/#{zip_dir}"
-
-          #获取excel文件数组和资源目录数组
-          files_and_dirs = get_file_and_dir path
-          excels = files_and_dirs[:excels]
-          res_dirs = files_and_dirs[:resource_dirs]
-
-          #获取excel中题目的错误信息
-          read_excel_result  = read_excel path, excels
-
-          #p "read_excel_result#{read_excel_result}"
-          #p read_excel_result[:all_round_questions]
-          #p read_excel_result[:error_infos]
-          if read_excel_result[:error_infos].length != 0
-            read_excel_result[:error_infos].each do |e|
-              @error_infos << e
-            end
+        user_tmp_path = "#{Rails.root}/public/qixueguan/tmp/user_#{user.id}"
+        zip_dir = rename_zip
+        if upload(user_tmp_path,zip_dir,zip_file)== false  #上传文件
+            @error_infos << "上传失败"
+        else
+          zip_url = "#{user_tmp_path}/#{zip_dir}"
+          if unzip(zip_url) == false         #解压zip压缩包
+              @error_infos << "zip压缩包不正确，请上传正确的压缩包"
+          else
+              #获取excel文件数组和资源目录数组
+              excels_and_dirs = get_excels_and_dirs zip_url
+              excels = excels_and_dirs[:excels]
+              resource_dirs = excels_and_dirs[:dirs]
+              if excels.length <= 0
+                  @error_infos << "没有找到excel题目文件"
+              else
+                  #获取excel中题目的错误信息
+                  read_excel_result  = read_excel zip_url, excels
+                  #p "read_excel_result#{read_excel_result}"
+                  #p read_excel_result[:all_round_questions]
+                  #p read_excel_result[:error_infos]
+                  if read_excel_result[:error_infos].length != 0
+                    read_excel_result[:error_infos].each do |e|
+                      @error_infos << e
+                    end
+                  end
+              end
           end
         end
       end
-    else
-      @error_infos << "zip压缩包不存在"
-    end
-    p "@error_info#{@error_infos}"
-    @notice_info = ""
-                      #判断错误信息是否为空
-    if !@error_infos.nil? && @error_infos.length != 0
-      @notice_info = @error_infos
-    else #转移文件&插入数据&写入XML文件
-      import_data read_excel_result[:all_round_questions], course_id, chapter_id, path
-      @notice_info =  ["导入完成！"]
-    end
+
+      if @error_infos.length != 0 #判断错误信息是否为空
+        @notice_info = @error_infos
+      else #转移文件&插入数据&写入XML文件
+        import_data read_excel_result[:all_round_questions], course_id, chapter_id, zip_url
+        @notice_info = "导入完成！"
+      end
   end
 
   private
