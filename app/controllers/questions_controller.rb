@@ -28,19 +28,18 @@ class QuestionsController < ApplicationController
     p "course_id#{course_id},chapter_id#{chapter_id}"
     path = ""
     if !zip_file.nil?
-      zip_dir = rename_zip
-      p zip_dir
-      path = base_url + "/user_#{user_id}/"+ zip_dir
-      if upload(base_url, user_id, zip_dir, zip_file) == false
+      zip_base_name = rename_zip
+      path = base_url + "/user_#{user_id}/"+ zip_base_name
+      if upload(base_url, user_id, zip_base_name, zip_file) == false
         @error_infos << "上传失败"
       else
         #解压压缩包
         zip_url = "#{base_url}/user_#{user_id}"
-        if unzip(zip_url, zip_dir) == false         #解压失败，返回错误提示信息
+        if unzip(zip_url, zip_base_name) == false         #解压失败，返回错误提示信息
           @error_infos << "zip压缩包不正确，请上传正确的压缩包"
         else                                        #解压成功，则继续验证
                                                     #excel文件与资源的根目录
-          path = "#{zip_url}/#{zip_dir}"
+          path = "#{zip_url}/#{zip_base_name}"
 
           #获取excel文件数组和资源目录数组
           files_and_dirs = get_file_and_dir path
