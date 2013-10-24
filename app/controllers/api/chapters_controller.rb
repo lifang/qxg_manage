@@ -33,18 +33,19 @@ r.chapter_id = #{chapter_id}  ORDER BY rs.score DESC")
 
     round_range = RoundScore.find_by_sql(["select u.name u_name, u.id uid, u.img img, rs.score score, rs.round_id round_id from round_scores rs inner join rounds r on r.id = rs.round_id
       inner join users u on u.id = rs.user_id where rs.round_id in (?) order by rs.score desc", rounds.map(&:id)]).group_by{|rs| rs.round_id}
-   rs_hash = {}
-   round_range.each do |round_id, users|
-     temp_users = users[0..2]
-     if temp_users.map(&:uid).include?(uid)
-       rs_hash[round_id] = temp_users
-     else
-       rs_hash[round_id] = temp_users + users.select{|u| u.uid == uid}
-     end
-   end
+    rs_hash = {}
+   
+    round_range.each do |round_id, users|
+      temp_users = users[0..2]
+      if temp_users.map(&:uid).include?(uid)
+        rs_hash[round_id] = temp_users
+      else
+        rs_hash[round_id] = temp_users + users.select{|u| u.uid == uid}
+      end
+    end
 
-    
-    render :json => {:rounds => rounds, :round_range => rs_hash}
+    has_score_rounds = rs_hash.keys
+    render :json => {:rounds => rounds, :round_range => rs_hash, :round_ids => has_score_rounds}
   end
 
   #关卡排名
@@ -84,14 +85,13 @@ r.chapter_id = #{chapter_id}  ORDER BY rs.score DESC")
     response.header['Content-Type'] = 'text'
     user_course_relation = UserCourseRelation.find_by_user_id_and_course_id(params[:uid], params[:course_id])
     if user_course_relation && ((user_course_relation.cardbag_count.to_i - user_course_relation.cardbag_use_count.to_i) > 0)
-      user_card_relation = UserCardsRelation.create(:user_id=>params[:uid],:knowledge_card_id => params[:card_id], :course_id => params[:course_id])
+      user_card_relation = UserCardsRelation.find_by_user_id_and_knowledge_card_id(params[:uid], params[:card_id] )
+      user_card_relation_new = UserCardsRelation.create(:user_id=>params[:uid],:knowledge_card_id => params[:card_id], :course_id => params[:course_id]) unless user_card_relation
       ucr = user_course_relation.update_attribute(:cardbag_use_count, user_course_relation.cardbag_use_count + 1) if user_course_relation
-      render :text => user_card_relation && ucr ? "success" : "error"
+      render :text => user_card_relation ? "added" : (user_card_relation_new && ucr ? "success" : "error")
     else
       render :text => "not_enough"
-    end
-    
-    
+    end  
   end
 
   #返回收藏的知识卡片（卡包）
@@ -125,6 +125,7 @@ r.chapter_id = #{chapter_id}  ORDER BY rs.score DESC")
   end
 
   #保存关卡得分、成就、经验、等级信息
+  #TODO
   def change_info
     #uid, round_id, chapter_id, score, star, experience,level,gold #achieve_point(暂时不要)
     #新建记录 => round_scores, 更新记录 => user_course_relations
@@ -138,13 +139,18 @@ r.chapter_id = #{chapter_id}  ORDER BY rs.score DESC")
         round_score = RoundScore.create(:user_id => params[:uid], :chapter_id => params[:chapter_id], :round_id => params[:round],
           :score => params[:score], :star => params[:star], :day => Time.now)
       end
-user_course_relarion = UserCourseRelation.find_by_user_id_and_course_id(params[:uid], params[:course_id])
+      user_course_relarion = UserCourseRelation.find_by_user_id_and_course_id(params[:uid], course.id)
+      user_course_relarion.update_attributes({:gold => user_course_relarion.gold.to_i + params[:gold].to_i,
+          :level => user_course_relarion.level.to_i + params[:level].to_i}) if user_course_relarion
+      render :json => {:msg => "success"}
     end
   end
 
   #保存成就点数
+  #TODO
   def save_achieve
     #参数 uid, cid
+     user_course_relarion = UserCourseRelation.find_by_user_id_and_course_id(params[:uid], params[:cid])
   end
 
   #知识卡片添加标签
@@ -205,7 +211,8 @@ user_course_relarion = UserCourseRelation.find_by_user_id_and_course_id(params[:
     #uid, course_id, question_id,wrong_time
     response.header['Access-Control-Allow-Origin'] = '*'
     response.header['Content-Type'] = 'application/json'
-    umq = UserMistakeQuestion.create({:user_id => params[:uid], :course_id => params[:course_id], :question_id => params[:question_id], :wrong_time => Time.now})
-    render :text => umq ? "success" : "error"
+    umq = UserMistakeQuestion.find_by_user_id_and_question_id(params[:uid], params[:question_id])
+    umq_new = UserMistakeQuestion.create({:user_id => params[:uid], :course_id => params[:course_id], :question_id => params[:question_id], :wrong_time => Time.now}) unless umq
+    render :text => umq ? "added" : (umq_new ? "success" : "error")
   end
 end
