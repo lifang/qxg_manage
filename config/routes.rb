@@ -44,6 +44,8 @@ QxgManage::Application.routes.draw do
   post "/login", :to => "sessions#create"
   get '/logout', :to => "sessions#destroy"
   get '/remove_knowledge_card/:question_id', :to => "questions#remove_knowledge_card", :as => "remove_knowledge_card"
+  post '/md_to_html', :to => "knowledge_cards#md_to_html"
+  post '/upload_kcard/:kcard_id', :to => "knowledge_cards#upload_kcard"
   root :to => 'courses#index'
 
   # See how all your routes lay out with "rake routes"

@@ -1,0 +1,40 @@
+<h1>知识卡片</h1>
+<form action="/upload_kcard/<%= @knowledge_card.try(:id) %>" method="post" data-remote="true" class="upload-kcard">
+  <div class="form_row">
+    <label class="label">上传图片：</label>
+    <input type="file" name="kc_photo" />
+  </div>
+  <div class="form_row">
+    <label class="label">&nbsp;</label>
+    <input type="submit" value="提交"/>
+  </div>
+</form>
+<div class="show_temp_images">
+  <% @images_paths.each do |imp| %>
+    <%= render :partial => "img", :locals => {:img => imp} %>
+  <% end %>
+</div>
+<%= form_for [@course, @knowledge_card], :remote => true do |f|%>
+  <div class="form_row">
+    <label class="label">名称：</label>
+    <%= f.text_field :name %>
+  </div>
+  <div class="form_row">
+    <label class="label">描述：</label>
+    <%= f.text_area :description,:rows => "5" %>
+  </div>
+  <div class="form_row">
+    <label class="label">markdown to html</label>
+    <%= button_to_function "预览", "MdToHtml(this)"%>
+  </div>
+  <div class="form_row card_preview" style="text-align:left">
+    <%= format(@knowledge_card.try(:description)) if @knowledge_card.present? %>
+  </div>
+  <div class="form_row">
+    <label class="label">标签：</label><% if @knowledge_card.system_tag.present?  %>标签：<%= @knowledge_card.system_tag %> <% end %>
+  </div>
+  <div class="form_row"><label class="label">&nbsp;</label>
+    <%= button_tag "提交",:type =>"submit", :class => "green_btn" %>
+    <%= link_to "移除知识卡片", remove_knowledge_card_path(@question.id), :remote => true, :class => "green_btn button", :confirm => "确定移除知识卡片吗？" %>
+  </div>
+<% end %>

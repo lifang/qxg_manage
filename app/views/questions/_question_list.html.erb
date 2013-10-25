@@ -17,7 +17,7 @@
           <td>
             <% if question.knowledge_card.present? %>
               <div class="question_<%= question.id %>">
-                <%= link_to "知识卡片", course_knowledge_card_path(@course, question.knowledge_card)+"?question_id=#{question.id}", :remote => true, :class => "knowledgeCard green_btn"%>
+                <%= link_to "知识卡片", edit_course_knowledge_card_path(@course, question.knowledge_card)+"?question_id=#{question.id}", :remote => true, :class => "knowledgeCard green_btn"%>
               </div>
             <% end %>
 

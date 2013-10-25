@@ -64,3 +64,6 @@ root {
 	float:left;
 	margin-right:5px;
 }
+.second_content form.upload-kcard{
+  float:right
+}

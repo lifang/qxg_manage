@@ -73,3 +73,21 @@ function hide_tab(obj){
     obj.parents(".second_box").hide();
     obj.parents(".second_box").prev().hide();
 }
+function MdToHtml(obj){
+   var mdContent = $.trim($("#knowledge_card_description").val());
+   var previewTag = $(obj).next();
+   if(mdContent!=""){
+     $.ajax({
+         url: "/md_to_html",
+         type: "POST",
+         dataType: "text",
+         data:{content:mdContent},
+         success:function(data){
+             previewTag.html(data)
+         },
+         error:function(data){
+            alert("error")
+         }
+     })
+   }
+}
