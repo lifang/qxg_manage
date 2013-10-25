@@ -20,6 +20,15 @@ $(function(){
 
 });
 
+// The action.
+$('btn_upload').click(function() {
+    alert('click');
+    return false;
+});
+
+// The most simple use.
+$('btn_upload').confirm();
+
 function handleUpload(obj){
     $(obj).parents(".fileBox").find(".fileText_1").val($(obj).val());
 }

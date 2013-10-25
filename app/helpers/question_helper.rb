@@ -26,15 +26,16 @@ module QuestionHelper
 
     #重命名zip压缩包为“年-月-日_时-分-秒”
     zipfile.original_filename = zip_dir + "." +  zipfile.original_filename.split(".").to_a[1]
-
+    file_url = "#{path}/#{zipfile.original_filename}"
     #上传文件
     begin
-      if File.open("#{path}/#{zipfile.original_filename}", "wb") do |file|
+      if File.open(file_url, "wb") do |file|
         file.write(zipfile.read)
       end
         return true
       end
     rescue
+      File.delete file_url
       return false
     end
   end
@@ -48,7 +49,7 @@ module QuestionHelper
       return true
     rescue
       File.delete "#{zip_url}.zip"
-      Dir.delete "#{zip_url}"
+      #Dir.delete "#{zip_url}"
       return false
     end
   end
@@ -76,33 +77,6 @@ module QuestionHelper
     all_files = {:excels => excels, :dirs => dirs}
   end
 
-  ##验证excel文件和资源目录
-  #def validate_file_and_dir files_and_dirs, number
-  #  excels = files_and_dirs[:excels]
-  #  dirs = files_and_dirs[:resource_dirs]
-  #  error_info = [] #
-  #  case number
-  #    when "one"
-  #      if excels.length == 1
-  #        if dirs.length  > 1
-  #          error_info << "只能有一个资源目录"
-  #        elsif dirs.length == 1
-  #            if excels[0].to_s.split(".")[0].to_s != dirs[0].to_s
-  #              error_info << "资源目录与excel不对应"
-  #            else
-  #              error_info = []
-  #            end
-  #        else
-  #          error_info = []
-  #        end
-  #      else
-  #        error_info << "只能有一个excel"
-  #      end
-  #    when "more"
-  #  end
-  #  error_info
-  #end
-
   #读取一个excel中的题目
   def read_excel path, excel_files
     all_error_infos = [] #错误信息的集合
@@ -115,8 +89,6 @@ module QuestionHelper
       end
       #p result #一个excel的结果集
       all_round_questions << result
-      #p all_round_questions
-      #p "all_error_infos#{all_error_infos}"
     end
     if all_error_infos.length != 0
       all_error_infos
@@ -136,12 +108,9 @@ module QuestionHelper
       #p oo
     rescue
       error_infos << "#{excel}不是Excel文件"
-      #      excel_files.delete(excel)
-      #      read_excel path,excel_files
     end
     start_line = 0
     end_line = 0
-    #questions = []
 
     #确定题目的开始行数
     end_line = oo.last_row.to_i
@@ -172,22 +141,25 @@ module QuestionHelper
       card_types = oo.cell(line,'C').to_s
       card_description = oo.cell(line,'D').to_s
 
-      type = -1
-      error_info = ""
+      if brackets_validate(que) == 1
+        error_infos << "文件'#{excel}'第#{line}行：双括号配对不完整、双括号存在嵌套或存在两个以上的连续括号"
+      else
+        type = -1
+        error_info = ""
 
-      #判断题型,题目信息错误验证
-      result = distinguish_question_types excel,que,line
-      #p "result#{result}"
-      error_info = result[:error_info]
-      type = result[:que_tpye]
-      error_infos << error_info if !error_info.empty?
-      #p "error_infos#{error_infos.length}"
+        #判断题型,题目信息错误验证
+        result = distinguish_question_types excel,que,line
+        #p "result#{result}"
+        error_info = result[:error_info]
+        type = result[:que_tpye]
+        error_infos << error_info if !error_info.empty?
+        #p "error_infos#{error_infos.length}"
+      end
       if error_infos.length == 0 && type != -1
         questions << {:que => que, :type => type, :card_name => card_name, :card_types => card_types, :card_description => card_description}
         #split_question que,type 截取题目
       end
     end
-    #p "error_infos#{error_infos}"
     return_info = {:round => round, :round_score => round_score, :round_time => round_time, :time_correct_percent => time_correct_percent, :blood => blood, :excel => excel, :error_infos => error_infos, :questions => questions}
   end
 
@@ -196,48 +168,51 @@ module QuestionHelper
     #按顺序取出题目中所有的双括号及多括号，放入数组
     double_brackets = que.scan(/\[\[|\]\]|\{\{|\}\}|\(\(|\)\)/)
     length  =  double_brackets.length
-    status = []  #值为0和1, 1表示括号有问题, 0表示括号没有问题
-    if que.scan(/\[\[{2,}|\]\]{2,}|\{\{{2,}|\}\}{2,}|\(\({2,}|\)\){2,}/).length != 0
-      status = 1
-    elsif length%2 != 0
-      status = 1
-    elsif length%2 == 0
-      length = double_brackets.length
-      result = []
+    if length > 0
+      status = []  #值为0和1, 1表示括号有问题, 0表示括号没有问题
+      if que.scan(/\[\[{2,}|\]\]{2,}|\{\{{2,}|\}\}{2,}|\(\({2,}|\)\){2,}/).length != 0
+        status = 1
+      elsif length%2 != 0
+        status = 1
+      elsif length%2 == 0
+        length = double_brackets.length
+        result = []
 
-      (0..(length-1)).each do |i|
-        if i%2==0 && i < length
-          e = double_brackets[i].to_s
-          f = double_brackets[i+1].to_s
-          if e.scan(/\(\(/).length == 1
-            if f.scan(/\)\)/).length == 1
-                result << true
+        (0..(length-1)).each do |i|
+          if i%2==0 && i < length
+            e = double_brackets[i].to_s
+            f = double_brackets[i+1].to_s
+            if e.scan(/\(\(/).length == 1
+              if f.scan(/\)\)/).length == 1
+                  result << true
+              else
+                  result << false
+              end
+            elsif e.scan(/\[\[/).length == 1
+                if f.scan(/\]\]/).length == 1
+                  result << true
+                else
+                  result << false
+                end
+            elsif e.scan(/\{\{/).length == 1
+                if f.scan(/\}\}/).length == 1
+                  result << true
+                else
+                  result << false
+                end
             else
                 result << false
             end
-          elsif e.scan(/\[\[/).length == 1
-              if f.scan(/\]\]/).length == 1
-                result << true
-              else
-                result << false
-              end
-          elsif e.scan(/\{\{/).length == 1
-              if f.scan(/\}\}/).length == 1
-                result << true
-              else
-                result << false
-              end
-          else
-              result << false
           end
+        end  #(0..(length-1)).each do |i|
+        count = 0
+        result.each do |e|
+          count = count + 1 if e ==false
         end
-      end  #(0..(length-1)).each do |i|
-      count = 0
-      result.each do |e|
-        count = count + 1 if e ==false
-      end
-    end #if que.scan(/\[\[{2,}|\]\]{2,}|\{\{{2,}|\}\}{2,}|\(\({2,}|\)\){2,}/).length != 0
-
+      end #if que.scan(/\[\[{2,}|\]\]{2,}|\{\{{2,}|\}\}{2,}|\(\({2,}|\)\){2,}/).length != 0
+    else
+       count = 0
+    end
     if count == 0
       return 0
     else
@@ -247,15 +222,11 @@ module QuestionHelper
 
   #识别题型
   def distinguish_question_types excel,que,line
+    puts_switch = 0 #0开启 -1关闭
     que_tpye = -1 #题型标记
     error_info = "" #错误信息
-    p "---------------------------------------------------"
-    p "que:#{que}"
-    if brackets_validate(que) == 1
-        error_info = "文件'#{excel}'第#{line}行：双括号配对不完整、双括号存在嵌套或存在两个以上的连续括号"
-        p error_info
-    end
-
+    p "---------------------------------------------------" if puts_switch == 0
+    p "que:#{que}" if puts_switch == 0
       count_a = 0	#[[]]计数
       count_b = 0	#(())计数
       count_c = 0	#{{}}计数
@@ -289,10 +260,10 @@ module QuestionHelper
             error_info = tmp_val[:error_info]
         elsif count_b >= 1 && count_a == 0 && count_c == 0  #填空题的
             que_tpye = Question::TYPE_NAMES[:input] #填空题
-            p "文件'#{excel}'第#{line}行：填空题"
+            p "文件'#{excel}'第#{line}行：填空题" if puts_switch = 0
         elsif count_c != 0 && count_a == 0 && count_b == 0   #语音输入题
             que_tpye = Question::TYPE_NAMES[:voice_input] # 语音输入题
-            p "文件'#{excel}'第#{line}行：语音输入题"
+            p "文件'#{excel}'第#{line}行：语音输入题" if puts_switch == 0
         elsif count_d != 0   # 综合题
             tmp_val = distinguish_question_three excel, line, que
             que_tpye = tmp_val[:que_tpye]
@@ -302,8 +273,8 @@ module QuestionHelper
         que_tpye = -2 #题面，没有选项的括号标记
       end
     #p "||total:#{count_e}  ;;total:#{count_f}  >>total:#{count_g}  @@total:#{count_h}"
-    p "que_tpye:#{que_tpye}"
-    p "error_info:#{error_info}"
+    p "que_tpye:#{que_tpye}" if puts_switch == 0
+    p "error_info:#{error_info}" if puts_switch == 0
     return_infos = {:que_tpye => que_tpye, :error_info => error_info }
   end
 
@@ -687,7 +658,7 @@ module QuestionHelper
         #p "card_types#{x[:card_types]}"
         knowledge_card = KnowledgeCard.create(:name => x[:card_name].to_s, :types => x[:card_types].to_s, :description => x[:card_description].to_s, :course_id => course.id)
 
-        question = Question.create(:knowledge_card_id => knowledge_card.id, :content => result[:content], :types => result[:question_types], :round_id => round.id)
+        question = Question.create(:knowledge_card_id => knowledge_card.id, :content => result[:content], :types => result[:question_types], :round_id => round.id, :full_text => x[:que] )
         #p question
         branch_questions =[]
         result[:branch_questions].each do |i|
@@ -756,6 +727,5 @@ module QuestionHelper
       Archive::Zip.archive("#{chapter_dir}/Round_#{round.id}.zip", round_dir)
       p "====================================="
     end
-    FileUtils.remove_dir("#{path}")
   end
 end

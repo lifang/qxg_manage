@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131016085244) do
+ActiveRecord::Schema.define(:version => 20131024055235) do
 
   create_table "achieve_counts", :force => true do |t|
     t.integer  "user_id"
@@ -101,7 +101,7 @@ ActiveRecord::Schema.define(:version => 20131016085244) do
     t.integer  "user_id"
     t.integer  "course_id"
     t.string   "name"
-    t.integer  "types",      :default => 0
+    t.integer  "types"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -127,13 +127,13 @@ ActiveRecord::Schema.define(:version => 20131016085244) do
     t.text     "description"
     t.string   "img"
     t.integer  "types"
+    t.integer  "status",      :limit => 1, :default => 0
     t.integer  "time_ratio"
     t.integer  "blood"
     t.integer  "max_score"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "round_time"
-    t.integer  "status",      :limit => 1, :default => 0
     t.integer  "round_count"
   end
 
@@ -192,6 +192,7 @@ ActiveRecord::Schema.define(:version => 20131016085244) do
     t.integer  "round_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "full_text"
   end
 
   add_index "questions", ["round_id"], :name => "index_questions_on_round_id"
@@ -287,7 +288,7 @@ ActiveRecord::Schema.define(:version => 20131016085244) do
     t.boolean  "sex"
     t.string   "img"
     t.string   "phone"
-    t.string   "weibo_id"
+    t.integer  "weibo_id"
     t.datetime "weibo_time"
     t.integer  "types"
     t.datetime "created_at"

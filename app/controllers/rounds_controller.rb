@@ -87,6 +87,7 @@ class RoundsController < ApplicationController
         import_data read_excel_result[:all_round_questions], course_id, chapter_id, zip_url
         @notice_info = "导入完成！"
       end
+      FileUtils.remove_dir zip_url if Dir.exist? zip_url
   end
 
   private

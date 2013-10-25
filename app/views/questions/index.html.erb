@@ -4,21 +4,13 @@
     <h1><%= link_to @course.name, course_chapters_path(@course.id) %>><%= link_to @chapter.name, course_chapter_rounds_path(@course.id, @chapter.id) %>><span class="round_name"><%= @round.name %></span></h1>
     <div class="m_con">
       <div class="pass_head">
-        <div id="upload_bar1">
+        <div id="upload_bar">
           <%= render :partial => 'uploadzip' %>
         </div>
         <div id="error_bar" style="width:100%; height:auto;">
           <% render :partial => 'error_infos'%>
         </div>
-        <!--<div class="upload con_box">-->
-          <!--<h2>关卡问题上传：</h2>-->
-          <!--<div class="fileBox" style="width:300px;">-->
-            <!--<input type="text" class="fileText_1" />-->
-            <!--<input type="button" class="fileBtn_1 green_btn" value="浏览..." />-->
-            <!--<input type="file" class="file_1" />-->
-          <!--</div>-->
-          <!--<input type="button" class="fileBtn_1 green_btn" value="导入" />-->
-        <!--</div>-->
+
 
         <div class="passInfo con_box">
           <div class="rightText">
