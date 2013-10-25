@@ -1,6 +1,9 @@
 #encoding: utf-8
 class Prop < ActiveRecord::Base
   belongs_to :course
+  has_many :user_prop_relations
+  has_many :props, :through => :user_prop_relations
+  
   mount_uploader :img, AvatarUploader
 
   STATUS = {0 => "正常", 1 => "删除"}

@@ -6,7 +6,7 @@ class ChaptersController < ApplicationController
   before_filter :get_course, :except => [:verify]
 
   def index
-    @chapters = @course.chapters
+    @chapters = @course.chapters.paginate(:per_page =>9, :page => params[:page])
   end
 
   def new

@@ -5,6 +5,8 @@ class Course < ActiveRecord::Base
   has_many :rounds, :dependent => :destroy
   has_many :cardbag_tags, :dependent => :destroy
   has_many :props, :dependent => :destroy
+  has_many :user_course_relations
+  has_many :courses, :through => :user_course_relations
   mount_uploader :img, AvatarUploader
   attr_accessor :type_name
 

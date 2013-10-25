@@ -22,23 +22,16 @@
           <th>道具</th>
           <th>成就点数</th>
         </tr>
-        <%  %>
+        <% @courses.each do |course|   %>
         <tr>
-          <td>1</td>
-          <td>1</td>
-          <td>1</td>
-          <td>1</td>
-          <td>1</td>
-          <td>1</td>
+          <td><%= course.cname %></td>
+          <td><%= course.level %></td>
+          <td><%= course.gold %></td>
+          <td><%= course.cardbag_left_count %></td>
+          <td><%= Prop.my_props(@user.id,course.cid).map(&:name).join("、") %></td>
+          <td><%= course.achieve_point %></td>
         </tr>
-        <tr>
-          <td>1</td>
-          <td>1</td>
-          <td>1</td>
-          <td>1</td>
-          <td>1</td>
-          <td>1</td>
-        </tr>
+        <% end %>
       </table>
     </div>
 

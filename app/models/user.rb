@@ -1,6 +1,9 @@
 #encoding: utf-8
 class User < ActiveRecord::Base
   has_many :user_course_relations
+  has_many :courses, :through => :user_course_relations
+  has_many :user_prop_relations
+  has_many :props, :through => :user_prop_relations
   has_many :friends
   require 'mini_magick'
   validates :email, :uniqueness => {:message => "this email has been regisited"}

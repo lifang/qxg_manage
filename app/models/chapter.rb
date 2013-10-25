@@ -2,7 +2,7 @@
 require 'fileutils'
 class Chapter < ActiveRecord::Base
 
-  belongs_to :course
+  belongs_to :course, :counter_cache => true
   has_many :rounds
   mount_uploader :img, AvatarUploader
   

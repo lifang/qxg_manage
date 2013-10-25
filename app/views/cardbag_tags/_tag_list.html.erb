@@ -14,7 +14,7 @@
     </tr>
   <% end %>
 </table>
-<%= will_paginate @tags %>
+<%= will_paginate @tags, :previous_label => "上一页",:next_label => "下一页" %>
 
 <script type="text/javascript">
 <%  if controller.action_name !="index" %>
