@@ -260,7 +260,7 @@ module QuestionHelper
             error_info = tmp_val[:error_info]
         elsif count_b >= 1 && count_a == 0 && count_c == 0  #填空题的
             que_tpye = Question::TYPE_NAMES[:input] #填空题
-            p "文件'#{excel}'第#{line}行：填空题" if puts_switch = 0
+            p "文件'#{excel}'第#{line}行：填空题" if puts_switch == 0
         elsif count_c != 0 && count_a == 0 && count_b == 0   #语音输入题
             que_tpye = Question::TYPE_NAMES[:voice_input] # 语音输入题
             p "文件'#{excel}'第#{line}行：语音输入题" if puts_switch == 0
