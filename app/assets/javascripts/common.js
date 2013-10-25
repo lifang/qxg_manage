@@ -20,15 +20,6 @@ $(function(){
 
 });
 
-// The action.
-$('btn_upload').click(function() {
-    alert('click');
-    return false;
-});
-
-// The most simple use.
-$('btn_upload').confirm();
-
 function handleUpload(obj){
     $(obj).parents(".fileBox").find(".fileText_1").val($(obj).val());
 }
@@ -47,6 +38,13 @@ function toggleCard(obj, question_id){ //展开显示知识卡片
     $("#question_" + question_id).toggle();
 }
 
+function upload(onj)
+{
+    if(confirm("导入将覆盖现有题目，确认导入？"))
+    {
+        $('.submit_btn').click();
+    }
+}
 
 function file_validate(obj){
     var reg =  /.*\.zip/
@@ -56,6 +54,7 @@ function file_validate(obj){
         $("#btn_upload").attr("disabled","true");
         alert("请选择zip题库压缩包");
         $(obj).val("");
+        $(obj).parents(".fileBox").find(".fileText_1").val($(obj).val());
     }
     else
         $("#btn_upload").removeAttr("disabled");

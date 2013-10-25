@@ -32,6 +32,7 @@ class QuestionsController < ApplicationController
     else
       user_tmp_path = "#{Rails.root}/public/qixueguan/tmp/user_#{user.id}"
       zip_dir = rename_zip
+      p zip_file
       if upload(user_tmp_path,zip_dir,zip_file)== false  #上传文件
         @error_infos << "上传失败"
       else
