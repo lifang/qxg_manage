@@ -25,7 +25,8 @@ class Api::UsersController < ActionController::Base
     email = params[:email]
     name = params[:name]
     pwd = params[:password]
-    user = User.new(:email => email, :name => name, :types => User::TYPES[:NORMAL])
+    phone = params[:phone]
+    user = User.new(:email => email, :name => name, :phone => phone, :types => User::TYPES[:NORMAL])
     user.encrypt_password(pwd)
     if user.save
       render :json => "success"
@@ -40,10 +41,11 @@ class Api::UsersController < ActionController::Base
     name = params[:name].strip
     birthday = params[:birthday]
     sex = params[:sex]
+    phone = params[:phone]
     if name.nil? || name.empty?
       render :json => "name is empty"
     else
-      if user.update_attributes(:name => name, :birthday => birthday, :sex => sex)
+      if user.update_attributes(:name => name, :birthday => birthday, :sex => sex, :phone => phone)
         render :json => "success"
       else
         render :json => "error"

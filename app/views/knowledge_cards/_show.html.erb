@@ -1,14 +1,14 @@
 <h1>知识卡片</h1>
 <div class="form_row">
-  <label>名称：</label><%= @knowledge_card.try(:name) %>
+  <label class="label">名称：</label><%= @knowledge_card.try(:name) %>
 </div>
 <div class="form_row">
-  <label>描述：</label><%= @knowledge_card.try(:description) %>
+  <label class="label">描述：</label><%= @knowledge_card.try(:description) %>
 </div>
 <div class="form_row">
-  <label>标签：</label><% if @knowledge_card.system_tag.present?  %>标签：<%= @knowledge_card.system_tag %> <% end %>
+  <label class="label">标签：</label><% if @knowledge_card.system_tag.present?  %>标签：<%= @knowledge_card.system_tag %> <% end %>
 </div>
-<div class="form_row"><label>&nbsp;</label>
-  <button class="green_btn">提交</button>
-  <%= link_to "移除知识卡片", remove_knowledge_card_path(@question.id), :remote => true, :class => "green_btn", :confirm => "确定移除知识卡片吗？" %>
+<div class="form_row"><label class="label">&nbsp;</label>
+  <%= button_tag "提交",:type =>"submit", :class => "green_btn" %>
+  <%= link_to "移除知识卡片", remove_knowledge_card_path(@question.id), :remote => true, :class => "green_btn button", :confirm => "确定移除知识卡片吗？" %>
 </div>

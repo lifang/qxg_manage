@@ -4,7 +4,7 @@ class RoundsController < ApplicationController
   before_filter :sign?, :get_course_chapter
   
   def index
-    @rounds = Round.where({:course_id => params[:course_id], :chapter_id => params[:chapter_id]})
+    @rounds = Round.where({:course_id => params[:course_id], :chapter_id => params[:chapter_id]}).paginate(:per_page => 16, :page => params[:page])
   end
 
   def edit

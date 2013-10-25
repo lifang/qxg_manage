@@ -36,7 +36,10 @@
         </div>
 
       <% end %>
+      
     </div>
+    <div class="clear"></div>
+<%= will_paginate @courses, :previous_label => "上一页",:next_label => "下一页" %>
   </div>
 </div>
 

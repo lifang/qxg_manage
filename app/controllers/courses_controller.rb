@@ -2,7 +2,7 @@
 class CoursesController < ApplicationController
   before_filter :sign?
   def index
-    @courses = Course.all
+    @courses = Course.paginate(:per_page =>9, :page => params[:page])
   end
 
   def new

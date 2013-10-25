@@ -68,3 +68,8 @@ function show_tag(obj){
     obj.parents(".second_box").show();
     obj.parents(".second_box").prev().show();
 }
+function hide_tab(obj){
+    obj.parent(".second_content").hide();
+    obj.parents(".second_box").hide();
+    obj.parents(".second_box").prev().hide();
+}

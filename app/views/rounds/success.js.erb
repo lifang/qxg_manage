@@ -1,3 +1,3 @@
 $("#round_detail").html("<%= j (render  "rounds/detail") %>")
 $(".round_name").text("<%= @round.name %>")
-$(".round_container").hide();
+hide_tab($("#round_container"));

@@ -7,24 +7,17 @@
         <div id="upload_bar">
           <%= render :partial => 'uploadzip' %>
         </div>
+          <div class="upload con_box">
+          <h2>关卡问题上传：</h2>
+          
+            <%= render :partial => 'uploadzip' %>
+        </div>
+  
         <div id="error_bar" style="width:100%; height:auto;">
           <% render :partial => 'error_infos'%>
         </div>
-
-
-        <div class="passInfo con_box">
-          <div class="rightText">
-            <h2>关卡基本信息</h2>
-            <dl>
-              <dt>血量：</dt><dd>1</dd>
-              <dt>规定时间：</dt><dd>1</dd>
-              <dt>关卡总分：</dt><dd>1</dd>
-              <dt>关卡总题数：</dt><dd>1</dd>
-              <dt>时间正确率比例：</dt><dd>1</dd>
-            </dl>
-            <%= link_to "编辑", edit_course_chapter_round_path(@course, @chapter, @round), :class => "green_btn passEdit", :remote => true %>
-
-          </div>
+        <div class="passInfo con_box" id="round_detail">
+          <%= render "rounds/detail" %>
         </div>
       </div>
       <div>
@@ -63,7 +56,7 @@
 
 <div class="second_bg"></div>
 <div class="second_box">
-    <div style="display: none"  class="second_content knowledge_card_container">
+  <div style="display: none"  class="second_content knowledge_card_container">
     <span class="close">关闭</span>
     <div class="second_view" id="knowledge_card_container">
     </div>

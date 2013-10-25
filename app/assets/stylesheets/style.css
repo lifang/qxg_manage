@@ -310,26 +310,17 @@ h1 a { cursor: pointer;}
 .fileBox .file_1 { position:absolute; top:0; left:0; filter:alpha(opacity:0); opacity: 0; width:100%; margin:0;}
 
 /*分页*/
-.pager {
-	width: 400px;
-	margin: 10px auto;
+.pagination { width: 400px; margin: 15px auto; }
+.pagination a,  .pagination em{
+    cursor: pointer;
+    margin: 0 2px;
+    padding: 3px 10px;
+	background: #ffffff;
+	border: 1px solid #ffffff;
 }
+.pagination a:hover { color:#333}
+.pagination em.current { background: #A8B5C4; color: #ffffff; font-weight: bold}
 
-.pager .page_main {
-	display: block;
-	overflow: hidden;
-	float: left;
-	padding: 1px 6px;
-}
-
-.pager a {
-	border: 1px solid #C3C3C3;
-	color: #000000;
-	display: block;
-	float: left;
-	padding: 1px 5px;
-	margin: 0 1px;
-}
 
 
 /*弹窗*/

@@ -11,10 +11,6 @@ class QuestionsController < ApplicationController
     end
   end
 
-  def delete
-
-  end
-
   def destroy
    @question = Question.find_by_id params[:id]
    @question.destroy
