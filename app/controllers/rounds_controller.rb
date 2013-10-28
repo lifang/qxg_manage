@@ -5,6 +5,7 @@ class RoundsController < ApplicationController
   
   def index
     @rounds = Round.where({:course_id => params[:course_id], :chapter_id => params[:chapter_id]}).paginate(:per_page => 16, :page => params[:page])
+
   end
 
   def edit
@@ -32,7 +33,42 @@ class RoundsController < ApplicationController
   #审核
   def verify
     @round = Round.find_by_id params[:id]
+    question_total = @round.questions.count
+    chapter_id = @round.chapter_id
+    course_id =@round.course_id
+    one_json_question = []
+    questions = @round.questions
+    str = ""
+    str = str + "{\"course_id\" : #{course_id},\n  \"chapter_id\" : #{chapter_id},\n
+    \"round_id\" : #{@round.id},\n \"round_time\" : \"#{@round.round_time}\",\n \"question_total\":#{question_total},
+      \"round_score\" : #{@round.max_score},  \"percent_time_correct\" : #{@round.time_ratio},\n
+    \"blood\" : #{@round.blood},\"questions\" :["
+    que = []
+    a = 0
+    questions.each do |e|
+      str = str + "," if a > 0
+      branch_questions = e.branch_questions
+      branch_que = ""
+      c = 0
+      branch_questions.each do |x|
+        branch_que = branch_que + "," if c > 0
+        branch_que =  branch_que + "{\"branch_question_id\":#{x.id}, \"branch_content\":\"#{x.branch_content}\",\"branch_question_types\":#{x.types}, \"options\":\"#{x.options}\",\"answer\":\"#{x.answer}\"}"
+        c = c + 1
+      end
+      knowledge_card = e.knowledge_card
+      str = str +  "{\"question_id\":#{e.id},\"content\":\"#{e.content}\",\"question_types\":#{e.types},\"branch_questions\": [#{branch_que}],\"card_id\":#{knowledge_card.id},\"card_name\": \"#{knowledge_card.name}\", \"description\": \"#{knowledge_card.description}\",\"card_types\" : \"#{knowledge_card.types}\"} \n"
+      a = a + 1
+    end
+    str = str + "]}"
+    p str
+    File.open("#{Rails.root}/public/qixueguan/Course_#{course_id}/Chapter_#{chapter_id}/Round_#{@round.id}/questions.js", 'wb') do |f|
+      f.write(str)
+    end
+    chapter_dir = "#{Rails.root}/public/qixueguan/Course_#{course_id}/Chapter_#{chapter_id}"
+    round_dir = chapter_dir + "/Round_#{@round.id}"
+    Archive::Zip.archive("#{chapter_dir}/Round_#{@round.id}.zip", round_dir)
     if @round.update_attribute(:status, true)
+
       @notice = "审核成功"
     else
       @notice = "审核失败"
@@ -84,7 +120,7 @@ class RoundsController < ApplicationController
       if @error_infos.length != 0 #判断错误信息是否为空
         @notice_info = @error_infos
       else #转移文件&插入数据&写入XML文件
-        import_data read_excel_result[:all_round_questions], course_id, chapter_id, zip_url
+        import_data read_excel_result[:all_round_questions], course_id, chapter_id, zip_url, user.id
         @notice_info = "导入完成！"
       end
       FileUtils.remove_dir zip_url if !zip_url.nil? && Dir.exist?(zip_url)

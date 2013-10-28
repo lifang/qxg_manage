@@ -36,6 +36,10 @@ QxgManage::Application.routes.draw do
       collection do
         post :search, :uploadfile
       end
+      member do
+        get :view #编辑题目加载原题
+        post :edit
+      end
       resources :branch_questions
     end
   end

@@ -1,0 +1,13 @@
+<%= form_for :question,:url=>"/rounds/#{params[:round_id]}/questions/#{params[:id]}/edit", :remote => true do |f|%>
+    <div class="form_row">
+      <label class="required label">原题：</label>
+      <%= f.text_area :full_text,:class => "question_text_area", :required => true %>
+      <input name="types" value="<%= @question.types %>" type="text" class="hidden_text">
+    </div>
+    <div class="form_row">
+      <label class="label">&nbsp;</label>
+      <%= button_tag "提交",:type =>"submit", :class => "green_btn" %>
+    </div>
+    <div id="errors_bar" style="width:100%; height:auto; background-color:#96a3b2;">
+    </div>
+<% end %>

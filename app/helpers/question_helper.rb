@@ -282,13 +282,9 @@ module QuestionHelper
   def distinguish_question_one excel, line, result_a
     que_tpye = -1 #题型标记
     error_info = "" #错误信息
-    #return_info = {}
     tmp = result_a[0].to_s.scan(/(?<=\[\[).*(?=\]\])/).to_a[0].to_s
-    #p tmp
     count_e = tmp.scan(/\|\|/).length
     count_f = tmp.scan(/\;\;/).length
-    #p count_e
-    #p count_f
     if(count_e == 0 && count_f == 0) #当选项中没有||和;;分隔符
       que_tpye = -1 #未知题型
       error_info = "文件'#{excel}'第#{line}行：未知题型"
@@ -301,7 +297,6 @@ module QuestionHelper
         c = c + 1 if e.to_s.rstrip.match(/^@@$/)
         d = d + 1 if e.to_s.gsub(/file>>>/, "file>;=;").gsub(/>>/, ";=;").match(/;=;/)
       end
-      #p "#{count}count"
       if count == 0
         if d != 0 && d == tmp.split(/\|\|/).length
           g = 0
@@ -329,7 +324,6 @@ module QuestionHelper
           error_info = "文件'#{excel}'第#{line}行：选择题的没有答案或答案为空"
         end
       elsif count == 1
-        #p "c#{c}"
         if c != 0
           que_tpye = -1 #未知题型
           error_info = "文件'#{excel}'第#{line}行：选择题的没有答案或有答案为空"
@@ -368,7 +362,6 @@ module QuestionHelper
   def distinguish_question_two excel, line, result_a
     que_tpye = -1 #题型标记
     error_info = "" #错误信息
-    #return_info = {}
     tmp = []
     result_a.each do |r|
       tmp << r.scan(/(?<=\[\[).*(?=\]\])/).to_a[0].to_s
@@ -411,14 +404,13 @@ module QuestionHelper
     error_info = []
     return_info = {}
     tmp =  que.split(%r{\n\s*})
-    #p tmp
     types = [] #完型填空中的所有小题类型的集合
     errorinfo = ""
     tmp.each do |e|
       t = distinguish_question_types(excel, e, line)
       types <<  t[:que_tpye]
       errorinfo = t[:error_info]
-      p "errorinfo#{errorinfo}"
+      #p "errorinfo#{errorinfo}"
     end
     count = 0
     types.each  do |e|
@@ -447,7 +439,6 @@ module QuestionHelper
       g = 0 #统计一个选项中的答案个数，即@@个数
       e.gsub(/^\|\|/,"").split("||").each do |x|
         g = g + 1 if x.to_s.lstrip.match(/^@@/)
-        #p "x = " + x if x.to_s.lstrip.match(/^@@/)
       end
       result << g
     end
@@ -547,7 +538,6 @@ module QuestionHelper
     elsif type == Question::TYPE_NAMES[:lineup]   #连线题
       branch_question_types = type
       options = que.scan(/\[\[[^\[\[]*\]\]/)[0].to_s.scan(/(?<=\[\[).*(?=\]\])/).to_a[0].to_s.gsub(/\|\|/,";||;").gsub(/file>>>/,"file>;=;").gsub(/>>/,";=;")
-      p options
       answer =options
       content = que.gsub(/\[\[[^\[\[]*\]\]/,"[[text]]")
       branch_questions << {:branch_content => branch_content, :branch_question_types => branch_question_types,
@@ -560,27 +550,25 @@ module QuestionHelper
       branch_questions << {:branch_content => branch_content, :branch_question_types => branch_question_types,
                            :options => options, :answer => answer}
     elsif type == Question::TYPE_NAMES[:zonghe] #综合题
-      p "综合题截取"
       tmp = que.to_s.split(%r{\n\s*})
       tmp.each do |e|
-        result = p distinguish_question_types excel="", e, line=""
+        result = distinguish_question_types excel="", e, line=""
         if result[:que_tpye] == -2
           content = content + e
         else
           branch_que =  split_question e, result[:que_tpye]
-          p branch_que
+          #p branch_que
           branch_questions << {:branch_content => branch_que[:content], :branch_question_types => branch_que[:question_types],
                                :options => branch_que[:branch_questions][0][:options], :answer => branch_que[:branch_questions][0][:answer]}
         end
       end
-      #branch_question_types = type
       #options = que.scan(/\{\{[^\{\{]*\}\}/)[0].to_s.scan(/(?<=\{\{).*(?=\}\})/).to_a[0]
     elsif type == Question::TYPE_NAMES[:drag]     #拖拽题
       branch_question_types = type
       c = 0
       que.scan(/\[\[[^\[\[]*\]\]/).to_a.each  do  |e|
         e = e.scan(/(?<=\[\[).*(?=\]\])/).to_a[0].to_s
-        p e
+        #p e
         options = options + ";||;" if c > 0
         options = options + e
         c = c +1
@@ -594,7 +582,7 @@ module QuestionHelper
       c = 0
       que.scan(/\(\([^\(\(]*\)\)/).to_a.each  do  |e|
         e = e.scan(/(?<=\(\().*(?=\)\))/).to_a[0].to_s
-        p e
+        #p e
         options = options + ";||;" if c > 0
         options = options + e
         c = c +1
@@ -608,7 +596,7 @@ module QuestionHelper
   end
 
   #导入数据
-  def import_data all_round_questions, course_id, chapter_id, path
+  def import_data all_round_questions, course_id, chapter_id, path, user_id
     all_round_questions.each do |e|
       excel = e[:excel].to_s
       json_file = ""
@@ -645,19 +633,23 @@ module QuestionHelper
                                :blood => course.blood, :chapter_id => chapter_id, :course_id => course.id)
         end
       end
-      p round
-      p course
+      #p round
+      #p course
       #p "questions#{questions}"
       one_json_question = []
       questions.each do |x|
-        #p x
+        p "x:#{x}"
         result = split_question x[:que], x[:type]
-        p " "
-        p "result:    #{result}"
-        p " "
+        #p "result:    #{result}"
         #p "card_types#{x[:card_types]}"
-        knowledge_card = KnowledgeCard.create(:name => x[:card_name].to_s, :types => x[:card_types].to_s, :description => x[:card_description].to_s, :course_id => course.id)
-
+        cardbag_tag = CardbagTag.find_by_course_id_and_name(course_id,x[:card_types].to_s.strip)
+        if cardbag_tag.nil?
+          cardbag_tag = CardbagTag.create(:course_id => course_id, :name => x[:card_types].to_s, :types => CardbagTag::TYPE_NAME[:system])
+        end
+        knowledge_card = KnowledgeCard.create(:name => x[:card_name].to_s, :description => x[:card_description].to_s, :course_id => course_id, :types => 1)
+        if !knowledge_card.nil?
+          CardTagRelation.create(:user_id => user_id, :course_id => course_id, :knowledge_card_id => knowledge_card.id, :cardbag_tag_id => cardbag_tag.id)
+        end
         question = Question.create(:knowledge_card_id => knowledge_card.id, :content => result[:content], :types => result[:question_types], :round_id => round.id, :full_text => x[:que] )
         #p question
         branch_questions =[]
@@ -665,21 +657,15 @@ module QuestionHelper
           branch_questions << BranchQuestion.create(:question_id => question.id, :branch_content => i[:branch_content], :types => i[:branch_question_types], :options => i[:options], :answer => i[:answer] )
         end
 
-        branch_ques = []
-        branch_questions.each do |y|
-          branch_ques <<  {:branch_question_id => "#{y.id}", :branch_content=> y.branch_content, :branch_question_types => "#{y.types}",:options => y.options,:answer => y.answer}
-        end
-        p "branch_ques#{branch_ques}"
-
-        tmp = ""
+        branch_ques = ""
         c = 0
-        branch_ques.each do |e|
-          tmp = tmp + "," if c > 0
-          tmp = tmp + e.to_json
+        branch_questions.each do |y|
+          branch_ques = branch_ques + "," if c > 0
+          branch_ques = branch_ques + "{\"branch_question_id\":#{y.id}, \"branch_content\":\"#{y.branch_content}\",\"branch_question_types\":#{y.types}, \"options\":\"#{y.options}\",\"answer\":\"#{y.answer}\"}"
+              #{:branch_question_id => "#{y.id}", :branch_content=> y.branch_content, :branch_question_types => "#{y.types}",:options => y.options,:answer => y.answer}
           c = c + 1
         end
-        p "content#{question.content}"
-        que = "{\"question_id\":#{question.id},\"content\":\"#{question.content}\",\"question_types\":#{question.types},\"branch_questions\": [#{tmp.gsub(/\"/,"\"").to_s}],\"card_id\":\"#{knowledge_card.id}\",\"card_name\": \"#{knowledge_card.name}\", \"description\": \"#{knowledge_card.description}\",\"card_types\" : #{knowledge_card.types}}"
+        que = "{\"question_id\":#{question.id},\"content\":\"#{question.content}\",\"question_types\":#{question.types},\"branch_questions\": [#{branch_ques}],\"card_id\":#{knowledge_card.id},\"card_name\": \"#{knowledge_card.name}\", \"description\": \"#{knowledge_card.description}\",\"card_types\" : \"#{knowledge_card.types}\"}"
 
         one_json_question << que
 
@@ -707,25 +693,25 @@ module QuestionHelper
       Dir.mkdir chapter_dir if !File.directory? chapter_dir
       round_dir = chapter_dir + "/Round_#{round.id}"
       Dir.mkdir round_dir if !File.directory? round_dir
-      p round_dir
+      #p round_dir
       FileUtils.mv "#{path}/questions.js", round_dir
 
       resource_dir = "#{path}/#{excel.split(".")[0]}"
-      p resource_dir
-      p Dir.exist? resource_dir
+      #p resource_dir
+      #p Dir.exist? resource_dir
       if Dir.exist? resource_dir
         files = []
         Dir.entries(resource_dir).each do |sub|
           files << sub if File.file?("#{resource_dir}/#{sub}") if sub != '.' && sub != '..'
         end
-        p files
+        #p files
         files.each do |file|
           FileUtils.mv "#{resource_dir}/#{file}", round_dir
         end
       end
       File.delete "#{chapter_dir}/Round_#{round.id}.zip" if File.exist? "#{chapter_dir}/Round_#{round.id}.zip"
       Archive::Zip.archive("#{chapter_dir}/Round_#{round.id}.zip", round_dir)
-      p "====================================="
+      #p "====================================="
     end
   end
 end

@@ -17,7 +17,7 @@
               <%= link_to "删除", course_chapter_round_path(@course, @chapter, round), :method => :delete, :confirm => "删除关卡将删除关卡所有相关记录，确认删除吗？", :class => "close", :title => "删除" %>
 
               <label title="<%= round.name %>"><%= round.name.truncate(8, separator: ' ') %></label>
-              <p class="passEnter">题目数量：<%= round.questions_count || 0 %></p>
+              <p class="passEnter">题目数量：<%= round.questions.count || 0 %></p>
               <p class="passEnter">是否通过审核：<span><%= Course::STATUS_NAME[round.status] %></span>
                 <%= verify_button(round) if round.status==0 %></p>
               <br/>

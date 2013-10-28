@@ -7,7 +7,7 @@
       <%= file_field_tag 'file', :onchange => "handleUpload(this);file_validate(this);", :class => "file_1" %>
     </div>
     <input id="btn_upload" type="button" class="green_btn"  disabled="true" onClick="upload(this)" value="上传" size="10"/>
-    <button class="submit_btn"/>提交</button>
+    <button class="submit_btn" hidden="true"/>提交</button>
     <input type="hidden" name="course_id" value="<%= @course.id %>" />
     <input type="hidden" name="chapter_id" value="<%= @chapter.id %>" />
     <input type="hidden" name="round_id" value="<%= @round.id %>" />

@@ -86,7 +86,27 @@ class QuestionsController < ApplicationController
         #FileUtils.remove_dir(zip_url)
         @notice_info = @error_infos
     else #转移文件&插入数据&写入XML文件
-        import_data read_excel_result[:all_round_questions], course_id, chapter_id, zip_url
+        questions = Question.where("round_id=#{round_id}")
+        if !questions.nil?
+          questions.each do |e|
+              branch_questions = e.branch_questions
+              knowledge_card = e.knowledge_card
+              card_tag_relation = CardTagRelation.find_by_knowledge_card_id_and_user_id(knowledge_card.id,user.id)
+              e.destroy  #删除题目
+              card_tag_relation.destroy #删除知识卡片和的关系
+          end
+        end
+
+        #branch_questions = questions.branch_questions
+        #p branch_questions
+        #branch_questions.each do |e|
+        #  e.destroy
+        #end
+
+        #questions.each do |e|
+        #  e.destroy
+        #end
+        import_data read_excel_result[:all_round_questions], course_id, chapter_id, zip_url, user.id
         @notice_info = "导入完成！"
     end
     FileUtils.remove_dir zip_url if Dir.exist? zip_url
@@ -100,6 +120,62 @@ class QuestionsController < ApplicationController
   def search
     @questions = @round.questions.where(:types => params[:question_types]).paginate(:per_page => 5, :page => params[:page])
     @branch_question_hash = BranchQuestion.where({:question_id => @questions.map(&:id)}).group_by{|bq| bq.question_id}
+  end
+
+  #展示原题
+  def view
+    @question = Question.find(params[:id])
+  end
+
+  #编辑题目
+  def edit
+    error_infos = []
+    full_text = params[:question][:full_text]
+    question_id = params[:id]
+    origin_types = params[:types].to_i
+    round_id = params[:round_id]
+
+    if brackets_validate(full_text) == 1
+      @error_infos << "该题双括号配对不完整、双括号存在嵌套或存在两个以上的连续括号"
+    else
+      type = -1
+      error_info = ""
+
+      #判断题型,题目信息错误验证
+      result = distinguish_question_types excel="",full_text,line=""
+      type = result[:que_tpye]
+      if origin_types != type
+        error_infos << "与原题题型不符，只能编辑题目内容，不能改变题型！"
+      end
+      #p "result#{result}"
+      error_info = result[:error_info]
+
+      error_infos << error_info if !error_info.empty?
+    end
+    p origin_types
+    p type
+
+    if error_infos.length == 0 && type != -1
+      #删除原有小题
+      que = Question.find(question_id)
+      que.branch_questions.each do |e|
+        e.destroy
+      end
+
+      que_hash = split_question full_text,type #截取题目
+
+      #更新大题,新建小题
+      que.update_attributes(:content => que_hash[:content], :full_text => full_text)
+      que_hash[:branch_questions].each do |e|
+        que.branch_questions.create(:branch_content => e[:branch_content], :types => e[:branch_question_types],
+        :options => e[:options], :answer => e[:answer])
+      end
+      round = Round.find(round_id)
+      round.update_attributes(:status => Round::STATUS[:not_verified])
+      @info = {:status => 0 , :notice => "编辑完成！"}
+    else
+      @info = {:status => -1, :notice => error_infos}
+    end
   end
   
   private

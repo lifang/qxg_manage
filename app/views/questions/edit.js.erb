@@ -1,0 +1,6 @@
+<%if @info[:status] == 0 %>
+hide_tab($("#question_container"));
+alert('<%= @info[:notice] %>');
+<% else %>
+$("#errors_bar").html('<%= j (render :partial => 'errors') %>');
+<% end %>

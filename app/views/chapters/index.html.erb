@@ -17,7 +17,7 @@
             <%= image_tag chapter.img.thumb.url, :class => "leftImg", :style =>"width:80px;height:123px" %>
             <div class="rightText">
               <span class="cpt_title" title="<%= chapter.name %>"><%= chapter.name.truncate(8, separator: ' ') %></span>
-              <span style="margin-left:30px">关卡数目：<%= chapter.rounds_count || 0  %></span>
+              <span style="margin-left:30px">关卡数目：<%= chapter.rounds.count || 0  %></span>
             </div>
           </div>
           <div>
