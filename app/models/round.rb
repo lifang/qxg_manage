@@ -1,6 +1,6 @@
 #encoding: utf-8
 class Round < ActiveRecord::Base
-  belongs_to :round, :counter_cache => true
+  belongs_to :chapter, :counter_cache => true
   has_many :questions, :dependent => :destroy
   has_many :round_scores
 
