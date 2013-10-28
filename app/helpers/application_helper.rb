@@ -12,4 +12,14 @@ module ApplicationHelper
     return session[:email] != nil
   end
 
+  # Format text for display.
+  def format(text)
+    sanitize(markdown(text))
+  end
+
+  # Process text with Markdown.
+  def markdown(text)
+    BlueCloth::new(text).to_html
+  end
+
 end

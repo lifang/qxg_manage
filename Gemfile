@@ -11,7 +11,7 @@ gem 'carrierwave', "0.5.8" #upload image
 gem 'archive-zip'
 gem 'roo',"~> 1.12.1"
 gem 'remotipart', '~> 1.0' #ajax upload file
-
+gem 'bluecloth'
 
 # Gems used only for assets and not required
 # in production environments by default.
