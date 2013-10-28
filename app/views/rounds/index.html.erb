@@ -4,7 +4,7 @@
     <h1><%= link_to @course.name, course_chapters_path(@course.id) %>><%= link_to @chapter.name, course_chapter_rounds_path(@course.id, @chapter.id) %></h1>
 
     <div class="m_con">
-      <div id="upload_bar">
+      <div id="upload_bar" class="passUp">
         <%= render 'uploadzip' %>
       </div>
       <div id="error_bar" style="width:100%; height:auto;">

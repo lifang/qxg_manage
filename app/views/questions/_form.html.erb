@@ -2,7 +2,7 @@
     <div class="form_row">
       <label class="required label">原题：</label>
       <%= f.text_area :full_text,:class => "question_text_area", :required => true %>
-      <input name="types" value="<%= @question.types %>" type="text" class="hidden_text">
+      <input name="types" value="<%= @question.types %>" type="text" style="display: none;">
     </div>
     <div class="form_row">
       <label class="label">&nbsp;</label>

@@ -13,8 +13,8 @@ module QuestionHelper
     #创建目录
     url = "/"
     count = 0
-    path.split("/").each  do |e|
-      if e.size > 0
+    path.split("/").each_with_index  do |e,i|
+      if i > 0 && e.size > 0
         url = url + "/" if count > 0
         url = url + "#{e}"
         if !Dir.exist? url
