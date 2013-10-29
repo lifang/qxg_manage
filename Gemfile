@@ -31,7 +31,8 @@ gem "will_paginate", '3.0.3'
 # gem 'unicorn'
 
 # Deploy with Capistrano
-# gem 'capistrano'
+ gem 'capistrano', '~>2.15.4'
+ gem 'capistrano_colors', '~>0.5.5'
 
 # To use debugger
 # gem 'ruby-debug19', :require => 'ruby-debug'

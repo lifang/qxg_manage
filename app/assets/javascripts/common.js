@@ -75,7 +75,7 @@ function hide_tab(obj){
 
 function MdToHtml(obj){
    var mdContent = $.trim($("#knowledge_card_description").val());
-   var previewTag = $(obj).next();
+   var previewTag = $(obj).parent().next();
    if(mdContent!=""){
      $.ajax({
          url: "/md_to_html",
