@@ -2,7 +2,7 @@ set :use_sudo, false
 set :group_writable, false
 set :keep_releases, 2 # Less releases, less space wasted
 set :runner, nil # thanks to http://www.rubyrobot.org/article/deploying-rails-20-to-mongrel-with-capistrano-21
-set :application, "lantan_BAM"  #应用名称
+set :application, "qxg_manage"  #应用名称
 
 default_run_options[:pty] = true #pty: 伪登录设备  
 set :scm, :git   # Or: `accurev`, `bzr`, `cvs`, `darcs`, `git`, `mercurial`, `perforce`, `subversion` or `none`

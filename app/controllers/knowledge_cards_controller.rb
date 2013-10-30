@@ -1,6 +1,6 @@
 class KnowledgeCardsController < ApplicationController
   include ActionView::Helpers::SanitizeHelper
-  before_filter :sign?, :get_course
+  before_filter :sign?, :get_course, :except => [:md_to_html]
 
   def index
     
@@ -8,10 +8,12 @@ class KnowledgeCardsController < ApplicationController
 
   def edit
     @knowledge_card = KnowledgeCard.find_by_id(params[:id])
-    img_folder = KnowledgeCard::IMG_PATH % @knowledge_card.id
+    img_folder = Rails.root.to_s + (KnowledgeCard::IMG_PATH % @knowledge_card.id)
     @images_paths = []
     Dir.foreach(img_folder) do |file|
-      @images_paths << (img_folder + file) if !File.directory?(file) && file.include?("_"+ KnowledgeCard::SIZE)
+      if !File.directory?(file) && file.include?("_"+ KnowledgeCard::SIZE.to_s)
+        @images_paths << ((KnowledgeCard::IMG_REAL_PATH % @knowledge_card.id) + file)
+      end
     end if Dir.exists?(img_folder)
     @question = Question.find_by_id params[:question_id]
   end

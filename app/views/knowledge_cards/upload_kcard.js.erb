@@ -1,1 +1,1 @@
-$(".show_temp_images").append("<%= render :partial => "img", :locals => {:img => @img_path} %>")
+$(".show_temp_images ul").append('<li><%= @img_path %><%= image_tag @img_path %></li>')

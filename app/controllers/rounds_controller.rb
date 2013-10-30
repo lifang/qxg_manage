@@ -56,7 +56,7 @@ class RoundsController < ApplicationController
         c = c + 1
       end
       knowledge_card = e.knowledge_card
-      str = str +  "{\"question_id\":#{e.id},\"content\":\"#{e.content}\",\"question_types\":#{e.types},\"branch_questions\": [#{branch_que}],\"card_id\":#{knowledge_card.id},\"card_name\": \"#{knowledge_card.name}\", \"description\": \"#{knowledge_card.description}\",\"card_types\" : \"#{knowledge_card.types}\"} \n"
+      str = str +  "{\"question_id\":#{e.id},\"content\":\"#{e.content}\",\"question_types\":#{e.types},\"branch_questions\": [#{branch_que}],\"card_id\":#{knowledge_card.try(:id)},\"card_name\": \"#{knowledge_card.try(:name)}\", \"description\": \"#{knowledge_card.try(:description)}\",\"card_types\" : \"#{knowledge_card.try(:types)}\"} \n"
       a = a + 1
     end
     str = str + "]}"

@@ -8,10 +8,10 @@ gem 'rails', '3.1.2'
 gem 'mysql2' , '0.3.10'
 gem "mini_magick", "3.5.0" #handle image
 gem 'carrierwave', "0.5.8" #upload image
-gem 'archive-zip'
+gem 'archive-zip', '0.6.0'
 gem 'roo',"~> 1.12.1"
 gem 'remotipart', '~> 1.0' #ajax upload file
-gem 'bluecloth'
+gem 'bluecloth','2.2.0'
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -36,7 +36,7 @@ gem "will_paginate", '3.0.3'
 
 # To use debugger
 # gem 'ruby-debug19', :require => 'ruby-debug'
-gem 'mime-types','1.21'
+gem 'mime-types','~>1.21'
 group :test do
   # Pretty printed test output
   gem 'turn', '0.8.2', :require => false

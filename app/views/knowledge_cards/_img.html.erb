@@ -1,1 +1,7 @@
-<%= imp %><%= image_tag imp %>
+<ul>
+<% @images_paths.each do |img| %>
+  <li>
+<%= img %><%= image_tag img %>
+  </li>
+<% end %>
+</ul>
