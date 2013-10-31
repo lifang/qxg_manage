@@ -5,7 +5,6 @@ class RoundsController < ApplicationController
   
   def index
     @rounds = Round.where({:course_id => params[:course_id], :chapter_id => params[:chapter_id]}).paginate(:per_page => 16, :page => params[:page])
-
   end
 
   def edit
@@ -14,6 +13,7 @@ class RoundsController < ApplicationController
 
   def update
     @round = Round.find_by_id params[:id]
+     params[:round][:name] =  name_strip(params[:round][:name])
     if @round.update_attributes(params[:round])
       @round.status = Round::STATUS[:not_verified] if @round.status == Round::STATUS[:verified]
       @round.save

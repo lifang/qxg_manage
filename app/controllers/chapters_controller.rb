@@ -14,6 +14,7 @@ class ChaptersController < ApplicationController
   end
   
   def create
+    params[:chapter][:name] =  name_strip(params[:chapter][:name])
     @chapter = @course.chapters.create(params[:chapter])
     if @chapter.save
       flash[:notice] = "添加成功！"
@@ -30,6 +31,7 @@ class ChaptersController < ApplicationController
 
   def update
     @chapter = Chapter.find_by_id(params[:id])
+    params[:chapter][:name] =  name_strip(params[:chapter][:name])
     if @chapter.update_attributes(params[:chapter])
       @chapter.status = Chapter::STATUS[:not_verified] if @chapter.status == Chapter::STATUS[:verified]
       @chapter.save

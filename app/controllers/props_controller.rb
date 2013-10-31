@@ -11,6 +11,7 @@ class PropsController < ApplicationController
   end
 
   def create
+    params[:prop][:name] =  name_strip(params[:prop][:name])
     params[:prop][:question_types] = params[:prop][:question_types].join(",")
     @prop = @course.props.create(params[:prop])
     if @prop.save
@@ -27,6 +28,7 @@ class PropsController < ApplicationController
   end
 
   def update
+    params[:prop][:name] =  name_strip(params[:prop][:name])
     params[:prop][:question_types] = params[:prop][:question_types].join(",")
     @prop = Prop.find_by_id(params[:id])
     if @prop.update_attributes(params[:prop])

@@ -15,6 +15,7 @@ class CardbagTagsController < ApplicationController
   end
 
   def create
+    params[:cardbag_tag][:name] =  name_strip(params[:cardbag_tag][:name])
     @tag = @course.cardbag_tags.create(params[:cardbag_tag])
     if @tag.save
       @notice = "添加成功"
@@ -31,6 +32,7 @@ class CardbagTagsController < ApplicationController
 
   def update
     @tag = CardbagTag.find_by_id(params[:id])
+    params[:cardbag_tag][:name] =  name_strip(params[:cardbag_tag][:name])
     if @tag.update_attributes(params[:cardbag_tag])
       @notice = "更新成功"
       render :success
