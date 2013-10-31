@@ -11,7 +11,7 @@
 </form>
 -->
 <div class="show_temp_images" style="float:right">
-    <%= render :partial => "img" %>
+  <%= render :partial => "img" %>
 </div>
 <%= form_for [@course, @knowledge_card], :remote => true do |f|%>
   <div class="form_row">
@@ -24,17 +24,23 @@
   </div>
   <!--<div class="form_row">
     <label class="label">markdown to html</label>
-    <%#= button_to_function "预览", "MdToHtml(this)"%>
+  <%#= button_to_function "预览", "MdToHtml(this)"%>
   </div>
   <div class="form_row card_preview" style="text-align:left">
-    <%#= format(@knowledge_card.try(:description)) if @knowledge_card.present? %>
+  <%#= format(@knowledge_card.try(:description)) if @knowledge_card.present? %>
   </div>
   -->
   <div class="form_row">
-    <label class="label">标签：</label><% if @knowledge_card.system_tag.present?  %>标签：<%= @knowledge_card.system_tag %> <% end %>
+    <label class="label">标签：</label>
+    <div class="prop_question_type">
+      <% @tags.each do |tag| %>
+        <label><%= tag.name %></label>
+        <%= check_box_tag "knowledge_card[cardbag_tag_ids][]", tag.id, @knowledge_card.cardbag_tags.include?(tag) %>
+      <% end %>
+    </div>
   </div>
   <div class="form_row"><label class="label">&nbsp;</label>
-    <%= button_tag "提交",:type =>"submit", :class => "green_btn" %>    
+    <%= button_tag "提交",:type =>"submit", :class => "green_btn" %>
     <%= link_to "移除知识卡片", remove_knowledge_card_path(@question.id), :remote => true, :class => "green_btn button", :confirm => "确定移除知识卡片吗？" %>
   </div>
 <% end %>

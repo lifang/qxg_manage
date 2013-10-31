@@ -17,7 +17,6 @@
   </div>
   <div class="form_row">
     <label class="required label">适合题型：</label>
-    <div class="clear"></div>
     <div class="prop_question_type">
       <% Question::TYPES.each do |value, name| %>
         <% check = @prop.question_types.nil? ? false : @prop.question_types.split(",").map(&:to_i).include?(value) %>

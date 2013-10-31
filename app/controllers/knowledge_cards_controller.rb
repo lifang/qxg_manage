@@ -1,3 +1,4 @@
+#encoding: utf-8
 class KnowledgeCardsController < ApplicationController
   include ActionView::Helpers::SanitizeHelper
   before_filter :sign?, :get_course, :except => [:md_to_html]
@@ -7,7 +8,9 @@ class KnowledgeCardsController < ApplicationController
   end
 
   def edit
-    @knowledge_card = KnowledgeCard.find_by_id(params[:id])
+    @knowledge_card = KnowledgeCard.includes(:cardbag_tags).find_by_id(params[:id])
+    @tags = CardbagTag.system.where(:course_id => @course.id)
+    #用于markdown上传图片 start
     img_folder = Rails.root.to_s + (KnowledgeCard::IMG_PATH % @knowledge_card.id)
     @images_paths = []
     Dir.foreach(img_folder) do |file|
@@ -15,6 +18,7 @@ class KnowledgeCardsController < ApplicationController
         @images_paths << ((KnowledgeCard::IMG_REAL_PATH % @knowledge_card.id) + file)
       end
     end if Dir.exists?(img_folder)
+    #用于markdown上传图片 end
     @question = Question.find_by_id params[:question_id]
   end
 
@@ -29,8 +33,8 @@ class KnowledgeCardsController < ApplicationController
 
   #markdown to html
   def md_to_html
-   content = params[:content]
-   render :text => format(content)
+    content = params[:content]
+    render :text => format(content)
   end
 
   #knowledge card upload files

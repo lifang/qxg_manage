@@ -14,7 +14,8 @@ class Course < ActiveRecord::Base
     5 => "Android", 6 => "Cocos2d-x", 7 => "计算机"}
   STATUS_NAME = { 0 => "未审核", 1 => "已审核"}
   STATUS = {:not_verified => 0, :verified => 1}
-  
+  validates :name, :uniqueness => { :message =>  "课程名称已存在！" }
+
   scope :verified, where(:status => STATUS[:verified])
   
   after_destroy :remove_img
