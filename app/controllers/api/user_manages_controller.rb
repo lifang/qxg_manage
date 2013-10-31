@@ -162,10 +162,8 @@ class Api::UserManagesController < ActionController::Base
     login_day = et && et.get_login_day  || 0  #每日任务登录天数
 
     props = Prop.find_by_sql("select p.id prop_id, p.name prop_name, p.description, p.price, p.types, p.question_types,
-  upr.user_prop_num, upr.user_id user_id from props p left join user_prop_relations upr on p.id=upr.prop_id
-left join users u on u.id = upr.user_id and upr.user_prop_num >=1 where  p.course_id=#{cid} and p.status = #{Prop::STATUS_NAME[:normal]}
- and ( upr.user_id=#{uid} || upr.user_id is null) ") #道具列表(包含我的道具)
-
+  upr.user_prop_num, upr.user_id user_id from props p left join user_prop_relations upr on p.id=upr.prop_id  and ( upr.user_id=#{uid} || upr.user_id is null)
+left join users u on u.id = upr.user_id and upr.user_prop_num >=1 where  p.course_id=#{cid} and p.status = #{Prop::STATUS_NAME[:normal]}") #道具列表(包含我的道具)
     props.map{|prop|
       prop[:logo] = prop.img.thumb.url
     }
