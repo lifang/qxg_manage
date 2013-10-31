@@ -27,7 +27,7 @@ class CoursesController < ApplicationController
   def update
     @course = Course.find_by_id params[:id]
     if @course.update_attributes(params[:course])
-      @course.status = STATUS[:not_verified] if @course.status == STATUS[:verified]
+      @course.status = Course::STATUS[:not_verified] if @course.status == Course::STATUS[:verified]
       @course.save
       @notice = "更新成功！"
       render :success

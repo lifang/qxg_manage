@@ -91,3 +91,29 @@ function MdToHtml(obj){
      })
    }
 }
+
+function checkFilesize(obj){
+    var edit_img_val = $(obj).parents('form').find(obj).val();
+    if(edit_img_val!=""){
+        var input_e = document.getElementById(obj);
+        var file_size_e = input_e.files[0].size;
+        if(file_size_e > 1024*1024){
+            alert("图片大小不能超过1MB！");
+            return false;
+        }
+
+        var pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]")
+        var img_name = edit_img_val.substring(edit_img_val.lastIndexOf("\\")).toLowerCase();
+        var g_name = img_name.substring(1,img_name.length);
+        if(pattern.test(g_name.split(".")[0])){
+            tishi_alert(g_name+"不能包含特殊字符!");
+            return false;
+        }
+        var edit_img_suff = edit_img_val.substring(edit_img_val.lastIndexOf('.') + 1).toLowerCase();
+        if(edit_img_suff == "jpg" || edit_img_suff == "png" || edit_img_suff == "jpeg"){
+        }else{
+            tishi_alert("图片格式不对!");
+            return false;
+        }
+    }
+}

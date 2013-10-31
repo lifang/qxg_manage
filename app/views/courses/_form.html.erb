@@ -46,7 +46,7 @@
     <%= f.text_field :time_ratio, :required => true,:digits => true, :min => 0, :max => 100 %>
   </div>
   <div class="form_row">
-    <label class="label">&nbsp;</label><%= button_tag "提交",:type => "submit", class: "green_btn" %>
+    <label class="label">&nbsp;</label><%= button_tag "提交",:type => "submit", class: "green_btn", :onclick => "return checkFilesize('course_img');" %>
     </div>
 
   <% end %>
@@ -56,5 +56,6 @@
       $('label.required').append('&nbsp;<strong>*</strong>&nbsp;');
         
       $("#courseForm").validate();  //课程表单验证
+     
     })
   </script>

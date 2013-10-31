@@ -38,7 +38,7 @@
   </div>
   <div class="form_row">
     <label class="label">&nbsp;</label>
-    <%= button_tag "提交", :type => "submit", :class => "green_btn" %>
+    <%= button_tag "提交", :type => "submit", :class => "green_btn", :onclick => "return checkFilesize('prop_img');" %>
   </div>
 <% end %>
 <script>
