@@ -31,6 +31,8 @@ class ChaptersController < ApplicationController
   def update
     @chapter = Chapter.find_by_id(params[:id])
     if @chapter.update_attributes(params[:chapter])
+      @chapter.status = STATUS[:not_verified] if @chapter.status == STATUS[:verified]
+      @chapter.save
       flash[:notice] = "更新成功！"
       render :success
     else

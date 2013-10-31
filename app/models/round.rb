@@ -12,9 +12,4 @@ class Round < ActiveRecord::Base
   validates :name, :uniqueness => { :scope => :chapter_id,
     :message => "同一章节下关卡名称已存在！" }
   scope :verified, where(:status => STATUS[:verified])
-  before_save :set_unverified
-
-  def set_unverified
-    self.status = STATUS[:not_verified] if status == STATUS[:verified]
-  end
 end

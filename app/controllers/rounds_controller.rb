@@ -15,6 +15,8 @@ class RoundsController < ApplicationController
   def update
     @round = Round.find_by_id params[:id]
     if @round.update_attributes(params[:round])
+      @round.status = STATUS[:not_verified] if @round.status == STATUS[:verified]
+      @round.save
       @notice = "更新成功！"
       render :success
     else
