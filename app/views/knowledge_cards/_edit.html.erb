@@ -22,13 +22,14 @@
     <label class="label">描述：</label>
     <%= f.text_area :description,:rows => "5" %>
   </div>
-  <div class="form_row">
+  <!--<div class="form_row">
     <label class="label">markdown to html</label>
-    <%= button_to_function "预览", "MdToHtml(this)"%>
+    <%#= button_to_function "预览", "MdToHtml(this)"%>
   </div>
   <div class="form_row card_preview" style="text-align:left">
-    <%= format(@knowledge_card.try(:description)) if @knowledge_card.present? %>
+    <%#= format(@knowledge_card.try(:description)) if @knowledge_card.present? %>
   </div>
+  -->
   <div class="form_row">
     <label class="label">标签：</label><% if @knowledge_card.system_tag.present?  %>标签：<%= @knowledge_card.system_tag %> <% end %>
   </div>

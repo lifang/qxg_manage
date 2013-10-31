@@ -4,7 +4,7 @@ class Api::UserManagesController < ActionController::Base
   def search_course     #查询课程
     name = params[:search_name].strip.gsub(/[%_]/){|x|'\\' + x}
     uid = params[:uid].to_i
-    courses = Course.find_by_sql("select c.id,c.name,c.press,c.description,c.round_count,c.types
+    courses = Course.find_by_sql("select c.id,c.name,c.press,c.description,c.types
                                    from courses c where name like '%#{name}%'")
     selected_courses = UserCourseRelation.where(["user_id = ? ", uid]).map(&:course_id)
     a = []
@@ -17,7 +17,7 @@ class Api::UserManagesController < ActionController::Base
   def search_single_course      #查询单个课程
     uid = params[:uid].to_i
     cid = params[:course_id]
-    course = Course.select("id, name, press, description, round_count, types").find_by_id(cid.to_i)
+    course = Course.select("id, name, press, description, types").find_by_id(cid.to_i)
     type_name = Course::TYPES[course.types]
     flag = UserCourseRelation.find_by_user_id_and_course_id(uid, cid).nil?
     a = flag == true ? 0 : 1
@@ -27,7 +27,7 @@ class Api::UserManagesController < ActionController::Base
   def selected_courses  #用户已选择的课程
     uid = params[:uid].to_i
     courses = UserCourseRelation.find_by_sql("select c.id course_id, c.name name, c.press press, ucr.gold gold, ucr.level level,
-                                              c.description description, c.types types, c.round_count round_count, ucr.cardbag_count,
+                                              c.description description, c.types types, ucr.cardbag_count,
                                               ucr.cardbag_use_count
                                               from user_course_relations ucr
                                               inner join courses c on ucr.course_id=c.id
@@ -170,15 +170,15 @@ left join users u on u.id = upr.user_id and upr.user_prop_num >=1 where  p.cours
       prop[:logo] = prop.img.thumb.url
     }
     #    props = props.select{|p| p.user_id == uid || p.user_id == nil}
-    chapters = (Course.find_by_id(cid)).chapters.verified.select("id,name,round_count")
+    chapters = (Course.find_by_id(cid)).chapters.verified.select("id,name,rounds_count")
 
     chapter_num = chapters.count
     complete_arr = []
     chapters.each do |chapter|
       rs = RoundScore.where(:user_id => uid, :chapter_id => chapter.id) #章节所有关卡全部完成
       three_stars = RoundScore.where(:user_id => uid, :chapter_id => chapter.id, :star => Round::STAR[:three_star]) #章节所有关卡满星
-      chapter[:all_complete] = (chapter.round_count == rs.count) ? 1 : 0
-      chapter[:all_3_star] = (chapter.round_count == three_stars.count) ? 1 : 0
+      chapter[:all_complete] = (chapter.rounds_count == rs.count) ? 1 : 0
+      chapter[:all_3_star] = (chapter.rounds_count == three_stars.count) ? 1 : 0
       complete_arr <<  chapter
     end
     render :json =>{:every_day_task => login_day, :props => props, :chapter_num => chapter_num, :chapters => complete_arr}
