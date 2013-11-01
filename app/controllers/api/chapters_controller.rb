@@ -40,7 +40,12 @@ r.chapter_id = #{chapter_id}  ORDER BY rs.score DESC")
       if temp_users.map(&:uid).include?(uid)
         rs_hash[round_id] = temp_users
       else
-        rs_hash[round_id] = temp_users + users.select{|u| u.uid == uid}
+        users.each_with_index do |user,index|
+          if user.uid == uid
+            user[:rank] = index+ 1
+            rs_hash[round_id] = temp_users << user
+          end
+        end
       end
     end
 
