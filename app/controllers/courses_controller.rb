@@ -14,20 +14,22 @@ class CoursesController < ApplicationController
   end
 
   def create
+    params[:course][:name] =  name_strip(params[:course][:name])
     @course = Course.create(params[:course])
     if @course.save
       @notice = "添加成功！"
       render :success
     else
-       @notice = "添加失败！\\n #{@course.errors.messages.values.flatten.join("<\\n>")}"
+      @notice = "添加失败！\\n #{@course.errors.messages.values.flatten.join("<\\n>")}"
       render :new
     end
   end
 
   def update
     @course = Course.find_by_id params[:id]
+    params[:course][:name] =  name_strip(params[:course][:name])
     if @course.update_attributes(params[:course])
-      @course.status = STATUS[:not_verified] if @course.status == STATUS[:verified]
+      @course.status = Course::STATUS[:not_verified] if @course.status == Course::STATUS[:verified]
       @course.save
       @notice = "更新成功！"
       render :success

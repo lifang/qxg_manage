@@ -1,5 +1,6 @@
 module ApplicationHelper
   include QuestionHelper
+  include CoursesHelper
   def sign?
     deny_access unless signed_in?
   end
