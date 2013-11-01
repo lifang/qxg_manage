@@ -3,7 +3,7 @@ class QuestionsController < ApplicationController
   before_filter :sign?, :get_round
 
   def index
-    @questions = @round.questions.includes(:knowledge_card).paginate(:per_page => 5, :page => params[:page])
+    @questions = @round.questions.includes(:knowledge_card).paginate(:per_page => 10, :page => params[:page])
     @branch_question_hash = BranchQuestion.where({:question_id => @questions.map(&:id)}).group_by{|bq| bq.question_id}
     respond_to do |f|
       f.html

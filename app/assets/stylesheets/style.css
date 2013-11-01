@@ -324,8 +324,8 @@ h1 a { cursor: pointer;}
 
 
 /*弹窗*/
-.second_box { width:100%; height:100%; z-index:99; position:absolute; top:0;display: none}
-.second_bg { width:100%; height:100%; z-index:98; position:absolute; top:0; background: #333; opacity: 0.5;display: none}
+.second_box { width:100%; height:100%; z-index:99; position:fixed; top:0;display: none}
+.second_bg { width:100%; height:100%; z-index:98; position:fixed; top:0; background: #333; opacity: 0.5;display: none}
 .second_content {
     background-color: #FCFCFC;
     border: 1px solid #CBD5D9;
