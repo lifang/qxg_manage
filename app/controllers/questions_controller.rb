@@ -136,7 +136,7 @@ class QuestionsController < ApplicationController
     round_id = params[:round_id]
 
     if brackets_validate(full_text) == 1
-      @error_infos << "该题双括号配对不完整、双括号存在嵌套或存在两个以上的连续括号"
+      error_infos << "该题双括号配对不完整、双括号存在嵌套或存在两个以上的连续括号"
     else
       type = -1
       error_info = ""
