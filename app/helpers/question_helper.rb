@@ -65,7 +65,8 @@ module QuestionHelper
         if File.directory?("#{path}/#{sub}")
           dirs << sub.to_s
         else
-          excels << sub.to_s if sub.to_s.split(".")[1]== "xls"
+        #  excels << sub.to_s if sub.to_s.split(".")[1]== "xls"
+          excels << sub.to_s if File.extname(sub.to_s)== ".xls"
         end
       end
     end
