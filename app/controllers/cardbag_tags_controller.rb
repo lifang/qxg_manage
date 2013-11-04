@@ -3,7 +3,7 @@ class CardbagTagsController < ApplicationController
   before_filter :sign?, :get_course
 
   def index
-    @tags = CardbagTag.system.where(:course_id => @course.id).paginate(:per_page => 5, :page => params[:page])
+    @tags = CardbagTag.system.where(:course_id => @course.id).paginate(:per_page => 10, :page => params[:page])
     respond_to do |f|
       f.html
       f.js {render :search}
@@ -51,7 +51,7 @@ class CardbagTagsController < ApplicationController
 
   #搜索标签
   def search
-    @tags = CardbagTag.system.where(:course_id => @course.id).where("name like (?)", "%#{params[:tag_name].gsub(/[%_]/){|x| '\\' + x}}%" ).paginate(:per_page => 5, :page => params[:page])
+    @tags = CardbagTag.system.where(:course_id => @course.id).where("name like (?)", "%#{params[:tag_name].gsub(/[%_]/){|x| '\\' + x}}%" ).paginate(:per_page => 10, :page => params[:page])
   end
  
   private

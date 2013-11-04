@@ -20,7 +20,7 @@
             <div>
               <span>题型：</span>
               <select name="question_types" id="question_types">
-                <option value="">请选择题型</option>
+                <option value="-1">请选择题型</option>
                 <% Question::TYPES.each do |k, v| %>
                   <option value="<%= k %>"><%= v %></option>
                 <% end %>
