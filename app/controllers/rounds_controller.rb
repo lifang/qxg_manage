@@ -26,9 +26,13 @@ class RoundsController < ApplicationController
   end
 
   def destroy
+    zip_url = "#{Rails.root}/public/qixueguan/Course_#{params[:course_id]}/Chapter_#{params[:chapter_id]}/Round_#{params[:id]}.zip"
+    round_dir = "#{Rails.root}/public/qixueguan/Course_#{params[:course_id]}/Chapter_#{params[:chapter_id]}/Round_#{params[:id]}"
     @round = Round.find_by_id params[:id]
     @round.destroy
     flash[:notice] = "删除成功"
+    File.delete zip_url if File.exist? zip_url
+    FileUtils.remove_dir round_dir if !round_dir.nil? && Dir.exist?(round_dir)
     redirect_to course_chapter_rounds_path(@course.id,@chapter.id)
   end
 
