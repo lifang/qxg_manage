@@ -38,6 +38,8 @@ namespace :deploy do
   run "rm -rf #{current_path}/log"        #移除当前路径下的log文件
   run "ln -s #{shared_path}/log/ #{current_path}/log"  #link日志文件到share下的日志文件
 
+  run "ln -s /opt/projects/qxg_manage/files/* #{current_path}/public/" #链接上传的图片
+
     # database.yml for localized database connection
     run "rm #{current_path}/config/database.yml"  #移除当前路径下的数据库配置文件
     run "ln -s #{shared_path}/database.yml #{current_path}/config/database.yml"  #link数据库文件到shared目录下的yml文件
