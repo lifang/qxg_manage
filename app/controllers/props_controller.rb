@@ -3,7 +3,7 @@ class PropsController < ApplicationController
   before_filter :sign?, :get_course
 
   def index
-    @props = @course.props
+    @props = @course.props.status_method(Prop::STATUS_NAME[:normal])
   end
 
   def new
