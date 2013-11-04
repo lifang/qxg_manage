@@ -27,23 +27,25 @@ class Api::ChaptersController < ApplicationController
     #uid, chapter_id
     uid = params[:uid].to_i
     chapter_id = params[:chapter_id].to_i
+    chapter = Chapter.find_by_id chapter_id
     rounds = Round.find_by_sql("SELECT r.id, r.chapter_id, r.name, r.questions_count, r.round_time, r.time_ratio, r.blood,
  r.max_score, rs.score score, rs.star from rounds r LEFT JOIN round_scores rs on r.id=rs.round_id AND rs.user_id =#{uid} where
-r.chapter_id = #{chapter_id}  ORDER BY rs.score DESC")
+r.chapter_id = #{chapter_id} and r.course_id = #{chapter.course_id}  ORDER BY rs.score DESC")
 
     round_range = RoundScore.find_by_sql(["select u.name u_name, u.id uid, u.img img, rs.score score, rs.round_id round_id from round_scores rs inner join rounds r on r.id = rs.round_id
       inner join users u on u.id = rs.user_id where rs.round_id in (?) order by rs.score desc", rounds.map(&:id)]).group_by{|rs| rs.round_id}
     rs_hash = {}
-   
+
     round_range.each do |round_id, users|
       temp_users = users[0..2]
       if temp_users.map(&:uid).include?(uid)
         rs_hash[round_id] = temp_users
       else
+        rs_hash[round_id] = temp_users
         users.each_with_index do |user,index|
           if user.uid == uid
             user[:rank] = index+ 1
-            rs_hash[round_id] = temp_users << user
+            rs_hash[round_id] << user
           end
         end
       end
