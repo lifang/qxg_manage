@@ -302,11 +302,32 @@ module QuestionHelper
             que_tpye = tmp_val[:que_tpye]
             error_info = tmp_val[:error_info]
         elsif count_b >= 1 && count_a == 0 && count_c == 0  #填空题的
-            que_tpye = Question::TYPE_NAMES[:input] #填空题
-            p "文件'#{excel}'第#{line}行：填空题"
+            count_e = 0
+            result_b.each do |e|
+              p e.scan(/\(\([\s]*\)\)/)
+              count_e+= 1 if e.scan(/\(\([\s]*\)\)/).length != 0
+            end
+            if count_e != 0
+              error_info = "文件'#{excel}'第#{line}行：填空题内容不能为空"
+              que_tpye = -1
+            else
+              que_tpye = Question::TYPE_NAMES[:input] #填空题
+              p "文件'#{excel}'第#{line}行：填空题"
+            end
         elsif count_c != 0 && count_a == 0 && count_b == 0   #语音输入题
-            que_tpye = Question::TYPE_NAMES[:voice_input] # 语音输入题
-            p "文件'#{excel}'第#{line}行：语音输入题"
+            p result_c
+            count_f = 0
+            result_c.each do |e|
+              p e.scan(/\{\{[\s]*\}\}/)
+              count_f += 1 if e.scan(/\{\{[\s]*\}\}/).length != 0
+            end
+            if count_f != 0
+              que_tpye = -1
+              error_info = "文件'#{excel}'第#{line}行：语音输入题内容不能为空"
+            else
+              que_tpye = Question::TYPE_NAMES[:voice_input] # 语音输入题
+              p "文件'#{excel}'第#{line}行：语音输入题"
+            end
         elsif count_d != 0   # 综合题
             tmp_val = distinguish_question_three excel, line, que
             que_tpye = tmp_val[:que_tpye]
