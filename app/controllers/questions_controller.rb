@@ -119,7 +119,12 @@ class QuestionsController < ApplicationController
   end
 
   def search
-    @questions = @round.questions.where(:types => params[:question_types]).paginate(:per_page => 5, :page => params[:page])
+    if params[:question_types]!="-1"
+      questions = @round.questions.where(:types => params[:question_types])
+    else
+      questions = @round.questions
+    end
+    @questions = questions.paginate(:per_page => 10, :page => params[:page])
     @branch_question_hash = BranchQuestion.where({:question_id => @questions.map(&:id)}).group_by{|bq| bq.question_id}
   end
 
