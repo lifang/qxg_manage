@@ -87,14 +87,14 @@ class Api::UserManagesController < ActionController::Base
     questions = []
     if wrong_questions.length < 20
       round_questions = Question.includes(:branch_questions).joins(:round => :round_scores).where(:round_scores =>{:user_id => params[:uid]}, :rounds => {:course_id => params[:course_id]}).select("questions.*").order("round_scores.updated_at asc")
-      #      if(wrong_questions + round_questions).length < 20
-      #        #questions = wrong_questions
-      #        status = 1 #用户暂无任务，请先完成更多的关卡挑战
-      #      else
+            if(wrong_questions + round_questions).length < 20
+              #questions = wrong_questions
+              status = 1 #用户暂无任务，请先完成更多的关卡挑战
+            else
       rs_question = round_questions[0 ..(20 - wrong_questions.length - 1)]
       questions = wrong_questions + rs_question
       rs_question.map{|q| q && q.round.round_scores.where(:round_scores => {:user_id => params[:uid]}).update_all(updated_at: Time.now) }
-      #      end
+            end
     else
       questions = wrong_questions[20]
     end
@@ -154,7 +154,7 @@ class Api::UserManagesController < ActionController::Base
     render :text => ""
   end
   
-  def course_to_chapter
+  def course_to_chapter  #课程到章节，根据关卡完成情况定位章节图片变化
     #参数uid， cid
     uid = params[:uid].to_i
     cid = params[:cid].to_i
