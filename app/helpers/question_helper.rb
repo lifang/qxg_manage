@@ -135,11 +135,29 @@ module QuestionHelper
     time_correct_percent = oo.cell(2,'D').to_s #时间正确率比
     blood = oo.cell(2,'E').to_s #血量
     round.strip!
+    round_time.strip!
+    round_score.strip!
+    time_correct_percent.strip!
+    blood.strip!
     if round.size == 0
       error_infos << "文件'#{excel}'关卡的名称不能为空"
-    elsif time_correct_percent.to_i <= 0 || time_correct_percent.to_i >= 100
+    end
+    if round_time.size != 0 && round_time.to_i <= 0
+      error_infos << "文件'#{excel}'关卡时间必须大于0"
+    end
+    if round_score.size != 0 && round_score.to_i <= 0
+      error_infos << "文件'#{excel}'关卡得分必须大于0"
+    end
+    if time_correct_percent.size != 0 && (time_correct_percent.to_i <= 0 || time_correct_percent.to_i >= 100)
       error_infos << "文件'#{excel}'关卡的'时间和正确率比例'字段取值不正确(正确取值范围：1-99)"
     end
+    if blood.size != 0 && blood.to_i <= 0
+      error_infos << "文件'#{excel}'关卡血量必须大于0"
+    end
+    round_time = round_time.to_i
+    round_score = round_score.to_i
+    time_correct_percent = time_correct_percent.to_i
+    blood = blood.to_i
 
     #循环取出每一题
     start_line.upto(end_line).each do |line|
