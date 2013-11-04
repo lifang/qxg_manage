@@ -12,6 +12,7 @@ class QuestionsController < ApplicationController
   end
 
   def destroy
+   p params
    @question = Question.find_by_id params[:id]
    @question.destroy
    redirect_to round_questions_path(@round)
@@ -83,32 +84,32 @@ class QuestionsController < ApplicationController
     end
 
     if @error_infos.length != 0 #判断错误信息是否为空
-        #FileUtils.remove_dir(zip_url)
+        @status = 1
         @notice_info = @error_infos
+        @info = {:status => @status, :notice => @notice_info}
     else #转移文件&插入数据&写入XML文件
         questions = Question.where("round_id=#{round_id}")
         if !questions.nil?
           questions.each do |e|
               branch_questions = e.branch_questions
-              knowledge_card = e.knowledge_card
-              card_tag_relation = CardTagRelation.find_by_knowledge_card_id_and_user_id(knowledge_card.id,user.id)
+              if e.knowledge_card_id != nil
+                knowledge_card = e.knowledge_card
+                card_tag_relation = CardTagRelation.find_by_knowledge_card_id_and_user_id(knowledge_card.id,user.id)
+                card_tag_relation.destroy #删除和知识卡片的关系
+              end
               e.destroy  #删除题目
-              card_tag_relation.destroy #删除知识卡片和的关系
           end
         end
 
-        #branch_questions = questions.branch_questions
-        #p branch_questions
-        #branch_questions.each do |e|
-        #  e.destroy
-        #end
-
-        #questions.each do |e|
-        #  e.destroy
-        #end
         import_data read_excel_result[:all_round_questions], course_id, chapter_id, zip_url, user.id
+        @status = 0
         @notice_info = "导入完成！"
+        @round = Round.find(round_id)
+        @questions = @round.questions.includes(:knowledge_card).paginate(:per_page => 10, :page => 1)
+        @branch_question_hash = BranchQuestion.where({:question_id => @questions.map(&:id)}).group_by{|bq| bq.question_id}
+        @info = {:status => @status, :notice => @notice_info, :question => @questions, :branch_question => @branch_question_hash}
     end
+
     FileUtils.remove_dir zip_url if Dir.exist? zip_url
   end
 
@@ -170,9 +171,11 @@ class QuestionsController < ApplicationController
         que.branch_questions.create(:branch_content => e[:branch_content], :types => e[:branch_question_types],
         :options => e[:options], :answer => e[:answer])
       end
+      @questions = @round.questions.includes(:knowledge_card).paginate(:per_page => 10, :page => params[:page])
+      @branch_question_hash = BranchQuestion.where({:question_id => @questions.map(&:id)}).group_by{|bq| bq.question_id}
       round = Round.find(round_id)
       round.update_attributes(:status => Round::STATUS[:not_verified])
-      @info = {:status => 0 , :notice => "编辑完成！"}
+      @info = {:status => 0 , :notice => "编辑完成！", :question => @questions, :branch_question => @branch_question_hash}
     else
       @info = {:status => -1, :notice => error_infos}
     end

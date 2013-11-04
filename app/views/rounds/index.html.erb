@@ -8,24 +8,12 @@
         <%= render 'uploadzip' %>
       </div>
       <div id="error_bar" style="width:100%; height:auto;">
-        <% render :partial => 'error_infos'%>
+        <%= render :partial => 'error_infos'%>
       </div>
 
-      <% @rounds.each do |round| %>
-          <div class="passList">
-            <div class="pass_box con_box cf">
-              <%= link_to "删除", course_chapter_round_path(@course, @chapter, round), :method => :delete, :confirm => "删除关卡将删除关卡所有相关记录，确认删除吗？", :class => "close", :title => "删除" %>
-
-              <label title="<%= round.name %>"><%= round.name.truncate(8, separator: ' ') %></label>
-              <p class="passEnter">题目数量：<%= round.questions_count || 0 %></p>
-              <p class="passEnter">是否通过审核：<span><%= Course::STATUS_NAME[round.status] %></span>
-                <%= verify_button(round) if round.status==0 %></p>
-              <br/>
-              <%= link_to "进入关卡", round_questions_path(round),:class => "green_btn passEnter" %>
-
-            </div>
-          </div>
-      <% end %>
+      <div id="rounds_list">
+        <%= render :partial => 'rounds_list' %>
+      </div>
     </div>
     <div class="clear"></div>
      <%= will_paginate @rounds, :previous_label => "上一页",:next_label => "下一页" %>

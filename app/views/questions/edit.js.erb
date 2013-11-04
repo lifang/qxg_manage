@@ -1,6 +1,9 @@
 <%if @info[:status] == 0 %>
 hide_tab($("#question_container"));
 alert('<%= @info[:notice] %>');
+<% @question = @info[:question] %>
+<% @branch_question_hash = @info[:branch_question] %>
+$("#question_list").html('<%= j (render :partial => 'question_list') %>');
 <% else %>
 $("#errors_bar").html('<%= j (render :partial => 'errors') %>');
 <% end %>

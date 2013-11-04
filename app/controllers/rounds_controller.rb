@@ -125,7 +125,9 @@ class RoundsController < ApplicationController
         import_data read_excel_result[:all_round_questions], course_id, chapter_id, zip_url, user.id
         @notice_info = "导入完成！"
       end
+      @rounds = Round.where({:course_id => params[:course_id], :chapter_id => params[:chapter_id]}).paginate(:per_page => 16, :page => params[:page])
       FileUtils.remove_dir zip_url if !zip_url.nil? && Dir.exist?(zip_url)
+      @hash_result = {:notice => @notice_info, :round => @rounds}
   end
 
   private

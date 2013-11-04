@@ -1,3 +1,12 @@
-$("#error_bar").html('<%= j (render :partial => 'error_infos') %>');
+<% @notice_info = @info[:notice]%>
+<% if @info[:status] == 1 %>
 $('.submit_btn').hide();
+<% else %>
+<% @question = @info[:question] %>
+<% @branch_question_hash = @info[:branch_question] %>
+$("#round_detail").html('<%= j (render :partial => 'rounds/detail') %>');
+$("#question_list").html('<%= j (render :partial => 'question_list') %>');
+$('.submit_btn').hide();
+<% end %>
+$("#error_bar").html('<%= j (render :partial => 'error_infos') %>');
 $("#upload_bar").html('<%= j (render :partial => 'uploadzip') %>');

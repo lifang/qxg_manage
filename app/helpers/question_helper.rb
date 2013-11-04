@@ -134,6 +134,12 @@ module QuestionHelper
     round_score = oo.cell(2,'C').to_s #关卡满分
     time_correct_percent = oo.cell(2,'D').to_s #时间正确率比
     blood = oo.cell(2,'E').to_s #血量
+    round.strip!
+    if round.size == 0
+      error_infos << "文件'#{excel}'关卡的名称不能为空"
+    elsif time_correct_percent.to_i <= 0 || time_correct_percent.to_i >= 100
+      error_infos << "文件'#{excel}'关卡的'时间和正确率比例'字段取值不正确(正确取值范围：1-99)"
+    end
 
     #循环取出每一题
     start_line.upto(end_line).each do |line|
@@ -141,21 +147,39 @@ module QuestionHelper
       card_name = oo.cell(line,'B').to_s
       card_types = oo.cell(line,'C').to_s
       card_description = oo.cell(line,'D').to_s
+      card_name.strip!
+      card_types.strip!
+      card_description.strip!
 
-      if brackets_validate(que) == 1
-        error_infos << "文件'#{excel}'第#{line}行：双括号配对不完整、双括号存在嵌套或存在两个以上的连续括号"
+      if que.size == 0
+        error_infos << "文件'#{excel}'第#{line}行：题目内容为空"
       else
-        type = -1
-        error_info = ""
+        if brackets_validate(que) == 1
+          error_infos << "文件'#{excel}'第#{line}行：双括号配对不完整、双括号存在嵌套或存在两个以上的连续括号"
+        else
+          type = -1
+          #error_info = ""
 
-        #判断题型,题目信息错误验证
-        result = distinguish_question_types excel,que,line
-        #p "result#{result}"
-        error_info = result[:error_info]
-        type = result[:que_tpye]
-        error_infos << error_info if !error_info.empty?
-        #p "error_infos#{error_infos.length}"
+          #判断题型,题目信息错误验证
+          result = distinguish_question_types excel,que,line
+          #p "result#{result}"
+          error_info = result[:error_info]
+          type = result[:que_tpye]
+          error_infos << error_info if !error_info.empty?
+          #p "error_infos#{error_infos.length}"
+        end
       end
+
+      if card_name.size == 0 && card_types.size == 0 && card_description.size == 0
+      elsif card_name.size != 0 && card_types.size != 0 && card_description.size != 0
+      else
+         error_infos << "文件'#{excel}'第#{line}行：知识卡片名称、知识卡片标签、知识卡片描述三个字段要么都为空，要么都不为空"
+      end
+
+      if type == -2
+        error_infos << "文件'#{excel}'第#{line}行：没有任何题型标记，未知题型"
+      end
+
       if error_infos.length == 0 && type != -1
         questions << {:que => que, :type => type, :card_name => card_name, :card_types => card_types, :card_description => card_description}
         #split_question que,type 截取题目
@@ -223,11 +247,11 @@ module QuestionHelper
 
   #识别题型
   def distinguish_question_types excel,que,line
-    puts_switch = 0 #0开启 -1关闭
     que_tpye = -1 #题型标记
     error_info = "" #错误信息
-    p "---------------------------------------------------" if puts_switch == 0
-    p "que:#{que}" if puts_switch == 0
+
+      p "---------------------------------------------------"
+      p "que:#{que}"
       count_a = 0	#[[]]计数
       count_b = 0	#(())计数
       count_c = 0	#{{}}计数
@@ -246,8 +270,8 @@ module QuestionHelper
       result_d = que.scan(%r{\n\s*})
       count_d = result_d.length if result_d.length != 0
 
-      #  count_e = 0 #||计数     #  count_f = 0		#;;计数
-      #  count_g = 0 #>>计数     #  count_h = 0 	  #@@计数
+      #  count_e = 0 #||计数     #  count_f = 0   #;;计数
+      #  count_g = 0 #>>计数     #  count_h = 0   #@@计数
       if(count_a != 0 || count_b != 0 || count_c != 0)   #[[]]、(())、{{}}的数量不能都为0
         if count_a == 1 && count_b == 0 && count_c == 0 #当只有一对[[]]时
              #单选题、多选题、排序题、连线题的判断及验证
@@ -261,21 +285,22 @@ module QuestionHelper
             error_info = tmp_val[:error_info]
         elsif count_b >= 1 && count_a == 0 && count_c == 0  #填空题的
             que_tpye = Question::TYPE_NAMES[:input] #填空题
-            p "文件'#{excel}'第#{line}行：填空题" if puts_switch == 0
+            p "文件'#{excel}'第#{line}行：填空题"
         elsif count_c != 0 && count_a == 0 && count_b == 0   #语音输入题
             que_tpye = Question::TYPE_NAMES[:voice_input] # 语音输入题
-            p "文件'#{excel}'第#{line}行：语音输入题" if puts_switch == 0
+            p "文件'#{excel}'第#{line}行：语音输入题"
         elsif count_d != 0   # 综合题
             tmp_val = distinguish_question_three excel, line, que
             que_tpye = tmp_val[:que_tpye]
             error_info = tmp_val[:error_info]
+            p "综合题：#{error_info}"
         end
       else
         que_tpye = -2 #题面，没有选项的括号标记
       end
     #p "||total:#{count_e}  ;;total:#{count_f}  >>total:#{count_g}  @@total:#{count_h}"
-    p "que_tpye:#{que_tpye}" if puts_switch == 0
-    p "error_info:#{error_info}" if puts_switch == 0
+    p "que_tpye:#{que_tpye}"
+    p "error_info:#{error_info}"
     return_infos = {:que_tpye => que_tpye, :error_info => error_info }
   end
 
@@ -289,6 +314,7 @@ module QuestionHelper
     if(count_e == 0 && count_f == 0) #当选项中没有||和;;分隔符
       que_tpye = -1 #未知题型
       error_info = "文件'#{excel}'第#{line}行：未知题型"
+      error_info = "未知题型" if excel.size == 0 || line.size == 0
     elsif(count_e != 0 && count_f == 0) #当只有||分隔符 单选题、多选题、没有答案、连线题
       count = 0
       c = 0
@@ -313,6 +339,7 @@ module QuestionHelper
           if g != 0
             que_tpye = -1 #未知题型
             error_info = "文件'#{excel}'第#{line}行：连线题对应关系不正确"
+            error_info = "连线题对应关系不正确" if excel.size == 0 || line.size == 0
           else
             que_tpye = Question::TYPE_NAMES[:lineup] #连线题
             p "文件'#{excel}'第#{line}行：连线题"
@@ -320,14 +347,17 @@ module QuestionHelper
         elsif d != 0 && d < tmp.split(/\|\|/).length
           que_tpye = -1 #未知题型
           error_info = "文件'#{excel}'第#{line}行：连线题对应关系不正确"
+          error_info = "连线题对应关系不正确" if excel.size == 0 || line.size == 0
         elsif d == 0
           que_tpye = -1 #未知题型
-          error_info = "文件'#{excel}'第#{line}行：选择题的没有答案或答案为空"
+          error_info = "文件'#{excel}'第#{line}行：选择题没有答案或答案为空"
+          error_info = "选择题没有答案或答案为空" if excel.size == 0 || line.size == 0
         end
       elsif count == 1
         if c != 0
           que_tpye = -1 #未知题型
-          error_info = "文件'#{excel}'第#{line}行：选择题的没有答案或有答案为空"
+          error_info = "文件'#{excel}'第#{line}行：选择题没有答案或有答案为空"
+          error_info = "选择题没有答案或答案为空" if excel.size == 0 || line.size == 0
         else
           p "文件'#{excel}'第#{line}行：单选题"
           que_tpye = Question::TYPE_NAMES[:single_choice] #单选题
@@ -335,7 +365,8 @@ module QuestionHelper
       elsif count > 1
         if c != 0
           que_tpye = -1 #未知题型
-          error_info = "文件'#{excel}'第#{line}行：选择题的没有答案或有答案为空"
+          error_info = "文件'#{excel}'第#{line}行：选择题没有答案或答案为空"
+          error_info = "选择题没有答案或答案为空" if excel.size == 0 || line.size == 0
         else
           p "文件'#{excel}'第#{line}行：多选题"
           que_tpye = Question::TYPE_NAMES[:multiple_choice] #多选题
@@ -349,13 +380,12 @@ module QuestionHelper
       if count != 0 #当排序题选项为空时
         que_tpye = -1 #未知题型
         error_info = "文件'#{excel}'第#{line}行：排序题的选项不能为空"
+        error_info = "排序题的选项不能为空" if excel.size == 0 || line.size == 0
       else
         que_tpye = Question::TYPE_NAMES[:sortby] #排序题
         p "文件'#{excel}'第#{line}行：排序题"
       end
     end
-    #p "one_error_info#{error_info}"
-    #p "one_que_tpye#{que_tpye}"
     return_info = {:que_tpye => que_tpye, :error_info => error_info }
   end
 
@@ -390,9 +420,11 @@ module QuestionHelper
     elsif count_zero == 0 && count_one != 0 && count_one == result.length #完型填空题
       #完型填空题的判断和验证
       t = distinguish_question_four excel, line, tmp
+      error_info = t[:error_info]
       que_tpye = t[:que_tpye]
     else
       error_info = "文件'#{excel}'第#{line}行：完形填空题的每个选项[[……]]中至少有一个必须有'||'或拖拽题的每个选项[[……]]中都不能有'||'"
+      error_info = "完形填空题的每个选项[[……]]中至少有一个必须有'||'或拖拽题的每个选项[[……]]中都不能有'||'" if excel.size == 0 || line.size == 0
     end
     #p error_info
     #p que_tpye
@@ -408,9 +440,9 @@ module QuestionHelper
     types = [] #完型填空中的所有小题类型的集合
     errorinfo = ""
     tmp.each do |e|
-      t = distinguish_question_types(excel, e, line)
+      t = distinguish_question_types("", e, "")
       types <<  t[:que_tpye]
-      errorinfo = t[:error_info]
+      errorinfo = "文件'#{excel}'第#{line}行综合题中:#{t[:error_info]}"
       #p "errorinfo#{errorinfo}"
     end
     count = 0
@@ -457,7 +489,9 @@ module QuestionHelper
       que_tpye = Question::TYPE_NAMES[:fillin] # 完型填空
       p "文件'#{excel}'第#{line}行：完形填空"
     elsif count_zero != 0 || count_one_more != 0
-      error_info = "文件'#{excel}'第#{line}行：完形填空完型填空题中的某个选项没答案或有多个答案"
+      p "bbbbbb"
+      error_info = "文件'#{excel}'第#{line}行：完型填空题中的某个选项没答案或有多个答案"
+      error_info = "完型填空题中的某个选项没答案或有多个答案" if excel.size == 0 || line.size == 0
     end
     #p error_info
     #p que_tpye
@@ -601,75 +635,84 @@ module QuestionHelper
     all_round_questions.each do |e|
       excel = e[:excel].to_s
       json_file = ""
-      round_name = e[:round].to_s.strip
+      round_name = e[:round].to_s
       round_score = e[:round_score].to_i
-      round_time = e[:round_score].to_i
-      time_correct_percent = e[:round_score].to_i
-      blood = e[:round_score].to_i
-      round_score = e[:round_score].to_i
+      round_time = e[:round_time].to_i
+      time_correct_percent = e[:time_correct_percent].to_i
+      blood = e[:blood].to_i
       questions = e[:questions]
+
       round = Round.find_by_course_id_and_chapter_id_and_name(course_id, chapter_id, round_name)
       course = Course.find(course_id)
       if round
-        if !round_name.strip.empty? && round_score != 0 && round_time != 0 && time_correct_percent != 0 && blood != 0
-
-          course.update_attributes(:max_score => round_score, :time_ratio => time_correct_percent,
-                                   :round_time => round_time, :blood => blood )
-          round.update_attributes(:max_score => round_score, :time_ratio => time_correct_percent,
-                                  :round_time => round_time, :blood => blood )
-
-        else
-          round = Round.create(:name => round_name, :max_score => course.max_score,
-                               :time_ratio => course.time_ratio, :round_time => course.round_time,
-                               :blood => course.blood , :chapter_id => chapter_id, :course_id => course.id)
-        end
+        update_round_data round, round_score, round_time, time_correct_percent, blood
       else
-        if !round_name.strip.empty? && round_score != 0 && round_time != 0 && time_correct_percent != 0 && blood != 0
-          round = Round.create(:name => round_name, :max_score => round_score,
-                               :time_ratio => time_correct_percent, :round_time => round_time,
-                               :blood => blood, :chapter_id => chapter_id, :course_id => course.id)
-        else
-          round = Round.create(:name => round_name, :max_score => course.max_score,
-                               :time_ratio => course.time_ratio, :round_time => course.round_time,
-                               :blood => course.blood, :chapter_id => chapter_id, :course_id => course.id)
-        end
+        round = Round.create(:name => round_name, :max_score => course.max_score,
+                             :time_ratio => course.time_ratio, :round_time => course.round_time,
+                             :blood => course.blood, :chapter_id => chapter_id, :course_id => course.id)
+        update_round_data round, round_score, round_time, time_correct_percent, blood
       end
       #p round
       #p course
       #p "questions#{questions}"
       one_json_question = []
       questions.each do |x|
-        p "x:#{x}"
+        #p "x:#{x}"
         result = split_question x[:que], x[:type]
         #p "result:    #{result}"
         #p "card_types#{x[:card_types]}"
-        cardbag_tag = CardbagTag.find_by_course_id_and_name(course_id,x[:card_types].to_s.strip)
-        if cardbag_tag.nil?
-          cardbag_tag = CardbagTag.create(:course_id => course_id, :name => x[:card_types].to_s, :types => CardbagTag::TYPE_NAME[:system])
-        end
-        knowledge_card = KnowledgeCard.create(:name => x[:card_name].to_s, :description => x[:card_description].to_s, :course_id => course_id, :types => 1)
-        if !knowledge_card.nil?
-          CardTagRelation.create(:user_id => user_id, :course_id => course_id, :knowledge_card_id => knowledge_card.id, :cardbag_tag_id => cardbag_tag.id)
-        end
-        question = Question.create(:knowledge_card_id => knowledge_card.id, :content => result[:content], :types => result[:question_types], :round_id => round.id, :full_text => x[:que] )
-        #p question
-        branch_questions =[]
-        result[:branch_questions].each do |i|
-          branch_questions << BranchQuestion.create(:question_id => question.id, :branch_content => i[:branch_content], :types => i[:branch_question_types], :options => i[:options], :answer => i[:answer] )
+        if x[:card_name].size != 0
+          cardbag_tag = CardbagTag.find_by_course_id_and_name(course_id,x[:card_types].to_s.strip)
+          if cardbag_tag
+            cardbag_tag = CardbagTag.create(:course_id => course_id, :name => x[:card_types].to_s, :types => CardbagTag::TYPE_NAME[:system])
+          end
+          knowledge_card = KnowledgeCard.create(:name => x[:card_name].to_s, :description => x[:card_description].to_s, :course_id => course_id, :types => 1)
+          if knowledge_card
+            CardTagRelation.create(:user_id => user_id, :course_id => course_id, :knowledge_card_id => knowledge_card.id, :cardbag_tag_id => cardbag_tag.id)
+          end
+          question = Question.create(:knowledge_card_id => knowledge_card.id, :content => result[:content], :types => result[:question_types], :round_id => round.id, :full_text => x[:que] )
+        else
+          question = Question.create(:content => result[:content], :types => result[:question_types], :round_id => round.id, :full_text => x[:que] )
         end
 
+        #p question
+        result[:branch_questions].each do |i|
+          BranchQuestion.create(:question_id => question.id, :branch_content => i[:branch_content], :types => i[:branch_question_types], :options => i[:options], :answer => i[:answer] )
+        end
+        #
+        #branch_ques = ""
+        #c = 0
+        #branch_questions.each do |y|
+        #  branch_ques = branch_ques + "," if c > 0
+        #  branch_ques = branch_ques + "{\"branch_question_id\":#{y.id}, \"branch_content\":\"#{y.branch_content}\",\"branch_question_types\":#{y.types}, \"options\":\"#{y.options}\",\"answer\":\"#{y.answer}\"}"
+        #  c = c + 1
+        #end
+        #que = "{\"question_id\":#{question.id},\"content\":\"#{question.content}\",\"question_types\":#{question.types},\"branch_questions\": [#{branch_ques}],\"card_id\":#{knowledge_card.id},\"card_name\": \"#{knowledge_card.name}\", \"description\": \"#{knowledge_card.description}\",\"card_types\" : \"#{knowledge_card.types}\"}"
+        #
+        #one_json_question << que
+
+      end
+
+      questions = round.questions
+
+      questions.each do |e|
         branch_ques = ""
+        branch_questions = e.branch_questions
         c = 0
         branch_questions.each do |y|
           branch_ques = branch_ques + "," if c > 0
           branch_ques = branch_ques + "{\"branch_question_id\":#{y.id}, \"branch_content\":\"#{y.branch_content}\",\"branch_question_types\":#{y.types}, \"options\":\"#{y.options}\",\"answer\":\"#{y.answer}\"}"
-              #{:branch_question_id => "#{y.id}", :branch_content=> y.branch_content, :branch_question_types => "#{y.types}",:options => y.options,:answer => y.answer}
           c = c + 1
         end
-        que = "{\"question_id\":#{question.id},\"content\":\"#{question.content}\",\"question_types\":#{question.types},\"branch_questions\": [#{branch_ques}],\"card_id\":#{knowledge_card.id},\"card_name\": \"#{knowledge_card.name}\", \"description\": \"#{knowledge_card.description}\",\"card_types\" : \"#{knowledge_card.types}\"}"
+        if e.knowledge_card_id != nil
+          knowledge_card = KnowledgeCard.find(e.knowledge_card_id)
+          que = "{\"question_id\":#{e.id},\"content\":\"#{e.content}\",\"question_types\":#{e.types},\"branch_questions\": [#{branch_ques}],\"card_id\":#{knowledge_card.id},\"card_name\": \"#{knowledge_card.name}\", \"description\": \"#{knowledge_card.description}\",\"card_types\" : \"#{knowledge_card.types}\"}"
+        else
+          #que = "{\"question_id\":#{e.id},\"content\":\"#{e.content}\",\"question_types\":#{e.types},\"branch_questions\": [#{branch_ques}],\"card_id\":#{knowledge_card.id},\"card_name\": \"#{knowledge_card.name}\", \"description\": \"#{knowledge_card.description}\",\"card_types\" : \"#{knowledge_card.types}\"}"
+          que = "{\"question_id\":#{e.id},\"content\":\"#{e.content}\",\"question_types\":#{e.types},\"branch_questions\": [#{branch_ques}],\"card_id\":,\"card_name\": \"\", \"description\": \"\",\"card_types\" : \"\"}"
+        end
 
         one_json_question << que
-
       end
 
       question_total = Question.count("round_id=#{round.id}")
@@ -715,4 +758,21 @@ module QuestionHelper
       #p "====================================="
     end
   end
+
+  #更新关卡基础数据
+  def update_round_data round, round_score, round_time, time_correct_percent, blood
+    if round_score != 0
+      round.update_attributes(:max_score => round_score)
+    end
+    if round_time != 0
+      round.update_attributes(:round_time => round_time)
+    end
+    if time_correct_percent != 0
+      round.update_attributes(:time_ratio => time_correct_percent)
+    end
+    if blood != 0
+      round.update_attributes(:blood => blood)
+    end
+  end
+
 end
