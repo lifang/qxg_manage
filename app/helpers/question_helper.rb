@@ -353,7 +353,11 @@ module QuestionHelper
     count_f = tmp.scan(/\;\;/).length
 
     if(count_e == 0 && count_f == 0) #当选项中没有||和;;分隔符
-      if tmp.scan(">>").length != 0 || tmp.scan("file>>>").length != 0
+      if tmp.match(/^\>\>/) || tmp.match(/\>\>$/)
+        que_type = -1 #未知题型
+        error_info = "文件'#{excel}'第#{line}行：连线题对应关系不完整"
+        error_info = "连线题对应关系不能为空" if excel.size == 0 || line.size == 0
+      elsif tmp.scan(">>").length != 0 || tmp.scan("file>>>").length != 0
         que_type = -1 #未知题型
         error_info = "文件'#{excel}'第#{line}行：连线题不能只有一对对应关系"
         error_info = "连线题不能只有一对对应关系" if excel.size == 0 || line.size == 0
@@ -421,16 +425,24 @@ module QuestionHelper
       end
     elsif(count_e == 0 && count_f != 0) #当只有;;分隔符 排序题
       count = 0
-      tmp.split(/\;\;/).to_a.each do |e|
-        count = count + 1 if e.to_s.strip.size == 0
-      end
-      if count != 0 #当排序题选项为空时
+      options = tmp.split(/\;\;/)
+      p options
+      if options.length == 0
         que_tpye = -1 #未知题型
         error_info = "文件'#{excel}'第#{line}行：排序题的选项不能为空"
         error_info = "排序题的选项不能为空" if excel.size == 0 || line.size == 0
       else
-        que_tpye = Question::TYPE_NAMES[:sortby] #排序题
-        p "文件'#{excel}'第#{line}行：排序题"
+        options.each do |e|
+          count = count + 1 if e.to_s.strip.size == 0
+        end
+        if count != 0 #当排序题选项为空时
+          que_tpye = -1 #未知题型
+          error_info = "文件'#{excel}'第#{line}行：排序题的选项不能为空"
+          error_info = "排序题的选项不能为空" if excel.size == 0 || line.size == 0
+        else
+          que_tpye = Question::TYPE_NAMES[:sortby] #排序题
+          p "文件'#{excel}'第#{line}行：排序题"
+        end
       end
     end
     return_info = {:que_tpye => que_tpye, :error_info => error_info }
