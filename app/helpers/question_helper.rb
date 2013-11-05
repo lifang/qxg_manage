@@ -301,7 +301,7 @@ module QuestionHelper
             tmp_val = distinguish_question_two excel, line, result_a
             que_tpye = tmp_val[:que_tpye]
             error_info = tmp_val[:error_info]
-        elsif count_b >= 1 && count_a == 0 && count_c == 0  #填空题的
+        elsif count_b >= 1 && count_a == 0 && count_c == 0  #填空题
             count_e = 0
             result_b.each do |e|
               p e.scan(/\(\([\s]*\)\)/)
