@@ -721,15 +721,16 @@ module QuestionHelper
         #p "result:    #{result}"
         #p "card_types#{x[:card_types]}"
         if x[:card_name].size != 0
-          cardbag_tag = CardbagTag.find_by_course_id_and_name(course_id,x[:card_types].to_s.strip)
-          if cardbag_tag
+          p 11111111
+          cardbag_tag = CardbagTag.find_by_course_id_and_name(course_id,x[:card_types])
+          if cardbag_tag.nil?
             cardbag_tag = CardbagTag.create(:course_id => course_id, :name => x[:card_types].to_s, :types => CardbagTag::TYPE_NAME[:system])
           end
           knowledge_card = KnowledgeCard.create(:name => x[:card_name].to_s, :description => x[:card_description].to_s, :course_id => course_id, :types => 1)
-          if knowledge_card
+          if !knowledge_card.nil?
             CardTagRelation.create(:user_id => user_id, :course_id => course_id, :knowledge_card_id => knowledge_card.id, :cardbag_tag_id => cardbag_tag.id)
+            question = Question.create(:knowledge_card_id => knowledge_card.id, :content => result[:content], :types => result[:question_types], :round_id => round.id, :full_text => x[:que] )
           end
-          question = Question.create(:knowledge_card_id => knowledge_card.id, :content => result[:content], :types => result[:question_types], :round_id => round.id, :full_text => x[:que] )
         else
           question = Question.create(:content => result[:content], :types => result[:question_types], :round_id => round.id, :full_text => x[:que] )
         end
