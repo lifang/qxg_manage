@@ -176,8 +176,6 @@ class QuestionsController < ApplicationController
         que.branch_questions.create(:branch_content => e[:branch_content], :types => e[:branch_question_types],
         :options => e[:options], :answer => e[:answer])
       end
-      @questions = @round.questions.includes(:knowledge_card).paginate(:per_page => 10, :page => params[:page])
-      @branch_question_hash = BranchQuestion.where({:question_id => @questions.map(&:id)}).group_by{|bq| bq.question_id}
       round = Round.find(round_id)
       round.update_attributes(:status => Round::STATUS[:not_verified])
       @info = {:status => 0 , :notice => "编辑完成！", :question => @questions, :branch_question => @branch_question_hash}
