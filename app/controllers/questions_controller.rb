@@ -87,7 +87,7 @@ class QuestionsController < ApplicationController
         @status = 1
         @notice_info = @error_infos
         @info = {:status => @status, :notice => @notice_info}
-    else #转移文件&插入数据&写入XML文件
+    else #转移文件&插入数据&写入文件
         questions = Question.where("round_id=#{round_id}")
         if !questions.nil?
           questions.each do |e|
@@ -176,8 +176,6 @@ class QuestionsController < ApplicationController
         que.branch_questions.create(:branch_content => e[:branch_content], :types => e[:branch_question_types],
         :options => e[:options], :answer => e[:answer])
       end
-      @questions = @round.questions.includes(:knowledge_card).paginate(:per_page => 10, :page => params[:page])
-      @branch_question_hash = BranchQuestion.where({:question_id => @questions.map(&:id)}).group_by{|bq| bq.question_id}
       round = Round.find(round_id)
       round.update_attributes(:status => Round::STATUS[:not_verified])
       @info = {:status => 0 , :notice => "编辑完成！", :question => @questions, :branch_question => @branch_question_hash}

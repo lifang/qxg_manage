@@ -301,18 +301,18 @@ module QuestionHelper
             tmp_val = distinguish_question_two excel, line, result_a
             que_tpye = tmp_val[:que_tpye]
             error_info = tmp_val[:error_info]
-        elsif count_b >= 1 && count_a == 0 && count_c == 0  #填空题的
+        elsif count_b >= 1 && count_a == 0 && count_c == 0  #填空题
             count_e = 0
             result_b.each do |e|
               p e.scan(/\(\([\s]*\)\)/)
               count_e+= 1 if e.scan(/\(\([\s]*\)\)/).length != 0
             end
             if count_e != 0
-              error_info = "文件'#{excel}'第#{line}行：填空题内容不能为空"
               que_tpye = -1
+              error_info = "文件'#{excel}'第#{line}行：填空题内容不能为空"
+              error_info = "填空题内容不能为空" if excel.size == 0 || line.size == 0
             else
               que_tpye = Question::TYPE_NAMES[:input] #填空题
-              p "文件'#{excel}'第#{line}行：填空题"
             end
         elsif count_c != 0 && count_a == 0 && count_b == 0   #语音输入题
             p result_c
@@ -324,22 +324,23 @@ module QuestionHelper
             if count_f != 0
               que_tpye = -1
               error_info = "文件'#{excel}'第#{line}行：语音输入题内容不能为空"
+              error_info = "语音输入题内容不能为空" if excel.size == 0 || line.size == 0
             else
               que_tpye = Question::TYPE_NAMES[:voice_input] # 语音输入题
-              p "文件'#{excel}'第#{line}行：语音输入题"
             end
         elsif count_d != 0   # 综合题
             tmp_val = distinguish_question_three excel, line, que
             que_tpye = tmp_val[:que_tpye]
             error_info = tmp_val[:error_info]
             p "综合题：#{error_info}"
+        else
+          que_type = -1
+          error_info = "文件'#{excel}'第#{line}行：未知题型"
+          error_info = "未知题型" if excel.size == 0 || line.size == 0
         end
       else
         que_tpye = -2 #题面，没有选项的括号标记
       end
-    #p "||total:#{count_e}  ;;total:#{count_f}  >>total:#{count_g}  @@total:#{count_h}"
-    p "que_tpye:#{que_tpye}"
-    p "error_info:#{error_info}"
     return_infos = {:que_tpye => que_tpye, :error_info => error_info }
   end
 
@@ -350,10 +351,21 @@ module QuestionHelper
     tmp = result_a[0].to_s.scan(/(?<=\[\[).*(?=\]\])/).to_a[0].to_s
     count_e = tmp.scan(/\|\|/).length
     count_f = tmp.scan(/\;\;/).length
+
     if(count_e == 0 && count_f == 0) #当选项中没有||和;;分隔符
-      que_tpye = -1 #未知题型
-      error_info = "文件'#{excel}'第#{line}行：未知题型"
-      error_info = "未知题型" if excel.size == 0 || line.size == 0
+      if tmp.match(/^\>\>/) || tmp.match(/\>\>$/)
+        que_type = -1 #未知题型
+        error_info = "文件'#{excel}'第#{line}行：连线题对应关系不完整"
+        error_info = "连线题对应关系不能为空" if excel.size == 0 || line.size == 0
+      elsif tmp.scan(">>").length != 0 || tmp.scan("file>>>").length != 0
+        que_type = -1 #未知题型
+        error_info = "文件'#{excel}'第#{line}行：连线题不能只有一对对应关系"
+        error_info = "连线题不能只有一对对应关系" if excel.size == 0 || line.size == 0
+      else
+        que_tpye = -1 #未知题型
+        error_info = "文件'#{excel}'第#{line}行：未知题型"
+        error_info = "未知题型" if excel.size == 0 || line.size == 0
+      end
     elsif(count_e != 0 && count_f == 0) #当只有||分隔符 单选题、多选题、没有答案、连线题
       count = 0
       c = 0
@@ -413,16 +425,24 @@ module QuestionHelper
       end
     elsif(count_e == 0 && count_f != 0) #当只有;;分隔符 排序题
       count = 0
-      tmp.split(/\;\;/).to_a.each do |e|
-        count = count + 1 if e.to_s.strip.size == 0
-      end
-      if count != 0 #当排序题选项为空时
+      options = tmp.split(/\;\;/)
+      p options
+      if options.length == 0
         que_tpye = -1 #未知题型
         error_info = "文件'#{excel}'第#{line}行：排序题的选项不能为空"
         error_info = "排序题的选项不能为空" if excel.size == 0 || line.size == 0
       else
-        que_tpye = Question::TYPE_NAMES[:sortby] #排序题
-        p "文件'#{excel}'第#{line}行：排序题"
+        options.each do |e|
+          count = count + 1 if e.to_s.strip.size == 0
+        end
+        if count != 0 #当排序题选项为空时
+          que_tpye = -1 #未知题型
+          error_info = "文件'#{excel}'第#{line}行：排序题的选项不能为空"
+          error_info = "排序题的选项不能为空" if excel.size == 0 || line.size == 0
+        else
+          que_tpye = Question::TYPE_NAMES[:sortby] #排序题
+          p "文件'#{excel}'第#{line}行：排序题"
+        end
       end
     end
     return_info = {:que_tpye => que_tpye, :error_info => error_info }
@@ -472,6 +492,7 @@ module QuestionHelper
 
   #综合题的判断和验证
   def distinguish_question_three excel, line, que
+    p 11111
     que_tpye = -1
     error_info = []
     return_info = {}
@@ -481,9 +502,11 @@ module QuestionHelper
     tmp.each do |e|
       t = distinguish_question_types("", e, "")
       types <<  t[:que_tpye]
-      errorinfo = "文件'#{excel}'第#{line}行综合题中:#{t[:error_info]}"
-      #p "errorinfo#{errorinfo}"
+      error_info = "文件'#{excel}'第#{line}行综合题中:#{t[:error_info]}" if t[:error_info].to_s.strip.size != 0
+      error_info = "综合题中#{t[:error_info]}" if (excel.size == 0 || line.size == 0) && t[:error_info].to_s.strip.size != 0
     end
+    p error_info
+    p types
     count = 0
     types.each  do |e|
       count = count + 1 if (e == -1 || e > 8)
@@ -491,10 +514,9 @@ module QuestionHelper
 
     if count == 0
       que_tpye = Question::TYPE_NAMES[:zonghe]
-      p "文件'#{excel}'第#{line}行：综合题"
     else
       que_tpye = -1
-      error_info = errorinfo
+      error_info = error_info
     end
     #p error_info
     #p que_tpye
@@ -526,9 +548,7 @@ module QuestionHelper
     end
     if count_zero == 0 && count_one_more == 0
       que_tpye = Question::TYPE_NAMES[:fillin] # 完型填空
-      p "文件'#{excel}'第#{line}行：完形填空"
     elsif count_zero != 0 || count_one_more != 0
-      p "bbbbbb"
       error_info = "文件'#{excel}'第#{line}行：完型填空题中的某个选项没答案或有多个答案"
       error_info = "完型填空题中的某个选项没答案或有多个答案" if excel.size == 0 || line.size == 0
     end
@@ -795,6 +815,7 @@ module QuestionHelper
       File.delete "#{chapter_dir}/Round_#{round.id}.zip" if File.exist? "#{chapter_dir}/Round_#{round.id}.zip"
       Archive::Zip.archive("#{chapter_dir}/Round_#{round.id}.zip", round_dir)
       #p "====================================="
+      round.update_attributes(:status => Round::STATUS[:not_verified])
     end
   end
 
