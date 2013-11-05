@@ -721,7 +721,6 @@ module QuestionHelper
         #p "result:    #{result}"
         #p "card_types#{x[:card_types]}"
         if x[:card_name].size != 0
-          p 11111111
           cardbag_tag = CardbagTag.find_by_course_id_and_name(course_id,x[:card_types])
           if cardbag_tag.nil?
             cardbag_tag = CardbagTag.create(:course_id => course_id, :name => x[:card_types].to_s, :types => CardbagTag::TYPE_NAME[:system])
