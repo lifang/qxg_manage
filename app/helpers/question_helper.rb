@@ -795,6 +795,7 @@ module QuestionHelper
       File.delete "#{chapter_dir}/Round_#{round.id}.zip" if File.exist? "#{chapter_dir}/Round_#{round.id}.zip"
       Archive::Zip.archive("#{chapter_dir}/Round_#{round.id}.zip", round_dir)
       #p "====================================="
+      round.update_attributes(:status => Round::STATUS[:not_verified])
     end
   end
 

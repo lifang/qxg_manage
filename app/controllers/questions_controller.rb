@@ -87,7 +87,7 @@ class QuestionsController < ApplicationController
         @status = 1
         @notice_info = @error_infos
         @info = {:status => @status, :notice => @notice_info}
-    else #转移文件&插入数据&写入XML文件
+    else #转移文件&插入数据&写入文件
         questions = Question.where("round_id=#{round_id}")
         if !questions.nil?
           questions.each do |e|
