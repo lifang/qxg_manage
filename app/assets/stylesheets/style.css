@@ -312,6 +312,7 @@ h1 a { cursor: pointer;}
 /*分页*/
 .pagination { text-align: center; margin: 15px auto; }
 .pagination a,  .pagination em{
+    line-height: 30px;
     cursor: pointer;
     margin: 0 2px;
     padding: 3px 10px;
