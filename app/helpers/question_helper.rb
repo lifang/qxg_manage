@@ -351,10 +351,17 @@ module QuestionHelper
     tmp = result_a[0].to_s.scan(/(?<=\[\[).*(?=\]\])/).to_a[0].to_s
     count_e = tmp.scan(/\|\|/).length
     count_f = tmp.scan(/\;\;/).length
+
     if(count_e == 0 && count_f == 0) #当选项中没有||和;;分隔符
-      que_tpye = -1 #未知题型
-      error_info = "文件'#{excel}'第#{line}行：未知题型"
-      error_info = "未知题型" if excel.size == 0 || line.size == 0
+      if tmp.scan(">>").length != 0 || tmp.scan("file>>>").length != 0
+        que_type = -1 #未知题型
+        error_info = "文件'#{excel}'第#{line}行：连线题不能只有一对对应关系"
+        error_info = "连线题不能只有一对对应关系" if excel.size == 0 || line.size == 0
+      else
+        que_tpye = -1 #未知题型
+        error_info = "文件'#{excel}'第#{line}行：未知题型"
+        error_info = "未知题型" if excel.size == 0 || line.size == 0
+      end
     elsif(count_e != 0 && count_f == 0) #当只有||分隔符 单选题、多选题、没有答案、连线题
       count = 0
       c = 0
