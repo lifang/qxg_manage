@@ -173,19 +173,19 @@ h1 span{ font-size:16px;}
 .rightText dl {
 	float:left;
 	width:100%;
+        overflow: hidden;
+        height: 120px;
 }
 
+.rightText dt,.rightText dd { float:left;}
 .rightText dt {
-	width:40%;
-	float:left;
-	text-align:right;
+ width:40%;
+ text-align:right;
 }
 
 .rightText dd{
-	width:50%;
-	float:left;
-	margin-left:10px;
-	overflow:hidden;
+ width:50%;
+ margin-left:10px;
 }
 
 .action { padding: 5px; text-align: center; width:100%;}

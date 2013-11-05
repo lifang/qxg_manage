@@ -13,7 +13,6 @@ class KnowledgeCard < ActiveRecord::Base
   end
 
   def upload_file(file)
-    p Rails.root.class
     img_parent_path = Rails.root.to_s + IMG_PATH % self.id
     img_real_parent_path = IMG_REAL_PATH % self.id
     FileUtils.mkdir_p(img_parent_path) unless Dir.exists?(img_parent_path)
@@ -26,9 +25,6 @@ class KnowledgeCard < ActiveRecord::Base
     new_file = "#{img_parent_path + file_name}_#{SIZE}"+ file_extension
     resize = SIZE > img["width"] ? img["width"] : SIZE
     height = img["height"].to_f/img["width"].to_f > 5.0/6 ?  250 : resize
-    p 1111111111111
-    p img_parent_path + filename
-    p new_file
     img.run_command("convert #{img_parent_path + filename}  -resize #{resize}x#{height} #{new_file}")
     #    end
     return (img_real_parent_path +  "#{file_name}_#{SIZE}"+ file_extension)
