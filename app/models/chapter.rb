@@ -1,9 +1,9 @@
 #encoding: utf-8
-require 'fileutils'
 class Chapter < ActiveRecord::Base
-
+  include ImageHandler
+  
   belongs_to :course, :counter_cache => true
-  has_many :rounds
+  has_many :rounds, :dependent => :destroy
   mount_uploader :img, AvatarUploader
   
   STATUS_NAME = { 0 => "未审核", 1 => "已审核"}
@@ -13,11 +13,6 @@ class Chapter < ActiveRecord::Base
     :message =>  "同一课程下章节名称已存在！" }
 
   scope :verified, where(:status => STATUS[:verified])
-  after_destroy :remove_img
-  
-  def remove_img
-    img_full_path_str = (Rails.root.to_s + "/public" + self.img.url)
-    file_dir = File.expand_path("..",img_full_path_str)
-    FileUtils.rm_r file_dir if Dir.exists?(file_dir)
-  end
+  after_destroy :remove_image_after_deleted
+
 end
