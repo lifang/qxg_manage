@@ -2,7 +2,7 @@
 class Round < ActiveRecord::Base
   belongs_to :chapter, :counter_cache => true
   has_many :questions, :dependent => :destroy
-  has_many :round_scores
+  has_many :round_scores, :dependent => :destroy
 
   STATUS_NAME = { 0 => "未审核", 1 => "已审核"}
   STATUS = {:not_verified => 0, :verified => 1}

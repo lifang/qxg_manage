@@ -1,5 +1,7 @@
 #encoding: utf-8
 class Course < ActiveRecord::Base
+  include ImageHandler
+  
   has_many :knowledge_cards
   has_many :chapters, :dependent => :destroy
   has_many :rounds, :dependent => :destroy
@@ -18,11 +20,5 @@ class Course < ActiveRecord::Base
 
   scope :verified, where(:status => STATUS[:verified])
   
-  after_destroy :remove_img
-
-  def remove_img
-    img_full_path_str = (Rails.root.to_s + "/public" + self.img.url)
-    file_dir = File.expand_path("..",img_full_path_str)
-    FileUtils.rm_r file_dir if Dir.exists?(file_dir)
-  end
+  after_destroy :remove_image_after_deleted
 end
