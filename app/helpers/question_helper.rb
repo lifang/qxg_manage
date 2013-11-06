@@ -727,7 +727,7 @@ module QuestionHelper
           end
           knowledge_card = KnowledgeCard.create(:name => x[:card_name].to_s, :description => x[:card_description].to_s, :course_id => course_id, :types => 1)
           if !knowledge_card.nil?
-            CardTagRelation.create(:user_id => user_id, :course_id => course_id, :knowledge_card_id => knowledge_card.id, :cardbag_tag_id => cardbag_tag.id)
+            CardTagRelation.create(:course_id => course_id, :knowledge_card_id => knowledge_card.id, :cardbag_tag_id => cardbag_tag.id)
             question = Question.create(:knowledge_card_id => knowledge_card.id, :content => result[:content], :types => result[:question_types], :round_id => round.id, :full_text => x[:que] )
           end
         else
