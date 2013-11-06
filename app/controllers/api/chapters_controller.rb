@@ -107,7 +107,7 @@ r.chapter_id = #{chapter_id} and r.course_id = #{chapter.course_id}  ORDER BY rs
     knowledge_cards = KnowledgeCard.joins(:user_cards_relations).select("*")
     .where(:user_cards_relations => {:user_id=>params[:uid],:course_id => params[:course_id]})
 
-    tags = CardbagTag.find_by_sql("select id,name,user_id,course_id,types from cardbag_tags where (course_id=1 and user_id is null) or (course_id=1 and user_id =2)")
+    tags = CardbagTag.find_by_sql("select id,name,user_id,course_id,types from cardbag_tags where (course_id=1 and user_id is null) or (course_id=1 and user_id =#{params[:uid]})")
     
     tag_cards = CardTagRelation.joins(:cardbag_tag).where(:course_id => params[:course_id],
       :knowledge_card_id => knowledge_cards.map(&:id))
@@ -122,6 +122,7 @@ r.chapter_id = #{chapter_id} and r.course_id = #{chapter.course_id}  ORDER BY rs
 
   #移除知识卡片
   def delete_card
+    #uid ,card_id
     UserCardsRelation.where(:user_id=>params[:uid],:knowledge_card_id => params[:card_id]).first.destroy
     render :json=>{:msg => 1}
   end
