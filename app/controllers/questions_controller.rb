@@ -94,7 +94,7 @@ class QuestionsController < ApplicationController
               branch_questions = e.branch_questions
               if e.knowledge_card_id != nil
                 knowledge_card = e.knowledge_card
-                card_tag_relation = CardTagRelation.find_by_knowledge_card_id_and_user_id(knowledge_card.id)
+                card_tag_relation = CardTagRelation.find_by_knowledge_card_id(knowledge_card.id)
                 card_tag_relation.destroy #删除和知识卡片的关系
               end
               e.destroy  #删除题目
