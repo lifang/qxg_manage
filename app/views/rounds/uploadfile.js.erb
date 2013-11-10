@@ -1,9 +1,8 @@
 <% @notice_info = @result[:notice] %>
 $("#upload_bar").html('<%= j (render :partial => 'uploadzip') %>');
 <% if @result[:status] == 0 %>
+location.reload();
 $("#error_bar").html('<%= j (render :partial => 'error_infos') %>');
 <% else %>
-location.reload();
 $("#error_bar").html('<%= j (render :partial => 'error_infos') %>');
 <% end %>
-location.reload();
