@@ -41,7 +41,9 @@ class CoursesController < ApplicationController
   #TODO
   def destroy
     @course = Course.find_by_id params[:id]
-    @course.destroy
+    course_url = "#{Rails.root}/public/qixueguan/Course_#{@course.id}"
+    FileUtils.remove_dir course_url if Dir.exist? course_url
+    @course.destroy    
     flash[:notice] = "删除成功"
     redirect_to courses_path
   end

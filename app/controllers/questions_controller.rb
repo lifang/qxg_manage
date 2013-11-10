@@ -109,7 +109,6 @@ class QuestionsController < ApplicationController
         @branch_question_hash = BranchQuestion.where({:question_id => @questions.map(&:id)}).group_by{|bq| bq.question_id}
         @info = {:status => @status, :notice => @notice_info, :question => @questions, :branch_question => @branch_question_hash}
     end
-
     FileUtils.remove_dir zip_url if Dir.exist? zip_url
   end
 
