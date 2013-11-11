@@ -153,9 +153,9 @@ class QuestionsController < ApplicationController
         error_infos << "与原题题型不符，只能编辑题目内容，不能改变题型！"
       end
       #p "result#{result}"
-      error_info = result[:error_info]
-
-      error_infos << error_info if !error_info.empty?
+      result[:error_info].each do |e|
+        error_infos << e.to_s.strip if e.to_s.strip.size != 0
+      end
     end
     p origin_types
     p type

@@ -82,7 +82,7 @@ module QuestionHelper
   def read_excel path, excel_files
     all_error_infos = [] #错误信息的集合
     all_round_questions = [] #所有个关卡所有题目的集合
-
+    p "excel_files#{excel_files}"
     excel_files.each do |excel|
       result = read_questions path, excel
       result[:error_infos].each do |e|
@@ -183,7 +183,10 @@ module QuestionHelper
           #p "result#{result}"
           error_info = result[:error_info]
           type = result[:que_tpye]
-          error_infos << error_info if !error_info.empty?
+          error_info.each do |e|
+            p e
+            error_infos << e.to_s.strip if e.to_s.strip.size != 0
+          end
           #p "error_infos#{error_infos.length}"
         end
       end
@@ -265,11 +268,12 @@ module QuestionHelper
 
   #识别题型
   def distinguish_question_types excel,que,line
+    p excel
     que_tpye = -1 #题型标记
-    error_info = "" #错误信息
+    error_info = [] #错误信息
 
       p "---------------------------------------------------"
-      p "que:#{que}"
+      #p "que:#{que}"
       count_a = 0	#[[]]计数
       count_b = 0	#(())计数
       count_c = 0	#{{}}计数
@@ -295,12 +299,16 @@ module QuestionHelper
              #单选题、多选题、排序题、连线题的判断及验证
              tmp_val =  distinguish_question_one excel, line, result_a
              que_tpye = tmp_val[:que_tpye]
-             error_info = tmp_val[:error_info]
+             tmp_val[:error_info].each do |e|
+              error_info << e.to_s.strip if e.to_s.strip.size != 0
+             end
         elsif count_a > 1 && count_b == 0 && count_c == 0 && result_d.length == 0
             #拖拽题和完形填空题的判断及验证
             tmp_val = distinguish_question_two excel, line, result_a
             que_tpye = tmp_val[:que_tpye]
-            error_info = tmp_val[:error_info]
+            tmp_val[:error_info].each do |e|
+              error_info << e.to_s.strip if e.to_s.strip.size != 0
+            end
         elsif count_b >= 1 && count_a == 0 && count_c == 0  #填空题
             count_e = 0
             result_b.each do |e|
@@ -309,8 +317,11 @@ module QuestionHelper
             end
             if count_e != 0
               que_tpye = -1
-              error_info = "文件'#{excel}'第#{line}行：填空题内容不能为空"
-              error_info = "填空题内容不能为空" if excel.size == 0 || line.size == 0
+              if excel.size == 0 || line.size == 0
+                error_info << "填空题内容不能为空"
+              else
+                error_info << "文件'#{excel}'第#{line}行：填空题内容不能为空"
+              end
             else
               que_tpye = Question::TYPE_NAMES[:input] #填空题
             end
@@ -323,20 +334,27 @@ module QuestionHelper
             end
             if count_f != 0
               que_tpye = -1
-              error_info = "文件'#{excel}'第#{line}行：语音输入题内容不能为空"
-              error_info = "语音输入题内容不能为空" if excel.size == 0 || line.size == 0
+              if excel.size == 0 || line.size == 0
+                error_info << "语音输入题内容不能为空"
+              else
+                error_info << "文件'#{excel}'第#{line}行：语音输入题内容不能为空"
+              end
             else
               que_tpye = Question::TYPE_NAMES[:voice_input] # 语音输入题
             end
         elsif count_d != 0   # 综合题
             tmp_val = distinguish_question_three excel, line, que
             que_tpye = tmp_val[:que_tpye]
-            error_info = tmp_val[:error_info]
-            p "综合题：#{error_info}"
+            tmp_val[:error_info].each do |e|
+              error_info << e.to_s.strip if e.to_s.strip.size != 0
+            end
         else
           que_type = -1
-          error_info = "文件'#{excel}'第#{line}行：未知题型"
-          error_info = "未知题型" if excel.size == 0 || line.size == 0
+          if excel.size == 0 || line.size == 0
+            error_info << "未知题型"
+          else
+            error_info << "文件'#{excel}'第#{line}行：未知题型"
+          end
         end
       else
         que_tpye = -2 #题面，没有选项的括号标记
@@ -347,7 +365,7 @@ module QuestionHelper
   #单选题、多选题、排序题、连线题的判断及验证
   def distinguish_question_one excel, line, result_a
     que_tpye = -1 #题型标记
-    error_info = "" #错误信息
+    error_info = [] #错误信息
     tmp = result_a[0].to_s.scan(/(?<=\[\[).*(?=\]\])/).to_a[0].to_s
     count_e = tmp.scan(/\|\|/).length
     count_f = tmp.scan(/\;\;/).length
@@ -355,16 +373,25 @@ module QuestionHelper
     if(count_e == 0 && count_f == 0) #当选项中没有||和;;分隔符
       if tmp.match(/^\>\>/) || tmp.match(/\>\>$/)
         que_type = -1 #未知题型
-        error_info = "文件'#{excel}'第#{line}行：连线题对应关系不完整"
-        error_info = "连线题对应关系不能为空" if excel.size == 0 || line.size == 0
+        if excel.size == 0 || line.size == 0
+          error_info << "连线题对应关系不能为空"
+        else
+          error_info << "文件'#{excel}'第#{line}行：连线题对应关系不完整"
+        end
       elsif tmp.scan(">>").length != 0 || tmp.scan("file>>>").length != 0
         que_type = -1 #未知题型
-        error_info = "文件'#{excel}'第#{line}行：连线题不能只有一对对应关系"
-        error_info = "连线题不能只有一对对应关系" if excel.size == 0 || line.size == 0
+        if excel.size == 0 || line.size == 0
+          error_info << "连线题不能只有一对对应关系"
+        else
+          error_info << "文件'#{excel}'第#{line}行：连线题不能只有一对对应关系"
+        end
       else
         que_tpye = -1 #未知题型
-        error_info = "文件'#{excel}'第#{line}行：未知题型"
-        error_info = "未知题型" if excel.size == 0 || line.size == 0
+        if excel.size == 0 || line.size == 0
+          error_info << "未知题型"
+        else
+          error_info << "文件'#{excel}'第#{line}行：未知题型"
+        end
       end
     elsif(count_e != 0 && count_f == 0) #当只有||分隔符 单选题、多选题、没有答案、连线题
       count = 0
@@ -389,26 +416,38 @@ module QuestionHelper
 
           if g != 0
             que_tpye = -1 #未知题型
-            error_info = "文件'#{excel}'第#{line}行：连线题对应关系不正确"
-            error_info = "连线题对应关系不正确" if excel.size == 0 || line.size == 0
+            if excel.size == 0 || line.size == 0
+              error_info << "连线题对应关系不正确"
+            else
+              error_info << "文件'#{excel}'第#{line}行：连线题对应关系不正确"
+            end
           else
             que_tpye = Question::TYPE_NAMES[:lineup] #连线题
             p "文件'#{excel}'第#{line}行：连线题"
           end
         elsif d != 0 && d < tmp.split(/\|\|/).length
           que_tpye = -1 #未知题型
-          error_info = "文件'#{excel}'第#{line}行：连线题对应关系不正确"
-          error_info = "连线题对应关系不正确" if excel.size == 0 || line.size == 0
+          if excel.size == 0 || line.size == 0
+            error_info << "连线题对应关系不正确"
+          else
+            error_info << "文件'#{excel}'第#{line}行：连线题对应关系不正确"
+          end
         elsif d == 0
           que_tpye = -1 #未知题型
-          error_info = "文件'#{excel}'第#{line}行：选择题没有答案或答案为空"
-          error_info = "选择题没有答案或答案为空" if excel.size == 0 || line.size == 0
+          if excel.size == 0 || line.size == 0
+            error_info << "选择题没有答案或答案为空"
+          else
+            error_info << "文件'#{excel}'第#{line}行：选择题没有答案或答案为空"
+          end
         end
       elsif count == 1
         if c != 0
           que_tpye = -1 #未知题型
-          error_info = "文件'#{excel}'第#{line}行：选择题没有答案或有答案为空"
-          error_info = "选择题没有答案或答案为空" if excel.size == 0 || line.size == 0
+          if excel.size == 0 || line.size == 0
+            error_info << "选择题没有答案或答案为空"
+          else
+            error_info << "文件'#{excel}'第#{line}行：选择题没有答案或答案为空"
+          end
         else
           p "文件'#{excel}'第#{line}行：单选题"
           que_tpye = Question::TYPE_NAMES[:single_choice] #单选题
@@ -416,8 +455,11 @@ module QuestionHelper
       elsif count > 1
         if c != 0
           que_tpye = -1 #未知题型
-          error_info = "文件'#{excel}'第#{line}行：选择题没有答案或答案为空"
-          error_info = "选择题没有答案或答案为空" if excel.size == 0 || line.size == 0
+          if excel.size == 0 || line.size == 0
+            error_info << "选择题没有答案或答案为空"
+          else
+            error_info << "文件'#{excel}'第#{line}行：选择题没有答案或答案为空"
+          end
         else
           p "文件'#{excel}'第#{line}行：多选题"
           que_tpye = Question::TYPE_NAMES[:multiple_choice] #多选题
@@ -426,19 +468,33 @@ module QuestionHelper
     elsif(count_e == 0 && count_f != 0) #当只有;;分隔符 排序题
       count = 0
       options = tmp.split(/\;\;/)
+      p tmp.split(/\;\;/)
       p options
       if options.length == 0
         que_tpye = -1 #未知题型
-        error_info = "文件'#{excel}'第#{line}行：排序题的选项不能为空"
-        error_info = "排序题的选项不能为空" if excel.size == 0 || line.size == 0
+        if excel.size == 0 || line.size == 0
+          error_info << "排序题的选项不能为空"
+        else
+          error_info << "文件'#{excel}'第#{line}行：排序题的选项不能为空"
+        end
+      elsif options.length == 1
+        que_tpye = -1 #未知题型
+        if excel.size == 0 || line.size == 0
+          error_info << "排序题的选项不能为空"
+        else
+          error_info << "文件'#{excel}'第#{line}行：排序题的选项个数必须在一个以上"
+        end
       else
         options.each do |e|
           count = count + 1 if e.to_s.strip.size == 0
         end
         if count != 0 #当排序题选项为空时
           que_tpye = -1 #未知题型
-          error_info = "文件'#{excel}'第#{line}行：排序题的选项不能为空"
-          error_info = "排序题的选项不能为空" if excel.size == 0 || line.size == 0
+          if excel.size == 0 || line.size == 0
+            error_info << "排序题的选项不能为空"
+          else
+            error_info << "文件'#{excel}'第#{line}行：排序题的选项不能为空"
+          end
         else
           que_tpye = Question::TYPE_NAMES[:sortby] #排序题
           p "文件'#{excel}'第#{line}行：排序题"
@@ -451,7 +507,7 @@ module QuestionHelper
   #拖拽题和完形填空题的判断及验证
   def distinguish_question_two excel, line, result_a
     que_tpye = -1 #题型标记
-    error_info = "" #错误信息
+    error_info = [] #错误信息
     tmp = []
     result_a.each do |r|
       tmp << r.scan(/(?<=\[\[).*(?=\]\])/).to_a[0].to_s
@@ -474,16 +530,35 @@ module QuestionHelper
     end
 
     if count_one == 0 && count_zero != 0 && count_zero == result.length  #拖拽题
-      que_tpye = Question::TYPE_NAMES[:drag] # 拖拽题
-      p "文件'#{excel}'第#{line}行：拖拽题"
+      count = 0 #对;;符号和@@符号计数
+      tmp.each do |e|
+        count += 1 if e.to_s.scan("@@").length != 0
+        count += 1 if e.to_s.scan(";;").length != 0
+      end
+      if count == 0
+        que_tpye = Question::TYPE_NAMES[:drag] # 拖拽题
+        p "文件'#{excel}'第#{line}行：拖拽题"
+      else
+        if excel.size == 0 || line.size == 0
+          error_info << "拖拽题中不能包含';;'符号或'@@'符号"
+        else
+          error_info << "文件'#{excel}'第#{line}行：拖拽题中不能包含';;'符号或'@@'符号"
+        end
+      end
     elsif count_zero == 0 && count_one != 0 && count_one == result.length #完型填空题
       #完型填空题的判断和验证
       t = distinguish_question_four excel, line, tmp
-      error_info = t[:error_info]
       que_tpye = t[:que_tpye]
+      p t[:error_info]
+      t[:error_info].each do |e|
+        error_info << e.to_s.strip if e.to_s.strip.size != 0
+      end
     else
-      error_info = "文件'#{excel}'第#{line}行：完形填空题的每个选项[[……]]中至少有一个必须有'||'或拖拽题的每个选项[[……]]中都不能有'||'"
-      error_info = "完形填空题的每个选项[[……]]中至少有一个必须有'||'或拖拽题的每个选项[[……]]中都不能有'||'" if excel.size == 0 || line.size == 0
+      if excel.size == 0 || line.size == 0
+        error_info << "完形填空题的每个选项[[……]]中至少有一个必须有'||'或拖拽题的每个选项[[……]]中都不能有'||'"
+      else
+        error_info << "文件'#{excel}'第#{line}行：完形填空题的每个选项[[……]]中至少有一个必须有'||'或拖拽题的每个选项[[……]]中都不能有'||'"
+      end
     end
     #p error_info
     #p que_tpye
@@ -492,32 +567,55 @@ module QuestionHelper
 
   #综合题的判断和验证
   def distinguish_question_three excel, line, que
-    p 11111
     que_tpye = -1
     error_info = []
     return_info = {}
     tmp =  que.split(%r{\n\s*})
     types = [] #完型填空中的所有小题类型的集合
-    errorinfo = ""
     tmp.each do |e|
       t = distinguish_question_types("", e, "")
       types <<  t[:que_tpye]
-      error_info = "文件'#{excel}'第#{line}行综合题中:#{t[:error_info]}" if t[:error_info].to_s.strip.size != 0
-      error_info = "综合题中#{t[:error_info]}" if (excel.size == 0 || line.size == 0) && t[:error_info].to_s.strip.size != 0
+      if t[:error_info].length != 0
+        if excel.size == 0 || line.size == 0
+          t[:error_info].each do |e|
+            error_info << "综合题中#{e}"
+          end
+        else
+          t[:error_info].each do |e|
+            error_info << "文件'#{excel}'第#{line}行综合题中:#{e}"
+          end
+        end
+      end
     end
     p error_info
     p types
-    count = 0
+    count = 0 #计数不属于综合题的题型
+    count_a = 0 #大题的内容
+    p types
     types.each  do |e|
-      count = count + 1 if (e == -1 || e > 8)
+      count += 1 if (e == -1 || e > 8)
+      count += 1 if e >= 2 && e <= 4
+      count += 1 if e >= 6 && e <= 7
+      count_a += 1 if e == -2
     end
 
-    if count == 0
+    if count_a != 0 && count == 0
       que_tpye = Question::TYPE_NAMES[:zonghe]
-    else
+    elsif count_a == 0 && count == 0
       que_tpye = -1
-      error_info = error_info
+      if excel.size == 0 || line.size == 0
+        error_info << "综合题大题的内容不能为空！"
+      else
+        error_info << "文件'#{excel}'第#{line}行综合题大题的内容不能为空！"
+      end
+    elsif count_a != 0 && count != 0
+      if excel.size == 0 || line.size == 0
+        error_info << "综合题的小题只能是单选题、多选题、填空题、语音题！"
+      else
+        error_info << "文件'#{excel}'第#{line}行综合题的小题只能是单选题、多选题、填空题、语音题！"
+      end
     end
+
     #p error_info
     #p que_tpye
     return_info = {:que_tpye => que_tpye, :error_info => error_info}
@@ -526,7 +624,7 @@ module QuestionHelper
   #完型填空题的判断及验证
   def distinguish_question_four excel, line, tmp
     que_tpye = -1 #题型标记
-    error_info = "" #错误信息
+    error_info = [] #错误信息
 
     result = [] #统计每个选项里的答案数,即@@个数
     tmp.each do |e|
@@ -549,8 +647,11 @@ module QuestionHelper
     if count_zero == 0 && count_one_more == 0
       que_tpye = Question::TYPE_NAMES[:fillin] # 完型填空
     elsif count_zero != 0 || count_one_more != 0
-      error_info = "文件'#{excel}'第#{line}行：完型填空题中的某个选项没答案或有多个答案"
-      error_info = "完型填空题中的某个选项没答案或有多个答案" if excel.size == 0 || line.size == 0
+      if excel.size == 0 || line.size == 0
+        error_info << "完型填空题中的某个选项没答案或有多个答案"
+      else
+        error_info << "文件'#{excel}'第#{line}行：完型填空题中的某个选项没答案或有多个答案"
+      end
     end
     #p error_info
     #p que_tpye
