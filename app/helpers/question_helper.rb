@@ -899,8 +899,11 @@ module QuestionHelper
       Dir.mkdir round_dir if !File.directory? round_dir
       #p round_dir
       FileUtils.mv "#{path}/questions.js", round_dir
-
-      resource_dir = "#{path}/#{excel.split(".")[0]}"
+      p path
+      resource_dir = "#{path}/#{excel.match(/[^\.]+/)}"
+      p "-----------------------------------------"
+      p "resource_dir#{resource_dir}"
+      p "-----------------------------------------"
       #p resource_dir
       #p Dir.exist? resource_dir
       if Dir.exist? resource_dir
