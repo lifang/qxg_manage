@@ -87,16 +87,16 @@ class Api::UserManagesController < ActionController::Base
     questions = []
     if wrong_questions.length < 20
       round_questions = Question.includes(:branch_questions).joins(:round => :round_scores).where(:round_scores =>{:user_id => params[:uid]}, :rounds => {:course_id => params[:course_id]}).select("questions.*").order("round_scores.updated_at asc")
-            if(wrong_questions + round_questions).length < 20
-              #TODO
-              questions = wrong_questions
+      if(wrong_questions + round_questions).length < 20
+        #TODO
+        questions = wrong_questions
 
-              status = 1 #用户暂无任务，请先完成更多的关卡挑战
-            else
-      rs_question = round_questions[0 ..(20 - wrong_questions.length - 1)]
-      questions = wrong_questions + rs_question
-      rs_question.map{|q| q && q.round.round_scores.where(:round_scores => {:user_id => params[:uid]}).update_all(updated_at: Time.now) }
-            end
+        status = 1 #用户暂无任务，请先完成更多的关卡挑战
+      else
+        rs_question = round_questions[0 ..(20 - wrong_questions.length - 1)]
+        questions = wrong_questions + rs_question
+        rs_question.map{|q| q && q.round.round_scores.where(:round_scores => {:user_id => params[:uid]}).update_all(updated_at: Time.now) }
+      end
     else
       questions = wrong_questions[20]
     end
@@ -252,12 +252,26 @@ left join users u on u.id = upr.user_id and upr.user_prop_num >=1 where  p.cours
 
   #根据用户id跟课程id获取用户当前课程的等级、经验以及下次升级的经验
   def course_level
-    #course_id, uid
+    #course_id, uid,experience_vaule 保存经验值，升级
+    old_exp_value = params[:experience_vaule].to_i
     ucr = UserCourseRelation.find_by_course_id_and_user_id(params[:course_id], params[:uid])
     exper_value = ucr.experience_value.to_i
-    course_lv = LevelValue.find_by_course_id_and_level(params[:course_id], ucr.level + 1) if ucr
-    needed_experience_value = course_lv.experience_value.to_i if course_lv
-    render :json => {:current_experience => exper_value,:level => ucr.level, :next_perience =>  needed_experience_value}
+    new_exp_value = exper_value + old_exp_value
+
+    course_lv_next = LevelValue.where("curse_id = ? and experience_value > ?", params[:course_id], new_exp_value).order("experience_value asc").first
+    next_experience_value = course_lv_next.experience_value.to_i if course_lv_next
+    next_level = course_lv_next.level.to_i if course_lv_next
+    UserCourseRelation.transaction do
+      if new_exp_value < next_experience_value
+        ucr.update_attributes({:experience_value => new_exp_value})
+        render :json => {:status => 0, :old_exp_value => exper_value,:level => ucr.level, :new_exp_value =>  new_exp_value}
+      else
+        course_lv_pass = LevelValue.where("curse_id = ? and level = ?", params[:course_id], next_level-1).first
+        passed_exp_value = new_exp_value - course_lv_pass.experience_value
+        ucr.update_attributes({:experience_value => passed_exp_value, :level => next_level-1})
+        render :json => {:status => 1,:old_exp_value => 0, :level => ucr.level, :new_exp_value =>  passed_exp_value}
+      end
+    end
   end
   
 end
