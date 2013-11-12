@@ -47,6 +47,8 @@ class ChaptersController < ApplicationController
 
   def destroy
     @chapter = Chapter.find_by_id(params[:id])
+    chapter_url = "#{Rails.root}/public/qixueguan/Course_#{@chapter.course_id}/Chapter_#{@chapter.id}"
+    FileUtils.remove_dir chapter_url if Dir.exist? chapter_url
     @chapter.destroy
     flash[:notice] = "删除成功"
     redirect_to course_chapters_path(@course.id)

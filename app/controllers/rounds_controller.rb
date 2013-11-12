@@ -125,13 +125,15 @@ class RoundsController < ApplicationController
 
       if @error_infos.length != 0 #判断错误信息是否为空
         @notice_info = @error_infos
+        status = 1
       else #转移文件&插入数据&写入XML文件
         import_data read_excel_result[:all_round_questions], course_id, chapter_id, zip_url, user.id
-        @notice_info = "导入完成！"
+        status = 0
+        @notice_info = ["导入完成！"]
       end
-      @rounds = Round.where({:course_id => params[:course_id], :chapter_id => params[:chapter_id]}).paginate(:per_page => 16, :page => params[:page])
       FileUtils.remove_dir zip_url if !zip_url.nil? && Dir.exist?(zip_url)
-      @hash_result = {:notice => @notice_info, :round => @rounds}
+      @rounds = Round.where({:course_id => params[:course_id], :chapter_id => params[:chapter_id]}).paginate(:per_page => 16, :page => params[:page])
+      @result = {:notice => @notice_info, :status => status}
   end
 
   private

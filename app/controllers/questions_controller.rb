@@ -94,7 +94,7 @@ class QuestionsController < ApplicationController
               branch_questions = e.branch_questions
               if e.knowledge_card_id != nil
                 knowledge_card = e.knowledge_card
-                card_tag_relation = CardTagRelation.find_by_knowledge_card_id_and_user_id(knowledge_card.id,user.id)
+                card_tag_relation = CardTagRelation.find_by_knowledge_card_id(knowledge_card.id)
                 card_tag_relation.destroy #删除和知识卡片的关系
               end
               e.destroy  #删除题目
@@ -109,7 +109,6 @@ class QuestionsController < ApplicationController
         @branch_question_hash = BranchQuestion.where({:question_id => @questions.map(&:id)}).group_by{|bq| bq.question_id}
         @info = {:status => @status, :notice => @notice_info, :question => @questions, :branch_question => @branch_question_hash}
     end
-
     FileUtils.remove_dir zip_url if Dir.exist? zip_url
   end
 
@@ -154,9 +153,9 @@ class QuestionsController < ApplicationController
         error_infos << "与原题题型不符，只能编辑题目内容，不能改变题型！"
       end
       #p "result#{result}"
-      error_info = result[:error_info]
-
-      error_infos << error_info if !error_info.empty?
+      result[:error_info].each do |e|
+        error_infos << e.to_s.strip if e.to_s.strip.size != 0
+      end
     end
     p origin_types
     p type

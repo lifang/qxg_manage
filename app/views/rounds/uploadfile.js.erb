@@ -1,6 +1,8 @@
-<% @notice_info = @hash_result[:notice] %>
-<% @round = @hash_result[:round]%>
-$("#error_bar").html('<%= j (render :partial => 'error_infos') %>');
+<% @notice_info = @result[:notice] %>
 $("#upload_bar").html('<%= j (render :partial => 'uploadzip') %>');
-$("#rounds_list").html("<%= j (render  "rounds/rounds_list") %>");
-//Location.reload();
+<% if @result[:status] == 0 %>
+location.reload();
+$("#error_bar").html('<%= j (render :partial => 'error_infos') %>');
+<% else %>
+$("#error_bar").html('<%= j (render :partial => 'error_infos') %>');
+<% end %>
