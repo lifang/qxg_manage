@@ -124,7 +124,7 @@ r.chapter_id = #{chapter_id} and r.course_id = #{chapter.course_id}  ORDER BY rs
   def delete_card
     #uid ,card_id
     UserCardsRelation.where(:user_id=>params[:uid],:knowledge_card_id => params[:card_id]).first.destroy
-    render :json=>{:msg => 1}
+    render :json => {:msg => "success"}
   end
   
   #卡片列表
@@ -185,16 +185,20 @@ r.chapter_id = #{chapter_id} and r.course_id = #{chapter.course_id}  ORDER BY rs
   #用户自定义添加标签
   def user_add_tag
     #参数uid, tag_name, course_id
-    cardbag_tag = CardbagTag.create({:name => params[:tag_name],:user_id => params[:uid], :course_id => params[:course_id], :types => CardbagTag::TYPE_NAME[:user]})
-    render :json => {:msg => cardbag_tag ? "success" : "error", :tag_id => cardbag_tag.id}
+    CardbagTag.transaction do
+      cardbag_tag = CardbagTag.create({:name => params[:tag_name],:user_id => params[:uid], :course_id => params[:course_id], :types => CardbagTag::TYPE_NAME[:user]})
+      render :json => {:msg => cardbag_tag ? "success" : "error", :tag => cardbag_tag}
+    end
   end
 
   #用户自定义修改标签
   def user_update_tag
     #参数tag_id, tag_name
-    cardbag_tag = CardbagTag.find_by_id(params[:tag_id])
-    ct = cardbag_tag.update_attribute(:name, params[:tag_name])
-    render :json => {:msg => ct ? "success" : "error"}
+    CardbagTag.transaction do
+      cardbag_tag = CardbagTag.find_by_id(params[:tag_id])
+      ct = cardbag_tag.update_attribute(:name, params[:tag_name])
+      render :json => {:msg => ct ? "success" : "error"}
+    end
   end
 
   #用户自定义删除标签
