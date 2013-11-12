@@ -901,7 +901,8 @@ module QuestionHelper
       #p round_dir
       FileUtils.mv "#{path}/questions.js", round_dir
       p path
-      resource_dir = "#{path}/#{excel.match(/[^\.]+/).to_a[0]}"
+      dir = File.basename(excel,".xls")
+      resource_dir = "#{path}/#{dir}"
       p "-----------------------------------------"
       p "resource_dir#{resource_dir}"
       p "-----------------------------------------"
