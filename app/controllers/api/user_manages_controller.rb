@@ -88,7 +88,9 @@ class Api::UserManagesController < ActionController::Base
     if wrong_questions.length < 20
       round_questions = Question.includes(:branch_questions).joins(:round => :round_scores).where(:round_scores =>{:user_id => params[:uid]}, :rounds => {:course_id => params[:course_id]}).select("questions.*").order("round_scores.updated_at asc")
             if(wrong_questions + round_questions).length < 20
-              #questions = wrong_questions
+              #TODO
+              questions = wrong_questions
+
               status = 1 #用户暂无任务，请先完成更多的关卡挑战
             else
       rs_question = round_questions[0 ..(20 - wrong_questions.length - 1)]
@@ -142,16 +144,16 @@ class Api::UserManagesController < ActionController::Base
   #每日任务，删除错题库中答对的题目
   def remove_wrong_questions
     #uid, course_id, question_id, flag(0 错误 1 正确)
-    flag = params[:flag].to_i
     response.header['Access-Control-Allow-Origin'] = '*'
     response.header['Content-Type'] = 'text'
-    umq = UserMistakeQuestion.find_by_uid_and_question_id(params[:uid], params[:question_id])
+    umq = UserMistakeQuestion.find_by_user_id_and_question_id(params[:uid], params[:question_id])
+    flag = params[:flag].to_i
     if flag == 0 && umq.blank?
       UserMistakeQuestion.create({:user_id => params[:uid], :question_id => params[:question_id], :course_id => params[:course_id], :wrong_time => Time.now()})
     elsif flag==1 && umq.present?
       umq.destroy
     end
-    render :text => ""
+    render :text => "success"
   end
   
   def course_to_chapter  #课程到章节，根据关卡完成情况定位章节图片变化
@@ -246,6 +248,16 @@ left join users u on u.id = upr.user_id and upr.user_prop_num >=1 where  p.cours
     can_add_friend_ids = weibo_user_ids - friend_ids
     render :json =>{:added_weibo_friends => User.where(:id => added_friend_ids),
       :can_add_weibo_friends => User.where(:id => can_add_friend_ids), :not_opened_weibo_ids => not_in_app_weibo_ids}
+  end
+
+  #根据用户id跟课程id获取用户当前课程的等级、经验以及下次升级的经验
+  def course_level
+    #course_id, uid
+    ucr = UserCourseRelation.find_by_course_id_and_user_id(params[:course_id], params[:uid])
+    exper_value = ucr.experience_value.to_i
+    course_lv = LevelValue.find_by_course_id_and_level(params[:course_id], ucr.level + 1) if ucr
+    needed_experience_value = course_lv.experience_value.to_i if course_lv
+    render :json => {:current_experience => exper_value,:level => ucr.level, :next_perience =>  needed_experience_value}
   end
   
 end
