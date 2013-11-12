@@ -794,6 +794,7 @@ module QuestionHelper
   def import_data all_round_questions, course_id, chapter_id, path, user_id
     all_round_questions.each do |e|
       excel = e[:excel].to_s
+      p excel
       json_file = ""
       round_name = e[:round].to_s
       round_score = e[:round_score].to_i
@@ -900,7 +901,7 @@ module QuestionHelper
       #p round_dir
       FileUtils.mv "#{path}/questions.js", round_dir
       p path
-      resource_dir = "#{path}/#{excel.match(/[^\.]+/)}"
+      resource_dir = "#{path}/#{excel.match(/[^\.]+/).to_a[0]}"
       p "-----------------------------------------"
       p "resource_dir#{resource_dir}"
       p "-----------------------------------------"
