@@ -59,7 +59,7 @@ class Api::UsersController < ActionController::Base
     user = User.find_by_id(uid)
     url = User.upload_img(img, uid, "user_head_img")
     if user.update_attribute("img", url)
-      render :json => "success"
+      render :json => {:message => "success", :img => user.img}
     else
       render :json => "error"
     end
