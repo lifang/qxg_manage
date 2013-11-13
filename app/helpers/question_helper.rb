@@ -1,7 +1,15 @@
 #encoding: utf-8
 require 'rake/file_utils'
 require 'archive/zip'
+require 'iconv'
+
 module QuestionHelper
+  #转换字符串编码
+  def enconding_gbk_to_utf8 gbk_str
+    conv = Iconv.new("utf-8","GBK")
+    utf8Str = conv.iconv(gbk_str)
+  end
+
   #以时间重名名压缩包
   def rename_zip
     time_now = Time.now().to_s.slice(0,19).gsub(/\:/,'-')
@@ -46,9 +54,11 @@ module QuestionHelper
     begin
       Archive::Zip.extract "#{zip_url}.zip","#{zip_url}"
       File.delete "#{zip_url}.zip"
+      `convmv -f gbk -t utf-8 -r --notest  #{zip_url}`
       return true
     rescue
       File.delete "#{zip_url}.zip"
+      FileUtils.remove_dir zip_url
       return false
     end
   end
@@ -57,7 +67,6 @@ module QuestionHelper
   def get_excels_and_dirs(path)
     excels =  []
     dirs = []
-
     #获取excel文件和资源目录
     Dir.entries(path).each do |sub|
       if sub != '.' && sub != '..'
@@ -74,7 +83,28 @@ module QuestionHelper
     else
       excels.sort!
     end
+    p excels
     all_files = {:excels => excels, :dirs => dirs}
+  end
+
+  #验证excel文件名称
+  def check_excel_name excels
+    error_infos = []
+    status = 1
+    excels.each  do |excel|
+      #excel = enconding_gbk_to_utf8 excel
+      if excel.scan(/\p{Han}/).to_a.length != 0
+        error_infos << "excel文件：'#{excel}'文件名中不能包含中文，请重新命名后打包上传"
+        status = 1
+      end
+      if File.basename(excel,".xls").match(/^[a-zA-Z]+$/) || File.basename(excel,".xls").match(/^[a-zA-Z]+[0-9]*$/)
+        status = 0
+      else
+        error_infos << "excel文件：'#{excel}'文件名没有按照约定格式'字母+数字'命名，请重新命名后打包上传"
+        status = 1
+      end
+    end
+    all_info = {:status => status, :error_infos => error_infos }
   end
 
   #读取一个excel中的题目

@@ -52,6 +52,12 @@ class QuestionsController < ApplicationController
              @error_infos << "只能导入一个关卡的题目"
              #FileUtils.remove_dir zip_url
           else
+            s = check_excel_name excels
+            if s[:status] == 1 #excel命名有问题
+              s[:error_infos].each do |e|
+                @error_infos << e
+              end
+            else
              begin
                 oo = Roo::Excel.new("#{zip_url}/#{excels[0]}")
                 oo.default_sheet = oo.sheets.first
@@ -78,6 +84,7 @@ class QuestionsController < ApplicationController
                    end
                 end
              end
+            end
           end
         end
       end

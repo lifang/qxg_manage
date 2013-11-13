@@ -108,14 +108,21 @@ class RoundsController < ApplicationController
               if excels.length <= 0
                   @error_infos << "没有找到excel题目文件"
               else
-                  #获取excel中题目的错误信息
-                  read_excel_result  = read_excel zip_url, excels
-                  #p "read_excel_result#{read_excel_result}"
-                  #p read_excel_result[:all_round_questions]
-                  #p read_excel_result[:error_infos]
-                  if read_excel_result[:error_infos].length != 0
-                    read_excel_result[:error_infos].each do |e|
+                  s = check_excel_name excels
+                  if s[:status] == 1 #excel命名有问题
+                    s[:error_infos].each do |e|
                       @error_infos << e
+                    end
+                  else
+                    #获取excel中题目的错误信息
+                    read_excel_result  = read_excel zip_url, excels
+                    #p "read_excel_result#{read_excel_result}"
+                    #p read_excel_result[:all_round_questions]
+                    #p read_excel_result[:error_infos]
+                    if read_excel_result[:error_infos].length != 0
+                      read_excel_result[:error_infos].each do |e|
+                        @error_infos << e
+                      end
                     end
                   end
               end
