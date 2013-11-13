@@ -49,7 +49,6 @@ module QuestionHelper
       return true
     rescue
       File.delete "#{zip_url}.zip"
-      #Dir.delete "#{zip_url}"
       return false
     end
   end
@@ -82,13 +81,11 @@ module QuestionHelper
   def read_excel path, excel_files
     all_error_infos = [] #错误信息的集合
     all_round_questions = [] #所有个关卡所有题目的集合
-    p "excel_files#{excel_files}"
     excel_files.each do |excel|
       result = read_questions path, excel
       result[:error_infos].each do |e|
         all_error_infos << e
       end
-      #p result #一个excel的结果集
       all_round_questions << result
     end
     if all_error_infos.length != 0
@@ -106,13 +103,11 @@ module QuestionHelper
     begin
       oo = Roo::Excel.new("#{path}/#{excel}")
       oo.default_sheet = oo.sheets.first
-      #p oo
     rescue
       error_infos << "#{excel}不是Excel文件"
     end
     start_line = 0
     end_line = 0
-
     #确定题目的开始行数
     end_line = oo.last_row.to_i
     if end_line  > 0
@@ -128,7 +123,6 @@ module QuestionHelper
     else
       end_line = 0
     end
-
     round = oo.cell(2,'A').to_s  #关卡名称
     round_time = oo.cell(2,'B').to_s #关卡时间
     round_score = oo.cell(2,'C').to_s #关卡满分
@@ -176,18 +170,13 @@ module QuestionHelper
           error_infos << "文件'#{excel}'第#{line}行：双括号配对不完整、双括号存在嵌套或存在两个以上的连续括号"
         else
           type = -1
-          #error_info = ""
-
           #判断题型,题目信息错误验证
           result = distinguish_question_types excel,que,line
-          #p "result#{result}"
           error_info = result[:error_info]
           type = result[:que_tpye]
           error_info.each do |e|
-            p e
             error_infos << e.to_s.strip if e.to_s.strip.size != 0
           end
-          #p "error_infos#{error_infos.length}"
         end
       end
 
@@ -203,7 +192,6 @@ module QuestionHelper
 
       if error_infos.length == 0 && type != -1
         questions << {:que => que, :type => type, :card_name => card_name, :card_types => card_types, :card_description => card_description}
-        #split_question que,type 截取题目
       end
     end
     return_info = {:round => round, :round_score => round_score, :round_time => round_time, :time_correct_percent => time_correct_percent, :blood => blood, :excel => excel, :error_infos => error_infos, :questions => questions}
@@ -268,17 +256,13 @@ module QuestionHelper
 
   #识别题型
   def distinguish_question_types excel,que,line
-    p excel
     que_tpye = -1 #题型标记
     error_info = [] #错误信息
 
-      p "---------------------------------------------------"
-      #p "que:#{que}"
       count_a = 0	#[[]]计数
       count_b = 0	#(())计数
       count_c = 0	#{{}}计数
       count_d = 0	#excel回车符计数
-      #p "que#{que}"
       #匹配[[]]
       result_a = que.scan(/\[\[[^\[\[]*\]\]/)
       count_a = result_a.length if result_a.length != 0
@@ -312,7 +296,6 @@ module QuestionHelper
         elsif count_b >= 1 && count_a == 0 && count_c == 0  #填空题
             count_e = 0
             result_b.each do |e|
-              p e.scan(/\(\([\s]*\)\)/)
               count_e+= 1 if e.scan(/\(\([\s]*\)\)/).length != 0
             end
             if count_e != 0
@@ -326,10 +309,8 @@ module QuestionHelper
               que_tpye = Question::TYPE_NAMES[:input] #填空题
             end
         elsif count_c != 0 && count_a == 0 && count_b == 0   #语音输入题
-            p result_c
             count_f = 0
             result_c.each do |e|
-              p e.scan(/\{\{[\s]*\}\}/)
               count_f += 1 if e.scan(/\{\{[\s]*\}\}/).length != 0
             end
             if count_f != 0
@@ -423,7 +404,6 @@ module QuestionHelper
             end
           else
             que_tpye = Question::TYPE_NAMES[:lineup] #连线题
-            p "文件'#{excel}'第#{line}行：连线题"
           end
         elsif d != 0 && d < tmp.split(/\|\|/).length
           que_tpye = -1 #未知题型
@@ -449,7 +429,6 @@ module QuestionHelper
             error_info << "文件'#{excel}'第#{line}行：选择题没有答案或答案为空"
           end
         else
-          p "文件'#{excel}'第#{line}行：单选题"
           que_tpye = Question::TYPE_NAMES[:single_choice] #单选题
         end
       elsif count > 1
@@ -461,15 +440,12 @@ module QuestionHelper
             error_info << "文件'#{excel}'第#{line}行：选择题没有答案或答案为空"
           end
         else
-          p "文件'#{excel}'第#{line}行：多选题"
           que_tpye = Question::TYPE_NAMES[:multiple_choice] #多选题
         end
       end
     elsif(count_e == 0 && count_f != 0) #当只有;;分隔符 排序题
       count = 0
       options = tmp.split(/\;\;/)
-      p tmp.split(/\;\;/)
-      p options
       if options.length == 0
         que_tpye = -1 #未知题型
         if excel.size == 0 || line.size == 0
@@ -497,7 +473,6 @@ module QuestionHelper
           end
         else
           que_tpye = Question::TYPE_NAMES[:sortby] #排序题
-          p "文件'#{excel}'第#{line}行：排序题"
         end
       end
     end
@@ -537,7 +512,6 @@ module QuestionHelper
       end
       if count == 0
         que_tpye = Question::TYPE_NAMES[:drag] # 拖拽题
-        p "文件'#{excel}'第#{line}行：拖拽题"
       else
         if excel.size == 0 || line.size == 0
           error_info << "拖拽题中不能包含';;'符号或'@@'符号"
@@ -549,7 +523,6 @@ module QuestionHelper
       #完型填空题的判断和验证
       t = distinguish_question_four excel, line, tmp
       que_tpye = t[:que_tpye]
-      p t[:error_info]
       t[:error_info].each do |e|
         error_info << e.to_s.strip if e.to_s.strip.size != 0
       end
@@ -560,8 +533,6 @@ module QuestionHelper
         error_info << "文件'#{excel}'第#{line}行：完形填空题的每个选项[[……]]中至少有一个必须有'||'或拖拽题的每个选项[[……]]中都不能有'||'"
       end
     end
-    #p error_info
-    #p que_tpye
     return_info = {:que_tpye => que_tpye, :error_info => error_info}
   end
 
@@ -587,11 +558,8 @@ module QuestionHelper
         end
       end
     end
-    p error_info
-    p types
     count = 0 #计数不属于综合题的题型
     count_a = 0 #大题的内容
-    p types
     types.each  do |e|
       count += 1 if (e == -1 || e > 8)
       count += 1 if e >= 2 && e <= 4
@@ -615,9 +583,6 @@ module QuestionHelper
         error_info << "文件'#{excel}'第#{line}行综合题的小题只能是单选题、多选题、填空题、语音题！"
       end
     end
-
-    #p error_info
-    #p que_tpye
     return_info = {:que_tpye => que_tpye, :error_info => error_info}
   end
 
@@ -653,14 +618,11 @@ module QuestionHelper
         error_info << "文件'#{excel}'第#{line}行：完型填空题中的某个选项没答案或有多个答案"
       end
     end
-    #p error_info
-    #p que_tpye
     return_info = {:que_tpye => que_tpye, :error_info => error_info}
   end
 
   #截取题目中的大题，小题与选项
   def split_question que, type
-    p Question::TYPES[type]
     question = {} #大题的哈希
     content = "" #大题题面
     question_types = type #大题类型
@@ -752,18 +714,15 @@ module QuestionHelper
           content = content + e
         else
           branch_que =  split_question e, result[:que_tpye]
-          #p branch_que
           branch_questions << {:branch_content => branch_que[:content], :branch_question_types => branch_que[:question_types],
                                :options => branch_que[:branch_questions][0][:options], :answer => branch_que[:branch_questions][0][:answer]}
         end
       end
-      #options = que.scan(/\{\{[^\{\{]*\}\}/)[0].to_s.scan(/(?<=\{\{).*(?=\}\})/).to_a[0]
     elsif type == Question::TYPE_NAMES[:drag]     #拖拽题
       branch_question_types = type
       c = 0
       que.scan(/\[\[[^\[\[]*\]\]/).to_a.each  do  |e|
         e = e.scan(/(?<=\[\[).*(?=\]\])/).to_a[0].to_s
-        #p e
         options = options + ";||;" if c > 0
         options = options + e
         c = c +1
@@ -777,7 +736,6 @@ module QuestionHelper
       c = 0
       que.scan(/\(\([^\(\(]*\)\)/).to_a.each  do  |e|
         e = e.scan(/(?<=\(\().*(?=\)\))/).to_a[0].to_s
-        #p e
         options = options + ";||;" if c > 0
         options = options + e
         c = c +1
@@ -794,7 +752,6 @@ module QuestionHelper
   def import_data all_round_questions, course_id, chapter_id, path, user_id
     all_round_questions.each do |e|
       excel = e[:excel].to_s
-      p excel
       json_file = ""
       round_name = e[:round].to_s
       round_score = e[:round_score].to_i
@@ -813,15 +770,9 @@ module QuestionHelper
                              :blood => course.blood, :chapter_id => chapter_id, :course_id => course.id)
         update_round_data round, round_score, round_time, time_correct_percent, blood
       end
-      #p round
-      #p course
-      #p "questions#{questions}"
       one_json_question = []
       questions.each do |x|
-        #p "x:#{x}"
         result = split_question x[:que], x[:type]
-        #p "result:    #{result}"
-        #p "card_types#{x[:card_types]}"
         if x[:card_name].size != 0
           cardbag_tag = CardbagTag.find_by_course_id_and_name(course_id,x[:card_types])
           if cardbag_tag.nil?
@@ -835,23 +786,9 @@ module QuestionHelper
         else
           question = Question.create(:content => result[:content], :types => result[:question_types], :round_id => round.id, :full_text => x[:que] )
         end
-
-        #p question
         result[:branch_questions].each do |i|
           BranchQuestion.create(:question_id => question.id, :branch_content => i[:branch_content], :types => i[:branch_question_types], :options => i[:options], :answer => i[:answer] )
         end
-        #
-        #branch_ques = ""
-        #c = 0
-        #branch_questions.each do |y|
-        #  branch_ques = branch_ques + "," if c > 0
-        #  branch_ques = branch_ques + "{\"branch_question_id\":#{y.id}, \"branch_content\":\"#{y.branch_content}\",\"branch_question_types\":#{y.types}, \"options\":\"#{y.options}\",\"answer\":\"#{y.answer}\"}"
-        #  c = c + 1
-        #end
-        #que = "{\"question_id\":#{question.id},\"content\":\"#{question.content}\",\"question_types\":#{question.types},\"branch_questions\": [#{branch_ques}],\"card_id\":#{knowledge_card.id},\"card_name\": \"#{knowledge_card.name}\", \"description\": \"#{knowledge_card.description}\",\"card_types\" : \"#{knowledge_card.types}\"}"
-        #
-        #one_json_question << que
-
       end
 
       questions = round.questions
@@ -869,7 +806,6 @@ module QuestionHelper
           knowledge_card = KnowledgeCard.find(e.knowledge_card_id)
           que = "{\"question_id\":#{e.id},\"content\":\"#{e.content}\",\"question_types\":#{e.types},\"branch_questions\": [#{branch_ques}],\"card_id\":#{knowledge_card.id},\"card_name\": \"#{knowledge_card.name}\", \"description\": \"#{knowledge_card.description}\",\"card_types\" : \"#{knowledge_card.types}\"}"
         else
-          #que = "{\"question_id\":#{e.id},\"content\":\"#{e.content}\",\"question_types\":#{e.types},\"branch_questions\": [#{branch_ques}],\"card_id\":#{knowledge_card.id},\"card_name\": \"#{knowledge_card.name}\", \"description\": \"#{knowledge_card.description}\",\"card_types\" : \"#{knowledge_card.types}\"}"
           que = "{\"question_id\":#{e.id},\"content\":\"#{e.content}\",\"question_types\":#{e.types},\"branch_questions\": [#{branch_ques}],\"card_id\":,\"card_name\": \"\", \"description\": \"\",\"card_types\" : \"\"}"
         end
 
@@ -898,29 +834,20 @@ module QuestionHelper
       Dir.mkdir chapter_dir if !File.directory? chapter_dir
       round_dir = chapter_dir + "/Round_#{round.id}"
       Dir.mkdir round_dir if !File.directory? round_dir
-      #p round_dir
       FileUtils.mv "#{path}/questions.js", round_dir
-      p path
       dir = File.basename(excel,".xls")
       resource_dir = "#{path}/#{dir}"
-      p "-----------------------------------------"
-      p "resource_dir#{resource_dir}"
-      p "-----------------------------------------"
-      #p resource_dir
-      #p Dir.exist? resource_dir
       if Dir.exist? resource_dir
         files = []
         Dir.entries(resource_dir).each do |sub|
           files << sub if File.file?("#{resource_dir}/#{sub}") if sub != '.' && sub != '..'
         end
-        #p files
         files.each do |file|
           FileUtils.mv "#{resource_dir}/#{file}", round_dir
         end
       end
       File.delete "#{chapter_dir}/Round_#{round.id}.zip" if File.exist? "#{chapter_dir}/Round_#{round.id}.zip"
       Archive::Zip.archive("#{chapter_dir}/Round_#{round.id}.zip", round_dir)
-      #p "====================================="
       round.update_attributes(:status => Round::STATUS[:not_verified])
     end
   end
