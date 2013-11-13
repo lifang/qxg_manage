@@ -131,7 +131,7 @@ class RoundsController < ApplicationController
         status = 0
         @notice_info = ["导入完成！"]
       end
-      FileUtils.remove_dir zip_url if !zip_url.nil? && Dir.exist?(zip_url)
+      #FileUtils.remove_dir zip_url if !zip_url.nil? && Dir.exist?(zip_url)
       @rounds = Round.where({:course_id => params[:course_id], :chapter_id => params[:chapter_id]}).paginate(:per_page => 16, :page => params[:page])
       @result = {:notice => @notice_info, :status => status}
   end
