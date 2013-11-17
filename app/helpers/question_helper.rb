@@ -558,7 +558,7 @@ module QuestionHelper
       end
     else
       if excel.size == 0 || line.size == 0
-        error_info << "完形填空题的每个选项[[……]]中至少有一个必须有'||'或拖拽题的每个选项[[……]]中都不能有'||'"
+        error_info << "完形填空题的每个选项[[……]]中至少有一个'||'/拖拽题的每个选项[[……]]中都不能有'||'"
       else
         error_info << "文件'#{excel}'第#{line}行：完形填空题的每个选项[[……]]中至少有一个必须有'||'或拖拽题的每个选项[[……]]中都不能有'||'"
       end
@@ -719,14 +719,16 @@ module QuestionHelper
       branch_question_types = type
       options = que.scan(/\[\[[^\[\[]*\]\]/)[0].to_s.scan(/(?<=\[\[).*(?=\]\])/).to_a[0].to_s.gsub(/\;\;/,";||;").gsub(/;\|\|;$/,"")
       answer =options
-      content = que.gsub(/\[\[[^\[\[]*\]\]/,"[[text]]")
+      #content = que.gsub(/\[\[[^\[\[]*\]\]/,"[[text]]")
+      content = que.gsub(/\[\[[^\[\[]*\]\]/,"")
       branch_questions << {:branch_content => branch_content, :branch_question_types => branch_question_types,
                            :options => options, :answer => answer}
     elsif type == Question::TYPE_NAMES[:lineup]   #连线题
       branch_question_types = type
       options = que.scan(/\[\[[^\[\[]*\]\]/)[0].to_s.scan(/(?<=\[\[).*(?=\]\])/).to_a[0].to_s.gsub(/\|\|/,";||;").gsub(/file>>>/,"file>;=;").gsub(/>>/,";=;")
       answer =options
-      content = que.gsub(/\[\[[^\[\[]*\]\]/,"[[text]]")
+      #content = que.gsub(/\[\[[^\[\[]*\]\]/,"[[text]]")
+      content = que.gsub(/\[\[[^\[\[]*\]\]/,"")
       branch_questions << {:branch_content => branch_content, :branch_question_types => branch_question_types,
                            :options => options, :answer => answer}
     elsif type == Question::TYPE_NAMES[:voice_input]  #语音输入题
