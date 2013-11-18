@@ -846,7 +846,7 @@ module QuestionHelper
 
       question_total = Question.count("round_id=#{round.id}")
       str = ""
-      str = str + "{\"course_id\" : #{course_id},\n  \"chapter_id\" : #{chapter_id},\n
+      str = str + "course = {\"course_id\" : #{course_id},\n  \"chapter_id\" : #{chapter_id},\n
       \"round_id\" : #{round.id},\n \"round_time\" : \"#{round.round_time}\",\n \"question_total\":#{question_total},
       \"round_score\" : #{round.max_score},  \"percent_time_correct\" : #{round.time_ratio},\n
       \"blood\" : #{round.blood},\"questions\" :["
