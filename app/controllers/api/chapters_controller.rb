@@ -9,9 +9,9 @@ class Api::ChaptersController < ApplicationController
   end
 
   #我的成就
-  def user_achieve
-    render :json => Achieve.where(:user_id=>params[:uid],:course_id=>params[:course_id]).select(:achieve_data_id).order("created_at desc").map(&:achieve_data_id).uniq
-  end
+#  def user_achieve
+#    render :json => Achieve.where(:user_id=>params[:uid],:course_id=>params[:course_id]).select(:achieve_data_id).order("created_at desc").map(&:achieve_data_id).uniq
+#  end
 
   #我的道具
   def user_prop
@@ -132,32 +132,10 @@ r.chapter_id = #{chapter_id} and r.course_id = #{chapter.course_id}  ORDER BY rs
     render :json =>KnowledgeCard.where(:course_id=>params[:course_id])
   end
 
-  #保存关卡得分、成就、经验、等级信息
-  #TODO
-  def change_info
-    #uid, round_id, chapter_id, score, star, experience,level,gold #achieve_point(暂时不要)
-    #新建记录 => round_scores, 更新记录 => user_course_relations
-    RoundScore.transaction do
-      round_score = RoundScore.find_by_round_id(params[:round_id]) if params[:round_id]
-      chapter = Chapter.find_by_id params[:chapter_id] if params[:chapter_id]
-      course = chapter.course if chapter
-      if round_score
-        round_score.update_attributes({:score => params[:score], :star => params[:star]})
-      else
-        round_score = RoundScore.create(:user_id => params[:uid], :chapter_id => params[:chapter_id], :round_id => params[:round],
-          :score => params[:score], :star => params[:star], :day => Time.now)
-      end
-      user_course_relarion = UserCourseRelation.find_by_user_id_and_course_id(params[:uid], course.id)
-      user_course_relarion.update_attributes({:gold => user_course_relarion.gold.to_i + params[:gold].to_i,
-          :level => user_course_relarion.level.to_i + params[:level].to_i}) if user_course_relarion
-      render :json => {:msg => "success"}
-    end
-  end
-
   #保存成就点数
   #TODO
   def save_achieve
-    #参数 uid, cid
+    #参数 uid, cid， achieve_point成就
      user_course_relarion = UserCourseRelation.find_by_user_id_and_course_id(params[:uid], params[:cid])
   end
 

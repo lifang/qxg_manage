@@ -6,6 +6,7 @@ class Api::UserManagesController < ActionController::Base
     uid = params[:uid].to_i
     courses = Course.find_by_sql("select c.id,c.name,c.press,c.description,c.types
                                    from courses c where name like '%#{name}%'")
+    courses.each{|course| course[:logo] = course.img.thumb.url}
     selected_courses = UserCourseRelation.where(["user_id = ? ", uid]).map(&:course_id)
     a = []
     Course::TYPES.each do |k, v|
@@ -18,6 +19,7 @@ class Api::UserManagesController < ActionController::Base
     uid = params[:uid].to_i
     cid = params[:course_id]
     course = Course.select("id, name, press, description, types").find_by_id(cid.to_i)
+    course[:logo] = course.img.thumb.url
     type_name = Course::TYPES[course.types]
     flag = UserCourseRelation.find_by_user_id_and_course_id(uid, cid).nil?
     a = flag == true ? 0 : 1
@@ -34,6 +36,7 @@ class Api::UserManagesController < ActionController::Base
                                               where ucr.user_id=#{uid}")
     courses.each do |c|
       c.types = Course::TYPES[c.types]
+      c[:logo] = c.course.img.thumb.url
     end
     render :json => courses
   end
@@ -75,7 +78,8 @@ class Api::UserManagesController < ActionController::Base
     .order("achieve_point desc")
 
     achieve_points_arr.each{|achieve| achieve[:self] = (achieve.user_id == user_id.to_i ? 1 : 0)}
-    render :json => achieve_points_arr
+    user_achieve = Achieve.where(:user_id=>params[:uid],:course_id=>params[:course_id]).select(:achieve_data_id).order("created_at desc").map(&:achieve_data_id).uniq
+    render :json => {:rank =>achieve_points_arr, :user_achieve => user_achieve}
   end
 
   def everyday_tasks    #每日任务选题
@@ -252,24 +256,33 @@ left join users u on u.id = upr.user_id and upr.user_prop_num >=1 where  p.cours
 
   #根据用户id跟课程id获取用户当前课程的等级、经验以及下次升级的经验
   def course_level
-    #course_id, uid,experience_vaule 保存经验值，升级
-    old_exp_value = params[:experience_vaule].to_i
-    ucr = UserCourseRelation.find_by_course_id_and_user_id(params[:course_id], params[:uid])
-    exper_value = ucr.experience_value.to_i
-    new_exp_value = exper_value + old_exp_value
-
-    course_lv_next = LevelValue.where("curse_id = ? and experience_value > ?", params[:course_id], new_exp_value).order("experience_value asc").first
-    next_experience_value = course_lv_next.experience_value.to_i if course_lv_next
-    next_level = course_lv_next.level.to_i if course_lv_next
+    #course_id,round_id, uid,experience_vaule（关卡得分/经验值），star, gold 保存经验值，关卡星级， 金币
+    #新建记录 => round_scores, 更新记录 => user_course_relations
     UserCourseRelation.transaction do
-      if new_exp_value < next_experience_value
-        ucr.update_attributes({:experience_value => new_exp_value})
-        render :json => {:status => 0, :old_exp_value => exper_value,:level => ucr.level, :new_exp_value =>  new_exp_value}
+      #保存关卡得分 开始
+      round_score = RoundScore.find_by_round_id(params[:round_id]) if params[:round_id]
+
+      if round_score
+        round_score.update_attributes({:score => params[:experience_vaule], :star => params[:star]})
       else
-        course_lv_pass = LevelValue.where("curse_id = ? and level = ?", params[:course_id], next_level-1).first
-        passed_exp_value = new_exp_value - course_lv_pass.experience_value
-        ucr.update_attributes({:experience_value => passed_exp_value, :level => next_level-1})
-        render :json => {:status => 1,:old_exp_value => 0, :level => ucr.level, :new_exp_value =>  passed_exp_value}
+        round_score = RoundScore.create(:user_id => params[:uid], :chapter_id => params[:chapter_id], :round_id => params[:round],
+          :score => params[:experience_vaule], :star => params[:star], :day => Time.now)
+      end
+      #保存关卡得分 结束
+      
+      added_exp_value = params[:experience_value].to_i
+      ucr = UserCourseRelation.find_by_course_id_and_user_id(params[:course_id], params[:uid])
+      old_exp_value = ucr.experience_value.to_i
+      new_exp_value = old_exp_value + added_exp_value
+      level_exp_value = LevelValue.find_by_course_id_and_level(params[:course_id], ucr.level ).try(:experience_value).to_i
+      if new_exp_value > level_exp_value
+        new_level = ucr.level + 1
+        new_level_exp_value = LevelValue.find_by_course_id_and_level(params[:course_id], new_level ).try(:experience_value).to_i
+        ucr.update_attributes({:experience_value => new_exp_value - level_exp_value, :level => new_level})
+        render :json => {:status => 1, :old_exp_value => 0,:level => ucr.level, :new_exp_value =>  ucr.experience_value, :level_exp_value => new_level_exp_value}
+      else
+        ucr.update_attributes({:experience_value => new_exp_value})
+        render :json => {:status => 0, :old_exp_value => old_exp_value,:level => ucr.level, :new_exp_value =>  ucr.experience_value, :level_exp_value => level_exp_value}
       end
     end
   end
