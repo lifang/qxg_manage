@@ -735,7 +735,8 @@ module QuestionHelper
       branch_question_types = type
       options = que.scan(/\{\{[^\{\{]*\}\}/)[0].to_s.scan(/(?<=\{\{).*(?=\}\})/).to_a[0]
       answer =options
-      content = que.gsub(/\{\{[^\{\{]*\}\}/,"[[text]]")
+      #content = que.gsub(/\{\{[^\{\{]*\}\}/,"[[text]]")
+      content = que.gsub(/\{\{[^\{\{]*\}\}/,"")
       branch_questions << {:branch_content => branch_content, :branch_question_types => branch_question_types,
                            :options => options, :answer => answer}
     elsif type == Question::TYPE_NAMES[:zonghe] #综合题
