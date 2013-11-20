@@ -4,10 +4,10 @@ require 'archive/zip'
 require 'iconv'
 
 module QuestionHelper
-  #以时间重名名压缩包
-  def rename_zip
+  #以时间重名名压缩包文件
+  def rename_file
     time_now = Time.now().to_s.slice(0,19).gsub(/\:/,'-')
-    zip_dir = time_now.slice(0,10) + "_" + time_now.slice(11,8)
+    filename = time_now.slice(0,10) + "_" + time_now.slice(11,8)
   end
 
   #上传文件
