@@ -52,8 +52,10 @@ r.chapter_id = #{chapter_id} and r.course_id = #{chapter.course_id}  ORDER BY rs
     end
     #TODO
 #加上每个关卡里面的知识卡片信息
+knowledge_cards = KnowledgeCard.find_by_sql(["select kc.id, kc.name, kc.description, q.round_id from knowledge_cards kc inner join questions q
+on q.knowledge_card_id = kc.id and q.round_id in (?)", rounds.map(&:id)]).group_by{|rs| rs.round_id}
     has_score_rounds = rs_hash.keys
-    render :json => {:rounds => rounds, :round_range => rs_hash, :round_ids => has_score_rounds}
+    render :json => {:rounds => rounds, :round_range => rs_hash, :round_ids => has_score_rounds, :knowledge_cards => knowledge_cards}
   end
 
   #关卡排名
@@ -106,14 +108,12 @@ r.chapter_id = #{chapter_id} and r.course_id = #{chapter.course_id}  ORDER BY rs
   def user_cards
     #course_id, uid
     ucr = UserCourseRelation.find_by_user_id_and_course_id(params[:uid], params[:course_id])
-    knowledge_cards = KnowledgeCard.joins(:user_cards_relations).select("*")
-    .where(:user_cards_relations => {:user_id=>params[:uid],:course_id => params[:course_id]})
+    knowledge_cards = KnowledgeCard.joins(:user_cards_relations).select("*").where(:user_cards_relations => {:user_id=>params[:uid],:course_id => params[:course_id]})
 
     tags = CardbagTag.find_by_sql("select id,name,user_id,course_id,types from cardbag_tags where (course_id=1 and user_id is null) or (course_id=1 and user_id =#{params[:uid]})")
     
     tag_cards = CardTagRelation.joins(:cardbag_tag).where(:course_id => params[:course_id],
-      :knowledge_card_id => knowledge_cards.map(&:id))
-    .select("cardbag_tags.id, cardbag_tags.name, cardbag_tags.types, knowledge_card_id")
+      :knowledge_card_id => knowledge_cards.map(&:id)).select("cardbag_tags.id, cardbag_tags.name, cardbag_tags.types, knowledge_card_id")
      
     tag_card_hash = tag_cards.group_by { |re| re.knowledge_card_id }
      
