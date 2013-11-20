@@ -9,9 +9,9 @@ class Api::ChaptersController < ApplicationController
   end
 
   #我的成就
-#  def user_achieve
-#    render :json => Achieve.where(:user_id=>params[:uid],:course_id=>params[:course_id]).select(:achieve_data_id).order("created_at desc").map(&:achieve_data_id).uniq
-#  end
+  #  def user_achieve
+  #    render :json => Achieve.where(:user_id=>params[:uid],:course_id=>params[:course_id]).select(:achieve_data_id).order("created_at desc").map(&:achieve_data_id).uniq
+  #  end
 
   #我的道具
   def user_prop
@@ -28,17 +28,18 @@ class Api::ChaptersController < ApplicationController
     uid = params[:uid].to_i
     chapter_id = params[:chapter_id].to_i
     chapter = Chapter.find_by_id chapter_id
+    user = User.find_by_id uid
     rounds = Round.find_by_sql("SELECT r.id, r.chapter_id, r.name, r.questions_count, r.round_time, r.time_ratio, r.blood,
  r.max_score, rs.score score, rs.star from rounds r LEFT JOIN round_scores rs on r.id=rs.round_id AND rs.user_id =#{uid} where
 r.chapter_id = #{chapter_id} and r.course_id = #{chapter.course_id}  ORDER BY rs.score DESC")
 
     round_range = RoundScore.find_by_sql(["select u.name u_name, u.id uid, u.img img, rs.score score, rs.round_id round_id from round_scores rs inner join rounds r on r.id = rs.round_id
-      inner join users u on u.id = rs.user_id where rs.round_id in (?) order by rs.score desc", rounds.map(&:id)]).group_by{|rs| rs.round_id}
+      inner join users u on u.id = rs.user_id where rs.round_id in (?) order by rs.rank asc", rounds.map(&:id)]).group_by{|rs| rs.round_id}
     rs_hash = {}
 
     round_range.each do |round_id, users|
       temp_users = users[0..2]
-      if temp_users.map(&:uid).include?(uid)
+      if user.rank <=3
         rs_hash[round_id] = temp_users
       else
         rs_hash[round_id] = temp_users
@@ -50,9 +51,9 @@ r.chapter_id = #{chapter_id} and r.course_id = #{chapter.course_id}  ORDER BY rs
         end
       end
     end
-    #TODO
-#加上每个关卡里面的知识卡片信息
-knowledge_cards = KnowledgeCard.find_by_sql(["select kc.id, kc.name, kc.description, q.round_id from knowledge_cards kc inner join questions q
+    
+    #加上每个关卡里面的知识卡片信息
+    knowledge_cards = KnowledgeCard.find_by_sql(["select kc.id, kc.name, kc.description, q.round_id from knowledge_cards kc inner join questions q
 on q.knowledge_card_id = kc.id and q.round_id in (?)", rounds.map(&:id)]).group_by{|rs| rs.round_id}
     has_score_rounds = rs_hash.keys
     render :json => {:rounds => rounds, :round_range => rs_hash, :round_ids => has_score_rounds, :knowledge_cards => knowledge_cards}
@@ -138,7 +139,7 @@ on q.knowledge_card_id = kc.id and q.round_id in (?)", rounds.map(&:id)]).group_
   #TODO
   def save_achieve
     #参数 uid, cid， achieve_point成就
-     user_course_relarion = UserCourseRelation.find_by_user_id_and_course_id(params[:uid], params[:cid])
+    user_course_relarion = UserCourseRelation.find_by_user_id_and_course_id(params[:uid], params[:cid])
   end
 
   #知识卡片添加标签
