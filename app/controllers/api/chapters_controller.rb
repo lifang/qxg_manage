@@ -50,7 +50,8 @@ r.chapter_id = #{chapter_id} and r.course_id = #{chapter.course_id}  ORDER BY rs
         end
       end
     end
-
+    #TODO
+#加上每个关卡里面的知识卡片信息
     has_score_rounds = rs_hash.keys
     render :json => {:rounds => rounds, :round_range => rs_hash, :round_ids => has_score_rounds}
   end
@@ -104,6 +105,7 @@ r.chapter_id = #{chapter_id} and r.course_id = #{chapter.course_id}  ORDER BY rs
   #返回收藏的知识卡片（卡包）
   def user_cards
     #course_id, uid
+    ucr = UserCourseRelation.find_by_user_id_and_course_id(params[:uid], params[:course_id])
     knowledge_cards = KnowledgeCard.joins(:user_cards_relations).select("*")
     .where(:user_cards_relations => {:user_id=>params[:uid],:course_id => params[:course_id]})
 
@@ -116,7 +118,7 @@ r.chapter_id = #{chapter_id} and r.course_id = #{chapter.course_id}  ORDER BY rs
     tag_card_hash = tag_cards.group_by { |re| re.knowledge_card_id }
      
     knowledge_cards.each{|card| card[:tag_ids] = (tag_card_hash[card.id] && tag_card_hash[card.id].map(&:id)) || []}
-    render :json =>{:cards => knowledge_cards, :tags => tags}
+    render :json =>{:cards => knowledge_cards, :tags => tags, :cards_total => ucr.try(:cardbag_count), :cards_left_count => ucr.try(:cardbag_count) - ucr.try(:cardbag_use_count)}
   end
 
 
@@ -205,4 +207,13 @@ r.chapter_id = #{chapter_id} and r.course_id = #{chapter.course_id}  ORDER BY rs
     umq_new = UserMistakeQuestion.create({:user_id => params[:uid], :course_id => params[:course_id], :question_id => params[:question_id], :wrong_time => Time.now}) unless umq
     render :text => umq ? "added" : (umq_new ? "success" : "error")
   end
+
+  #用户前台删除课程
+  def user_delete_course
+    #uid, course_id
+    ucr = UserCourseRelation.find_by_user_id_and_course_id(params[:uid], params[:course_id])
+    ucrd = ucr.destroy
+    render :json => {:msg => ucrd ? "success" : "error"}
+  end
+  
 end

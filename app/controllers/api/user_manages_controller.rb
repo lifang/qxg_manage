@@ -278,13 +278,15 @@ left join users u on u.id = upr.user_id and upr.user_prop_num >=1 where  p.cours
       if new_exp_value > level_exp_value
         new_level = ucr.level + 1
         new_level_exp_value = LevelValue.find_by_course_id_and_level(params[:course_id], new_level ).try(:experience_value).to_i
-        ucr.update_attributes({:experience_value => new_exp_value - level_exp_value, :level => new_level})
-        render :json => {:status => 1, :old_exp_value => 0,:level => ucr.level, :new_exp_value =>  ucr.experience_value, :level_exp_value => new_level_exp_value}
+        ucr.update_attributes({:experience_value => new_exp_value - level_exp_value, :level => new_level, :gold => ucr.gold + params[:gold], :gold_total => ucr.gold_total + params[:gold]})
+        render :json => {:status => 1, :old_exp_value => 0,:level => ucr.level, :new_exp_value =>  ucr.experience_value, :level_exp_value => new_level_exp_value, :gold => ucr.gold_total}
       else
-        ucr.update_attributes({:experience_value => new_exp_value})
-        render :json => {:status => 0, :old_exp_value => old_exp_value,:level => ucr.level, :new_exp_value =>  ucr.experience_value, :level_exp_value => level_exp_value}
+        ucr.update_attributes({:experience_value => new_exp_value, :gold => ucr.gold + params[:gold], :gold_total => ucr.gold_total + params[:gold]})
+        render :json => {:status => 0, :old_exp_value => old_exp_value,:level => ucr.level, :new_exp_value =>  ucr.experience_value, :level_exp_value => level_exp_value, :gold => ucr.gold_total}
       end
     end
+    #TODO
+    #累计金币，当前课程当前用户关卡排名第一的次数
   end
   
 end
