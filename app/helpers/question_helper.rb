@@ -4,12 +4,6 @@ require 'archive/zip'
 require 'iconv'
 
 module QuestionHelper
-  #转换字符串编码
-  def enconding_gbk_to_utf8 gbk_str
-    conv = Iconv.new("utf-8","GBK")
-    utf8Str = conv.iconv(gbk_str)
-  end
-
   #以时间重名名压缩包
   def rename_zip
     time_now = Time.now().to_s.slice(0,19).gsub(/\:/,'-')
@@ -92,7 +86,7 @@ module QuestionHelper
     error_infos = []
     status = 1
     excels.each  do |excel|
-      #excel = enconding_gbk_to_utf8 excel
+
       if excel.scan(/\p{Han}/).to_a.length != 0
         error_infos << "excel文件：'#{excel}'文件名中不能包含中文，请重新命名后打包上传"
         status = 1
@@ -672,7 +666,8 @@ module QuestionHelper
         answer = e.to_s.scan(/[^\@\@].*/)[0].to_s if e.to_s.match(/^@@.*/)
       end
       options = options.gsub(/@@/,"").gsub(/^;\|\|;/,"").gsub(/;\|\|;$/,"")
-      content = que.gsub(/\[\[[^\[\[]*\]\]/,"[[text]]")
+      #content = que.gsub(/\[\[[^\[\[]*\]\]/,"[[text]]")
+      content = que.gsub(/\[\[[^\[\[]*\]\]/,"[[text]]").gsub(/\[\[text\]\]$/,"")
       branch_questions << {:branch_content => branch_content, :branch_question_types => branch_question_types,
                            :options => options, :answer => answer}
     elsif type == Question::TYPE_NAMES[:multiple_choice]   #多选题
@@ -689,7 +684,8 @@ module QuestionHelper
         end
       end
       options = options.gsub(/@@/,"").gsub(/^;\|\|;/,"").gsub(/;\|\|;$/,"")
-      content = que.gsub(/\[\[[^\[\[]*\]\]/,"[[text]]")
+      #content = que.gsub(/\[\[[^\[\[]*\]\]/,"[[text]]")
+      content = que.gsub(/\[\[[^\[\[]*\]\]/,"[[text]]").gsub(/\[\[text\]\]$/,"")
       branch_questions << {:branch_content => branch_content, :branch_question_types => branch_question_types,
                            :options => options, :answer => answer}
     elsif type == Question::TYPE_NAMES[:fillin]   #完型填空题

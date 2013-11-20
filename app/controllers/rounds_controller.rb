@@ -144,7 +144,6 @@ class RoundsController < ApplicationController
   end
 
   private
-
   def get_course_chapter
     @course = Course.find_by_id params[:course_id]
     @chapter = Chapter.find_by_id params[:chapter_id]
