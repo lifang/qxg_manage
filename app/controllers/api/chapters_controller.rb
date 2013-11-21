@@ -135,11 +135,23 @@ on q.knowledge_card_id = kc.id and q.round_id in (?)", rounds.map(&:id)]).group_
     render :json =>KnowledgeCard.where(:course_id=>params[:course_id])
   end
 
-  #保存成就点数
+  #保存成就点数   未测试
   #TODO
   def save_achieve
-    #参数 uid, cid， achieve_point成就
-    user_course_relarion = UserCourseRelation.find_by_user_id_and_course_id(params[:uid], params[:cid])
+    #参数 uid, course_id， (achieve_id)_point成就
+    user_course_relation = UserCourseRelation.find_by_user_id_and_course_id(params[:uid], params[:course_id])
+    Achieve.transaction do
+    if user_course_relation && params[:achieve_point]
+      params[:achieve_point].split(",").each do |ap|
+        achieve_data_id = ap.split("_")[0]
+        point = ap.split("_")[1]
+        user_course_relation.update_attributes(:achieve_point => user_course_relation.achieve_point.to_i + point)
+        achieve = Achieve.find_by_user_id_and_achieve_data_id_and_course_id(params[:uid], params[:achieve_data_id], params[:course_id])
+        Achieve.create({:user_id => params[:uid], :achieve_data_id => achieve_data_id, :course_id => params[:course_id], :point => point}) unless achieve
+      end
+    end
+    render :json => {:massage => user_course_relation ? "success" : "error"}
+    end
   end
 
   #知识卡片添加标签
@@ -195,8 +207,11 @@ on q.knowledge_card_id = kc.id and q.round_id in (?)", rounds.map(&:id)]).group_
     #参数uid，course_id, num, gold
     bcr = BuyCardbagRecord.create({:user_id => params[:uid], :course_id => params[:course_id], :num => params[:num], :gold => params[:gold]})
     user_course_relation = UserCourseRelation.find_by_user_id_and_course_id(params[:uid], params[:course_id])
-    ucr = user_course_relation.update_attribute(:cardbag_count, user_course_relation.cardbag_count + params[:num].to_i) if user_course_relation
-    render :json => {:msg => bcr&&ucr ? "success" : "error"}
+    if user_course_relation
+      ucr = user_course_relation.update_attributes(:cardbag_count => user_course_relation.cardbag_count + params[:num].to_i, :gold => user_course_relation.gold.to_i - params[:gold].to_i)
+      cardbag_use_count = user_course_relation.cardbag_count.to_i - user_course_relation.cardbag_use_count.to_i
+    end
+    render :json => {:msg => bcr&&ucr ? "success" : "error", :cardbag_left_count => cardbag_use_count.to_i}
   end
 
   #添加错题

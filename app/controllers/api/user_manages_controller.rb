@@ -221,9 +221,12 @@ left join users u on u.id = upr.user_id and upr.user_prop_num >=1 where  p.cours
   #添加通讯录、微博好友
   def add_friend
     #参数 uid, friend_id
-    f1 = Friend.create({:user_id => params[:uid], :friend_id => params[:friend_id]})
-    f2 = Friend.create({:user_id => params[:friend_id], :friend_id => params[:uid]})
-    render :json => { :msg => f1&&f2 ? "success" : "error"}
+    Friend.transaction do
+      f1 = Friend.create({:user_id => params[:uid], :friend_id => params[:friend_id]})
+      f2 = Friend.create({:user_id => params[:friend_id], :friend_id => params[:uid]})
+      friend_count = Friend.find_all_by_user_id(params[:uid]).length
+      render :json => { :msg => f1&&f2 ? "success" : "error", :friend_count => friend_count}
+    end
   end
 
   #返回通讯录好友
@@ -271,20 +274,25 @@ left join users u on u.id = upr.user_id and upr.user_prop_num >=1 where  p.cours
       end
       #保存关卡得分 结束
 
+      ucr = UserCourseRelation.find_by_course_id_and_user_id(params[:course_id], params[:uid])
+      if round_score.star == Round::STAR[:three_star]
+        ucr.round_3star_count = ucr.round_3star_count + 1 #计算成就，保存关卡三星的次数  有疑问，每次计算，难免要累加，怎么弄只加一次？
+      end
       #保存当前关卡，用户以及好友的得分排名 开始
       friend_ids = Friend.where(:user_id => uid).map(&:friend_id)
       round_score_ranks = RoundScore.where({:round_id => round_id, :user_id => friend_ids}).order("score desc")
       round_score_ranks.each_with_index do |rs, index|
         if index == 0 && rs.user_id == uid
-          rs.update_attribute(:toppest_count => rs.toppest_count.to_i + 1)
+          ucr.toppest_count = ucr.toppest_count + 1  #计算成就，保存关卡排名第一的次数
         end
         rs.update_attribute(:rank => index+1)
+
       end
       #保存当前关卡，用户以及好友的得分排名 开始
 
 
       added_exp_value = params[:experience_value].to_i
-      ucr = UserCourseRelation.find_by_course_id_and_user_id(params[:course_id], params[:uid])
+      
       old_exp_value = ucr.experience_value.to_i
       new_exp_value = old_exp_value + added_exp_value
       level_exp_value = LevelValue.find_by_course_id_and_level(params[:course_id], ucr.level ).try(:experience_value).to_i
@@ -299,7 +307,9 @@ left join users u on u.id = upr.user_id and upr.user_prop_num >=1 where  p.cours
       end
     end
 
-    #返回值加上累计金币，当前课程当前用户关卡排名第一的次数
+    #返回值加上累计金币，当前课程当前用户所有关卡排名第一（不重复）的次数
+
+    RoundScore.find_by_sql("select")
   end
   
 end
