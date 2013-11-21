@@ -39,14 +39,14 @@ r.chapter_id = #{chapter_id} and r.course_id = #{chapter.course_id}  ORDER BY rs
 
     round_range.each do |round_id, users|
       temp_users = users[0..2]
-      if user.rank <=3
+      if temp_users.map(&:uid).include?(uid)
         rs_hash[round_id] = temp_users
       else
         rs_hash[round_id] = temp_users
-        users.each_with_index do |user,index|
-          if user.uid == uid
-            user[:rank] = index+ 1
-            rs_hash[round_id] << user
+        users.each_with_index do |u,index|
+          if u.uid == uid
+            u[:rank] = index+ 1
+            rs_hash[round_id] << u
           end
         end
       end
