@@ -311,5 +311,12 @@ left join users u on u.id = upr.user_id and upr.user_prop_num >=1 where  p.cours
 
     RoundScore.find_by_sql("select")
   end
+
+  #TODO
+  #下载课程的时候请求，保存user_course_relations这个所有初始值，卡包初始25
+  def save_user_course_relations
+    #uid, course_id
+
+  end
   
 end
