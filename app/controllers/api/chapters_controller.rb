@@ -135,23 +135,27 @@ on q.knowledge_card_id = kc.id and q.round_id in (?)", rounds.map(&:id)]).group_
     render :json =>KnowledgeCard.where(:course_id=>params[:course_id])
   end
 
-  #保存成就点数   未测试
-  #TODO
+  #保存成就点数,user_course_relations 累加成就点数，Achieve新增记录
   def save_achieve
-    #参数 uid, course_id， (achieve_id)_point成就
-    user_course_relation = UserCourseRelation.find_by_user_id_and_course_id(params[:uid], params[:course_id])
+    #参数 uid, course_id， achieve_point (achieve_id)_point 成就可能多个
+    #更新
+    uid = params[:uid]
+    course_id = params[:course_id]
     Achieve.transaction do
-    if user_course_relation && params[:achieve_point]
-      params[:achieve_point].split(",").each do |ap|
-        achieve_data_id = ap.split("_")[0]
-        point = ap.split("_")[1]
-        user_course_relation.update_attributes(:achieve_point => user_course_relation.achieve_point.to_i + point)
-        achieve = Achieve.find_by_user_id_and_achieve_data_id_and_course_id(params[:uid], params[:achieve_data_id], params[:course_id])
-        Achieve.create({:user_id => params[:uid], :achieve_data_id => achieve_data_id, :course_id => params[:course_id], :point => point}) unless achieve
+      user_course_relarion = UserCourseRelation.find_by_user_id_and_course_id(uid, course_id)
+      if user_course_relarion && params[:achieve_point]
+        params[:achieve_point].split(",").each do |ap|
+          achieve_data_id = ap.split("_")[0].to_i
+          point = ap.split("_")[1].to_i
+          achieve = Achieve.find_by_user_id_and_course_id_and_achieve_data_id(uid, course_id, achieve_data_id)
+          Achieve.create({:user_id => uid, :course_id => course_id, :achieve_data_id => achieve_data_id, :point => point}) unless achieve
+          user_course_relarion.update_attribute(:achieve_point, user_course_relarion.achieve_point + point)
+        end
       end
     end
-    render :json => {:massage => user_course_relation ? "success" : "error"}
-    end
+
+    render :json => {:message => user_course_relarion ? "success" : "error"}
+
   end
 
   #知识卡片添加标签
@@ -230,6 +234,18 @@ on q.knowledge_card_id = kc.id and q.round_id in (?)", rounds.map(&:id)]).group_
     ucr = UserCourseRelation.find_by_user_id_and_course_id(params[:uid], params[:course_id])
     ucrd = ucr.destroy
     render :json => {:msg => ucrd ? "success" : "error"}
+  end
+
+  #下载课程时请求保存user_course_relations
+  def save_user_course
+    #uid,course_id，卡包默认值25
+    uid,course_id = params[:uid],params[:course_id]
+    UserCourseRelation.transaction do
+      ucr = UserCourseRelation.find_by_course_id_and_user_id(course_id, uid)
+      ucr_new = UserCourseRelation.create({:user_id => uid, :course_id => course_id, :cardbag_count => 25, :cardbag_use_count => 0, :gold => 0,
+          :gold_total => 0, :level => 1, :achieve_point => 0, :experience_value => 0 }) unless ucr
+      render :json => {:message => ucr_new ? "success" : "error"}
+    end
   end
   
 end

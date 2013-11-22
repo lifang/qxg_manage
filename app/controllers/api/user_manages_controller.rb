@@ -259,63 +259,65 @@ left join users u on u.id = upr.user_id and upr.user_prop_num >=1 where  p.cours
 
   #根据用户id跟课程id获取用户当前课程的等级、经验以及下次升级的经验
   def course_level
-    #course_id,round_id, uid,experience_vaule（关卡得分/经验值），star, gold 保存经验值，关卡星级， 金币
+    #course_id,round_id,chapter_id, uid,experience_vaule（关卡得分/经验值），star, gold 保存经验值，关卡星级， 金币
     #新建记录 => round_scores, 更新记录 => user_course_relations
     uid = params[:uid].to_i
     round_id = params[:round_id].to_i
+    gold = params[:gold].to_i
     UserCourseRelation.transaction do
-      #保存关卡得分 开始
-      round_score = RoundScore.find_by_user_id_and_round_id(uid, round_id) if uid
-      if round_score
-        round_score.update_attributes({:score => params[:experience_vaule], :star => params[:star]})
-      else
-        round_score = RoundScore.create(:user_id => uid, :chapter_id => params[:chapter_id], :round_id => round_id,
-          :score => params[:experience_vaule], :star => params[:star], :day => Time.now)
-      end
-      #保存关卡得分 结束
 
       ucr = UserCourseRelation.find_by_course_id_and_user_id(params[:course_id], params[:uid])
       if round_score.star == Round::STAR[:three_star]
         ucr.round_3star_count = ucr.round_3star_count + 1 #计算成就，保存关卡三星的次数  有疑问，每次计算，难免要累加，怎么弄只加一次？
       end
       #保存当前关卡，用户以及好友的得分排名 开始
-      friend_ids = Friend.where(:user_id => uid).map(&:friend_id)
+      friend_ids = Friend.where(:user_id => uid).map(&:friend_id) << uid
       round_score_ranks = RoundScore.where({:round_id => round_id, :user_id => friend_ids}).order("score desc")
+  
       round_score_ranks.each_with_index do |rs, index|
         if index == 0 && rs.user_id == uid
           ucr.toppest_count = ucr.toppest_count + 1  #计算成就，保存关卡排名第一的次数
         end
         rs.update_attribute(:rank => index+1)
-
+       
       end
       #保存当前关卡，用户以及好友的得分排名 开始
 
+      #保存关卡得分 开始
+      round_score = RoundScore.find_by_user_id_and_round_id(uid, round_id) if uid
 
+      if round_score
+        round_score.update_attributes({:score => params[:experience_value], :star => params[:star]})
+      else
+        round_score = RoundScore.create(:user_id => uid, :chapter_id => params[:chapter_id], :round_id => round_id,
+          :score => params[:experience_value], :star => params[:star], :day => Time.now)
+      end
+      #保存关卡得分 结束
+      
       added_exp_value = params[:experience_value].to_i
       
       old_exp_value = ucr.experience_value.to_i
       new_exp_value = old_exp_value + added_exp_value
       level_exp_value = LevelValue.find_by_course_id_and_level(params[:course_id], ucr.level ).try(:experience_value).to_i
       if new_exp_value > level_exp_value
-        new_level = ucr.level + 1
+        new_level = (ucr.level || 1) + 1
         new_level_exp_value = LevelValue.find_by_course_id_and_level(params[:course_id], new_level ).try(:experience_value).to_i
-        ucr.update_attributes({:experience_value => new_exp_value - level_exp_value, :level => new_level, :gold => ucr.gold + params[:gold], :gold_total => ucr.gold_total + params[:gold]})
+        ucr.update_attributes({:experience_value => new_exp_value - level_exp_value, :level => new_level, :gold => ucr.gold.to_i + gold, :gold_total => ucr.gold_total.to_i + gold})
         render :json => {:status => 1, :old_exp_value => 0,:level => ucr.level, :new_exp_value =>  ucr.experience_value, :level_exp_value => new_level_exp_value, :gold => ucr.gold_total, :toppest_count => round_score.toppest_count}
       else
-        ucr.update_attributes({:experience_value => new_exp_value, :gold => ucr.gold + params[:gold], :gold_total => ucr.gold_total + params[:gold]})
+        ucr.update_attributes({:experience_value => new_exp_value, :gold => ucr.gold.to_i + gold, :gold_total => ucr.gold_total.to_i + gold})
         render :json => {:status => 0, :old_exp_value => old_exp_value,:level => ucr.level, :new_exp_value =>  ucr.experience_value, :level_exp_value => level_exp_value, :gold => ucr.gold_total, :toppest_count => round_score.toppest_count}
       end
     end
-
-    #返回值加上累计金币，当前课程当前用户所有关卡排名第一（不重复）的次数
-
-    RoundScore.find_by_sql("select")
-  end
-
-  #TODO
-  #下载课程的时候请求，保存user_course_relations这个所有初始值，卡包初始25
-  def save_user_course_relations
-    #uid, course_id
+    #返回值加上累计金币，当前课程当前用户关卡排名第一的次数
+    
+    #TODO
+    #知识卡片使用数量
+    #三星数目
+    #
+    #张秀楠的
+    #购买卡包之后，返回总数量
+    #添加好友之后，返回好友数目
 
   end
   
