@@ -143,18 +143,19 @@ on q.knowledge_card_id = kc.id and q.round_id in (?)", rounds.map(&:id)]).group_
     course_id = params[:course_id]
     Achieve.transaction do
       user_course_relarion = UserCourseRelation.find_by_user_id_and_course_id(uid, course_id)
+
       if user_course_relarion && params[:achieve_point]
         params[:achieve_point].split(",").each do |ap|
           achieve_data_id = ap.split("_")[0].to_i
           point = ap.split("_")[1].to_i
           achieve = Achieve.find_by_user_id_and_course_id_and_achieve_data_id(uid, course_id, achieve_data_id)
           Achieve.create({:user_id => uid, :course_id => course_id, :achieve_data_id => achieve_data_id, :point => point}) unless achieve
+
           user_course_relarion.update_attribute(:achieve_point, user_course_relarion.achieve_point + point)
         end
       end
+       render :json => {:message => user_course_relarion ? "success" : "error"}
     end
-
-    render :json => {:message => user_course_relarion ? "success" : "error"}
 
   end
 
