@@ -4,33 +4,36 @@ class Api::UserManagesController < ActionController::Base
   def search_course     #查询课程
     name = params[:search_name].strip.gsub(/[%_]/){|x|'\\' + x}
     uid = params[:uid].to_i
-    courses = Course.find_by_sql("select c.id,c.name,c.press,c.description,c.types
+    courses = Course.find_by_sql("select c.id,c.name,c.press,c.description,c.types,c.img
                                    from courses c where name like '%#{name}%'")
-    courses.each{|course| course[:logo] = course.img.thumb.url}
+    course_arr = []
+    courses.each{|course|
+      course_hash = course.attributes
+      course_hash[:logo] = course.img.thumb.url
+      course_hash[:types] = Course::TYPES[course.types]
+      course_arr << course_hash
+      }
     selected_courses = UserCourseRelation.where(["user_id = ? ", uid]).map(&:course_id)
-    a = []
-    Course::TYPES.each do |k, v|
-      a << v
-    end
-    render :json => {:c => courses, :sc => selected_courses, :type_name => a}
+
+    render :json => {:c => course_arr, :sc => selected_courses}
   end
 
   def search_single_course      #查询单个课程
     uid = params[:uid].to_i
     cid = params[:course_id]
-    course = Course.select("id, name, press, description, types").find_by_id(cid.to_i)
-    course[:logo] = course.img.thumb.url
-    type_name = Course::TYPES[course.types]
+    course = Course.select("id, name, press, description, types, img").find_by_id(cid.to_i)
+    course_hash = course.attributes
+    course_hash[:logo] = course.img.thumb.url
+    course_hash[:types] = Course::TYPES[course.types]
     flag = UserCourseRelation.find_by_user_id_and_course_id(uid, cid).nil?
     a = flag == true ? 0 : 1
-    render :json => {:course => course, :type_name => type_name, :flag => a}
+    render :json => {:course => course_hash, :flag => a}
   end
 
   def selected_courses  #用户已选择的课程
     uid = params[:uid].to_i
     courses = UserCourseRelation.find_by_sql("select c.id course_id, c.name name, c.press press, ucr.gold gold, ucr.level level,
-                                              c.description description, c.types types, ucr.cardbag_count,
-                                              ucr.cardbag_use_count
+                                              c.description description, c.types types, ucr.cardbag_count,ucr.cardbag_use_count
                                               from user_course_relations ucr
                                               inner join courses c on ucr.course_id=c.id
                                               where ucr.user_id=#{uid}")
@@ -53,18 +56,21 @@ class Api::UserManagesController < ActionController::Base
   end
 
   def buy_prop      #购买道具
-    uid = params[:uid].to_i
-    pid = params[:pid].to_i
-    pcount = params[:pcount].to_i
+    #uid,course_id,pid,pcount
+    uid, pid, course_id, pcount = params[:uid].to_i, params[:pid].to_i, params[:course_id].to_i, params[:pcount].to_i
+    
     UserPropRelation.transaction do
+      prop = Prop.find_by_id pid
+      ucr = User.find_by_user_id_and_course_id(uid, course_id)
+      ucr.update_attribute(:gold => ucr.gold - prop.gold * pcount) if ucr
       selected_prop = UserPropRelation.find_by_user_id_and_prop_id(uid, pid)
       if selected_prop
         selected_prop.update_attribute("user_prop_num", selected_prop.user_prop_num + pcount)
       else
         UserPropRelation.create(:user_id => uid, :prop_id => pid, :user_prop_num => pcount)
       end
-      sp = UserPropRelation.find_by_user_id_and_prop_id(uid, pid)
-      render :json => sp
+     
+      render :json => {:message => "success"}
     end
   end
 
@@ -260,64 +266,74 @@ left join users u on u.id = upr.user_id and upr.user_prop_num >=1 where  p.cours
   #根据用户id跟课程id获取用户当前课程的等级、经验以及下次升级的经验
   def course_level
     #course_id,round_id,chapter_id, uid,experience_vaule（关卡得分/经验值），star, gold 保存经验值，关卡星级， 金币
-    #新建记录 => round_scores, 更新记录 => user_course_relations
+    #新建记录 => round_scores, 更新记录 => user_course_relations   round_scores  增加标志（得分第一的标志）。score 跟 star 里面的值都是保存历史最高值
+    course_id = params[:course_id].to_i
+    chapter_id = params[:chapter_id].to_i
     uid = params[:uid].to_i
     round_id = params[:round_id].to_i
     gold = params[:gold].to_i
+    score = params[:experience_value].to_i
+    star = params[:star].to_i
     UserCourseRelation.transaction do
 
-      ucr = UserCourseRelation.find_by_course_id_and_user_id(params[:course_id], params[:uid])
-      if round_score.star == Round::STAR[:three_star]
-        ucr.round_3star_count = ucr.round_3star_count + 1 #计算成就，保存关卡三星的次数  有疑问，每次计算，难免要累加，怎么弄只加一次？
-      end
-      #保存当前关卡，用户以及好友的得分排名 开始
-      friend_ids = Friend.where(:user_id => uid).map(&:friend_id) << uid
-      round_score_ranks = RoundScore.where({:round_id => round_id, :user_id => friend_ids}).order("score desc")
-  
-      round_score_ranks.each_with_index do |rs, index|
-        if index == 0 && rs.user_id == uid
-          ucr.toppest_count = ucr.toppest_count + 1  #计算成就，保存关卡排名第一的次数
+      ucr = UserCourseRelation.find_by_course_id_and_user_id(course_id, uid)
+      if ucr
+        #保存关卡得分 开始
+        round_score = RoundScore.find_by_user_id_and_round_id(uid, round_id) if uid
+
+        if round_score
+          round_score.update_attributes({:score => score, :star => params[:star], :best_score => [score, round_score.best_score].max})
+        else
+          round_score = RoundScore.create(:user_id => uid, :chapter_id => params[:chapter_id], :round_id => round_id,
+            :score => score, :star => star, :best_score => score, :day => Time.now)
         end
-        rs.update_attribute(:rank => index+1)
+        #保存关卡得分 结束
+      
+        if star == Round::STAR[:three_star] && !round_score.star_3flag #此关卡得过3星的标志
+          round_score.update_attribute(:star_3flag => true)
+        end
+      
+        #保存当前关卡，用户以及好友的得分排名 开始
+        friend_ids = Friend.where(:user_id => uid).map(&:friend_id) << uid
+        round_score_ranks = RoundScore.where({:round_id => round_id, :user_id => friend_ids}).order("best_score desc")
+  
+        round_score_ranks.each_with_index do |rs, index|
+          if index == 0 && rs.user_id == uid && !round_score.toppest_flag
+            round_score.update_attribute(:toppest_flag, true)  #此关卡有过排名第一的标志
+          end
        
-      end
-      #保存当前关卡，用户以及好友的得分排名 开始
+        end
+        #保存当前关卡，用户以及好友的得分排名 结束
 
-      #保存关卡得分 开始
-      round_score = RoundScore.find_by_user_id_and_round_id(uid, round_id) if uid
+        star3_count = RoundScore.where(:round_id => round_id, :star_3flag => true).length  #当前关卡, 用户得3星的次数
+        toppest_count = RoundScore.where(:round_id => round_id, :toppest_flag => true).length  #当前关卡, 用户得第一的次数
 
-      if round_score
-        round_score.update_attributes({:score => params[:experience_value], :star => params[:star]})
-      else
-        round_score = RoundScore.create(:user_id => uid, :chapter_id => params[:chapter_id], :round_id => round_id,
-          :score => params[:experience_value], :star => params[:star], :day => Time.now)
-      end
-      #保存关卡得分 结束
       
-      added_exp_value = params[:experience_value].to_i
-      
-      old_exp_value = ucr.experience_value.to_i
-      new_exp_value = old_exp_value + added_exp_value
-      level_exp_value = LevelValue.find_by_course_id_and_level(params[:course_id], ucr.level ).try(:experience_value).to_i
-      if new_exp_value > level_exp_value
-        new_level = (ucr.level || 1) + 1
-        new_level_exp_value = LevelValue.find_by_course_id_and_level(params[:course_id], new_level ).try(:experience_value).to_i
-        ucr.update_attributes({:experience_value => new_exp_value - level_exp_value, :level => new_level, :gold => ucr.gold.to_i + gold, :gold_total => ucr.gold_total.to_i + gold})
-        render :json => {:status => 1, :old_exp_value => 0,:level => ucr.level, :new_exp_value =>  ucr.experience_value, :level_exp_value => new_level_exp_value, :gold => ucr.gold_total, :toppest_count => round_score.toppest_count}
+        old_exp_value = ucr.experience_value.to_i
+        new_exp_value = old_exp_value + score
+        level_exp_value = LevelValue.find_by_course_id_and_level(params[:course_id], ucr.level ).try(:experience_value).to_i
+        if new_exp_value > level_exp_value
+          new_level = (ucr.level || 1) + 1
+          new_level_exp_value = LevelValue.find_by_course_id_and_level(params[:course_id], new_level ).try(:experience_value).to_i
+          ucr.update_attributes({:experience_value => new_exp_value - level_exp_value, :level => new_level, :gold => ucr.gold.to_i + gold, :gold_total => ucr.gold_total.to_i + gold})
+          render :json => {:status => 1, :old_exp_value => 0,:level => ucr.level, :new_exp_value =>  ucr.experience_value,
+            :level_exp_value => new_level_exp_value, :gold => ucr.gold_total, :toppest_count => toppest_count, :star3_count => star3_count, :card_use_count => ucr.cardbag_use_count}
+        else
+          ucr.update_attributes({:experience_value => new_exp_value, :gold => ucr.gold.to_i + gold, :gold_total => ucr.gold_total.to_i + gold})
+          render :json => {:status => 0, :old_exp_value => old_exp_value,:level => ucr.level, :new_exp_value =>  ucr.experience_value,
+            :level_exp_value => level_exp_value, :gold => ucr.gold_total, :toppest_count => toppest_count, :star3_count => star3_count, :card_use_count => ucr.cardbag_use_count}
+        end
       else
-        ucr.update_attributes({:experience_value => new_exp_value, :gold => ucr.gold.to_i + gold, :gold_total => ucr.gold_total.to_i + gold})
-        render :json => {:status => 0, :old_exp_value => old_exp_value,:level => ucr.level, :new_exp_value =>  ucr.experience_value, :level_exp_value => level_exp_value, :gold => ucr.gold_total, :toppest_count => round_score.toppest_count}
+        render :json => {:message => "record not found"}
       end
     end
     #返回值加上累计金币，当前课程当前用户关卡排名第一的次数
     
-    #TODO
+    #计算成就
     #知识卡片使用数量
     #三星数目
-    #
-    #张秀楠的
-    #购买卡包之后，返回总数量
-    #添加好友之后，返回好友数目
+    #第一数目
+    
 
   end
   

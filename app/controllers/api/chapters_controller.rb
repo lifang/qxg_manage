@@ -22,19 +22,21 @@ class Api::ChaptersController < ApplicationController
     render :json => Prop.my_props(params[:uid],params[:course_id])
   end
 
-  #关卡列表
+  #章节下所有关卡列表
+  #张，是否是自己跟好友，还是此关卡所有人？
   def user_round
     #uid, chapter_id
     uid = params[:uid].to_i
     chapter_id = params[:chapter_id].to_i
     chapter = Chapter.find_by_id chapter_id
-    user = User.find_by_id uid
-    rounds = Round.find_by_sql("SELECT r.id, r.chapter_id, r.name, r.questions_count, r.round_time, r.time_ratio, r.blood,
- r.max_score, rs.score score, rs.star from rounds r LEFT JOIN round_scores rs on r.id=rs.round_id AND rs.user_id =#{uid} where
-r.chapter_id = #{chapter_id} and r.course_id = #{chapter.course_id}  ORDER BY rs.score DESC")
+
+    friend_ids = Friend.where(:user_id => uid).map(&:friend_id) << uid
+    rounds = Round.find_by_sql(["SELECT r.id, r.chapter_id, r.name, r.questions_count, r.round_time, r.time_ratio, r.blood,
+ r.max_score, rs.score score, rs.star from rounds r LEFT JOIN round_scores rs on r.id=rs.round_id AND rs.user_id in (?) where
+r.chapter_id = #{chapter_id} and r.course_id = #{chapter.course_id}  ORDER BY rs.score DESC", friend_ids])
 
     round_range = RoundScore.find_by_sql(["select u.name u_name, u.id uid, u.img img, rs.score score, rs.round_id round_id from round_scores rs inner join rounds r on r.id = rs.round_id
-      inner join users u on u.id = rs.user_id where rs.round_id in (?) order by rs.rank asc", rounds.map(&:id)]).group_by{|rs| rs.round_id}
+      inner join users u on u.id = rs.user_id where rs.round_id in (?) order by rs.best_score desc", rounds.map(&:id)]).group_by{|rs| rs.round_id}
     rs_hash = {}
 
     round_range.each do |round_id, users|
