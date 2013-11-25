@@ -2,6 +2,7 @@
 class Api::UserManagesController < ActionController::Base
   
   def search_course     #查询课程
+    #search_name, uid
     name = params[:search_name].strip.gsub(/[%_]/){|x|'\\' + x}
     uid = params[:uid].to_i
     courses = Course.find_by_sql("select c.id,c.name,c.press,c.description,c.types,c.img
@@ -9,20 +10,33 @@ class Api::UserManagesController < ActionController::Base
     course_arr = []
     courses.each{|course|
       course_hash = course.attributes
+      chapter = course.chapters[0]
+      if chapter
+        rounds = chapter.rounds.limit 5
+        course_hash[:chapter_id] = chapter.id
+        course_hash[:round_ids] = rounds.map(&:id)
+      end
       course_hash[:logo] = course.img.thumb.url
       course_hash[:types] = Course::TYPES[course.types]
       course_arr << course_hash
-      }
+    }
     selected_courses = UserCourseRelation.where(["user_id = ? ", uid]).map(&:course_id)
 
     render :json => {:c => course_arr, :sc => selected_courses}
   end
 
-  def search_single_course      #查询单个课程
+  def search_single_course      #查询单个课程 二维码查询
+    #uid, course_id
     uid = params[:uid].to_i
     cid = params[:course_id]
     course = Course.select("id, name, press, description, types, img").find_by_id(cid.to_i)
     course_hash = course.attributes
+    chapter = course.chapters[0]
+    if chapter
+      rounds = chapter.rounds.limit 5
+      course_hash[:chapter_id] = chapter.id
+      course_hash[:round_ids] = rounds.map(&:id)
+    end
     course_hash[:logo] = course.img.thumb.url
     course_hash[:types] = Course::TYPES[course.types]
     flag = UserCourseRelation.find_by_user_id_and_course_id(uid, cid).nil?
@@ -31,6 +45,7 @@ class Api::UserManagesController < ActionController::Base
   end
 
   def selected_courses  #用户已选择的课程
+    #uid
     uid = params[:uid].to_i
     courses = UserCourseRelation.find_by_sql("select c.id course_id, c.name name, c.press press, ucr.gold gold, ucr.level level,
                                               c.description description, c.types types, ucr.cardbag_count,ucr.cardbag_use_count
@@ -42,6 +57,19 @@ class Api::UserManagesController < ActionController::Base
       c[:logo] = c.course.img.thumb.url
     end
     render :json => courses
+  end
+
+  #返回请求下载剩下关卡的下载信息，course_id, chapter_id, round_id
+  def return_round_ids
+    #uid, course_id, chapter_id, round_id
+    ucr = UserCourseRelation.find_by_user_id_and_course_id(params[:uid], params[:course_id])
+    if ucr
+      chapter = Chapter.find_by_id params[:chapter_id]
+      rounds = chapter.rounds.where("id > ?", params[:round_id].to_i).limit 5
+      render :json => {:message => "success", :round_ids => rounds.map(&:id)}
+    else
+     render :json => {:message => "error"}
+    end
   end
 
   def props_list    #道具列表
@@ -61,8 +89,8 @@ class Api::UserManagesController < ActionController::Base
     
     UserPropRelation.transaction do
       prop = Prop.find_by_id pid
-      ucr = User.find_by_user_id_and_course_id(uid, course_id)
-      ucr.update_attribute(:gold => ucr.gold - prop.gold * pcount) if ucr
+      ucr = UserCourseRelation.find_by_user_id_and_course_id(uid, course_id)
+      ucr.update_attribute(:gold, ucr.gold - prop.price * pcount) if ucr
       selected_prop = UserPropRelation.find_by_user_id_and_prop_id(uid, pid)
       if selected_prop
         selected_prop.update_attribute("user_prop_num", selected_prop.user_prop_num + pcount)
