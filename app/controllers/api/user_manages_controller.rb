@@ -282,9 +282,9 @@ left join users u on u.id = upr.user_id and upr.user_prop_num >=1 where  p.cours
         round_score = RoundScore.find_by_user_id_and_round_id(uid, round_id) if uid
 
         if round_score
-          round_score.update_attributes({:score => score, :star => params[:star], :best_score => [score, round_score.best_score].max})
+          round_score.update_attributes({:score => score, :star => star, :best_score => [score, round_score.best_score].max})
         else
-          round_score = RoundScore.create(:user_id => uid, :chapter_id => params[:chapter_id], :round_id => round_id,
+          round_score = RoundScore.create(:user_id => uid, :chapter_id => chapter_id, :round_id => round_id,
             :score => score, :star => star, :best_score => score, :day => Time.now)
         end
         #保存关卡得分 结束
