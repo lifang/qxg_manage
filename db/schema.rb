@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131024055235) do
+ActiveRecord::Schema.define(:version => 20131121140659) do
 
   create_table "achieve_counts", :force => true do |t|
     t.integer  "user_id"
@@ -101,7 +101,7 @@ ActiveRecord::Schema.define(:version => 20131024055235) do
     t.integer  "user_id"
     t.integer  "course_id"
     t.string   "name"
-    t.integer  "types"
+    t.integer  "types",      :default => 0
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -113,10 +113,10 @@ ActiveRecord::Schema.define(:version => 20131024055235) do
     t.integer  "course_id"
     t.string   "name"
     t.string   "img"
-    t.integer  "round_count"
+    t.integer  "rounds_count"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "status",      :limit => 1, :default => 0
+    t.integer  "status",       :limit => 1, :default => 0
   end
 
   add_index "chapters", ["course_id"], :name => "index_chapters_on_course_id"
@@ -127,14 +127,15 @@ ActiveRecord::Schema.define(:version => 20131024055235) do
     t.text     "description"
     t.string   "img"
     t.integer  "types"
-    t.integer  "status",      :limit => 1, :default => 0
     t.integer  "time_ratio"
     t.integer  "blood"
     t.integer  "max_score"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "round_time"
+    t.integer  "status",         :limit => 1, :default => 0
     t.integer  "round_count"
+    t.integer  "chapters_count",              :default => 0
   end
 
   create_table "everyday_tasks", :force => true do |t|
@@ -169,6 +170,12 @@ ActiveRecord::Schema.define(:version => 20131024055235) do
   end
 
   add_index "knowledge_cards", ["course_id"], :name => "index_knowledge_cards_on_course_id"
+
+  create_table "level_values", :force => true do |t|
+    t.integer "course_id"
+    t.integer "level"
+    t.integer "experience_value"
+  end
 
   create_table "props", :force => true do |t|
     t.integer  "course_id"
@@ -205,7 +212,10 @@ ActiveRecord::Schema.define(:version => 20131024055235) do
     t.datetime "day"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "star",       :limit => 1
+    t.integer  "star",          :limit => 1
+    t.integer  "rank",          :limit => 1
+    t.boolean  "toppest_flag"
+    t.boolean  "all3star_flag"
   end
 
   add_index "round_scores", ["chapter_id"], :name => "index_round_scores_on_chapter_id"
@@ -251,6 +261,8 @@ ActiveRecord::Schema.define(:version => 20131024055235) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "experience_value"
+    t.integer  "round_toppest_count", :default => 0
+    t.integer  "round_3star_count",   :default => 0
   end
 
   add_index "user_course_relations", ["course_id"], :name => "index_user_course_relations_on_course_id"
@@ -284,11 +296,11 @@ ActiveRecord::Schema.define(:version => 20131024055235) do
     t.string   "email"
     t.string   "password"
     t.string   "name"
-    t.datetime "birthday"
+    t.date     "birthday"
     t.boolean  "sex"
     t.string   "img"
     t.string   "phone"
-    t.integer  "weibo_id"
+    t.string   "weibo_id"
     t.datetime "weibo_time"
     t.integer  "types"
     t.datetime "created_at"
