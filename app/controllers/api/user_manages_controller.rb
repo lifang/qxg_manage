@@ -7,56 +7,79 @@ class Api::UserManagesController < ActionController::Base
     uid = params[:uid].to_i
     courses = Course.find_by_sql("select c.id,c.name,c.press,c.description,c.types,c.img
                                    from courses c where name like '%#{name}%'")
+    selected_courses = UserCourseRelation.where(["user_id = ? ", uid]).map(&:course_id)
+
     course_arr = []
     courses.each{|course|
       course_hash = course.attributes
       chapter = course.chapters[0]
       if chapter
         rounds = chapter.rounds.limit 5
-        course_hash[:chapter_id] = chapter.id
-        course_hash[:round_ids] = rounds.map(&:id)
+        chapter_hash = chapter.attributes
+        chapter_hash[:logo] = chapter.img.thumb.url
+        chapter_hash.delete(:img)
+        course_hash[:chapter] = chapter_hash
+        course_hash[:rounds] = rounds
       end
       course_hash[:logo] = course.img.thumb.url
       course_hash[:types] = Course::TYPES[course.types]
+      course_hash[:is_new] = selected_courses.include?(course.id) ? 0 : 1
+      course_hash.delete(:img)
       course_arr << course_hash
     }
-    selected_courses = UserCourseRelation.where(["user_id = ? ", uid]).map(&:course_id)
 
-    render :json => {:c => course_arr, :sc => selected_courses}
+    render :json => {:c => course_arr}
   end
 
   def search_single_course      #查询单个课程 二维码查询
     #uid, course_id
     uid = params[:uid].to_i
     cid = params[:course_id]
+    selected_courses = UserCourseRelation.where(["user_id = ? ", uid]).map(&:course_id)
     course = Course.select("id, name, press, description, types, img").find_by_id(cid.to_i)
     course_hash = course.attributes
     chapter = course.chapters[0]
     if chapter
       rounds = chapter.rounds.limit 5
-      course_hash[:chapter_id] = chapter.id
-      course_hash[:round_ids] = rounds.map(&:id)
+      chapter_hash = chapter.attributes
+      chapter_hash[:logo] = chapter.img.thumb.url
+      chapter_hash.delete(:img)
+      course_hash[:chapter] = chapter_hash
+      course_hash[:rounds] = rounds
     end
     course_hash[:logo] = course.img.thumb.url
     course_hash[:types] = Course::TYPES[course.types]
-    flag = UserCourseRelation.find_by_user_id_and_course_id(uid, cid).nil?
-    a = flag == true ? 0 : 1
-    render :json => {:course => course_hash, :flag => a}
+    course_hash[:is_new] = selected_courses.include?(course.id) ? 0 : 1
+    course_hash.delete(:img)
+    #flag = UserCourseRelation.find_by_user_id_and_course_id(uid, cid).nil?
+
+    render :json => {:course => course_hash, :message => "success"}
   end
 
-  def selected_courses  #用户已选择的课程
+  def selected_courses  #所有课程以及 用户已选择的课程标志is_new
     #uid
     uid = params[:uid].to_i
-    courses = UserCourseRelation.find_by_sql("select c.id course_id, c.name name, c.press press, ucr.gold gold, ucr.level level,
-                                              c.description description, c.types types, ucr.cardbag_count,ucr.cardbag_use_count
-                                              from user_course_relations ucr
-                                              inner join courses c on ucr.course_id=c.id
-                                              where ucr.user_id=#{uid}")
+    courses = Course.all
+    selected_courses = UserCourseRelation.where(["user_id = ? ", uid]).map(&:course_id).uniq
+    course_arr = []
     courses.each do |c|
-      c.types = Course::TYPES[c.types]
-      c[:logo] = c.course.img.thumb.url
+      course_hash = c.attributes
+      chapter = c.chapters[0]
+      if chapter
+        rounds = chapter.rounds.limit 5
+        chapter_hash = chapter.attributes
+        chapter_hash[:logo] = chapter.img.thumb.url
+        chapter_hash.delete(:img)
+        course_hash[:chapter] = chapter_hash
+        course_hash[:rounds] = rounds
+      end
+      course_hash[:logo] = c.img.thumb.url
+      course_hash[:types] = Course::TYPES[c.types]
+      course_hash[:is_new] = selected_courses.include?(c.id) ? 0 : 1
+      course_hash.delete(:img)
+      course_arr << course_hash
     end
-    render :json => courses
+    render :json => course_arr
   end
 
   #返回请求下载剩下关卡的下载信息，course_id, chapter_id, round_id
@@ -68,7 +91,7 @@ class Api::UserManagesController < ActionController::Base
       rounds = chapter.rounds.where("id > ?", params[:round_id].to_i).limit 5
       render :json => {:message => "success", :round_ids => rounds.map(&:id)}
     else
-     render :json => {:message => "error"}
+      render :json => {:message => "error"}
     end
   end
 
@@ -198,29 +221,34 @@ class Api::UserManagesController < ActionController::Base
     #参数uid， cid
     uid = params[:uid].to_i
     cid = params[:cid].to_i
-    et = EverydayTask.find_by_user_id_and_course_id(uid, cid)
-    login_day = et && et.get_login_day  || 0  #每日任务登录天数
+    ucr = UserCourseRelation.find_by_user_id_and_course_id(uid, cid)
+    course = Course.find_by_id(cid)
+    if course
+      et = EverydayTask.find_by_user_id_and_course_id(uid, cid)
+      login_day = et && et.get_login_day  || 0  #每日任务登录天数
 
-    props = Prop.find_by_sql("select p.id prop_id, p.name prop_name, p.description, p.price, p.types, p.question_types,
+      props = Prop.find_by_sql("select p.id prop_id, p.name prop_name, p.description, p.price, p.types, p.question_types,
   upr.user_prop_num, upr.user_id user_id from props p left join user_prop_relations upr on p.id=upr.prop_id  and ( upr.user_id=#{uid} || upr.user_id is null)
 left join users u on u.id = upr.user_id and upr.user_prop_num >=1 where  p.course_id=#{cid} and p.status = #{Prop::STATUS_NAME[:normal]}") #道具列表(包含我的道具)
-    props.map{|prop|
-      prop[:logo] = prop.img.thumb.url
-    }
-    #    props = props.select{|p| p.user_id == uid || p.user_id == nil}
-    chapters = (Course.find_by_id(cid)).chapters.verified.select("id,name,rounds_count")
+      props.map{|prop|
+        prop[:logo] = prop.img.thumb.url
+      }
+      #    props = props.select{|p| p.user_id == uid || p.user_id == nil}
+      chapters = course.chapters.verified.select("id,name,rounds_count")
 
-    chapter_num = chapters.count
-    complete_arr = []
-    chapters.each do |chapter|
-      rs = RoundScore.where(:user_id => uid, :chapter_id => chapter.id) #章节所有关卡全部完成
-      three_stars = RoundScore.where(:user_id => uid, :chapter_id => chapter.id, :star => Round::STAR[:three_star]) #章节所有关卡满星
-      chapter[:all_complete] = (chapter.rounds_count == rs.count) ? 1 : 0
-      chapter[:all_3_star] = (chapter.rounds_count == three_stars.count) ? 1 : 0
-      complete_arr <<  chapter
+      chapter_num = chapters.count
+      complete_arr = []
+      chapters.each do |chapter|
+        rs = RoundScore.where(:user_id => uid, :chapter_id => chapter.id) #章节所有关卡全部完成
+        three_stars = RoundScore.where(:user_id => uid, :chapter_id => chapter.id, :star => Round::STAR[:three_star]) #章节所有关卡满星
+        chapter[:all_complete] = (chapter.rounds_count == rs.count) ? 1 : 0
+        chapter[:all_3_star] = (chapter.rounds_count == three_stars.count) ? 1 : 0
+        complete_arr <<  chapter
+      end
+      render :json =>{:every_day_task => login_day, :props => props, :chapter_num => chapter_num, :chapters => complete_arr, :level => ucr.level, :gold => ucr.gold}
+    else
+      render :json => {:massage => "error"}
     end
-    render :json =>{:every_day_task => login_day, :props => props, :chapter_num => chapter_num, :chapters => complete_arr}
-    
   end
 
   def set_task_day  #修改连续天数
@@ -318,7 +346,7 @@ left join users u on u.id = upr.user_id and upr.user_prop_num >=1 where  p.cours
         #保存关卡得分 结束
       
         if star == Round::STAR[:three_star] && !round_score.star_3flag #此关卡得过3星的标志
-          round_score.update_attribute(:star_3flag => true)
+          round_score.update_attribute(:star_3flag, true)
         end
       
         #保存当前关卡，用户以及好友的得分排名 开始

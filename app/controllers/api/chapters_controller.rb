@@ -29,36 +29,41 @@ class Api::ChaptersController < ApplicationController
     uid = params[:uid].to_i
     chapter_id = params[:chapter_id].to_i
     chapter = Chapter.find_by_id chapter_id
-
-    friend_ids = Friend.where(:user_id => uid).map(&:friend_id) << uid
-    rounds = Round.find_by_sql(["SELECT r.id, r.chapter_id, r.name, r.questions_count, r.round_time, r.time_ratio, r.blood,
+    if chapter
+      friend_ids = Friend.where(:user_id => uid).map(&:friend_id) << uid
+      friend_ids = friend_ids.uniq
+      rounds = Round.find_by_sql(["SELECT rs.user_id, r.id, r.chapter_id, r.name, r.questions_count, r.round_time, r.time_ratio, r.blood,
  r.max_score, rs.score score, rs.star from rounds r LEFT JOIN round_scores rs on r.id=rs.round_id AND rs.user_id in (?) where
-r.chapter_id = #{chapter_id} and r.course_id = #{chapter.course_id}  ORDER BY rs.score DESC", friend_ids])
+r.chapter_id = #{chapter_id} and r.course_id = #{chapter.course_id}", friend_ids])
 
-    round_range = RoundScore.find_by_sql(["select u.name u_name, u.id uid, u.img img, rs.score score, rs.round_id round_id from round_scores rs inner join rounds r on r.id = rs.round_id
+      round_range = RoundScore.find_by_sql(["select u.name u_name, u.id uid, u.img img, rs.score score, rs.round_id round_id from round_scores rs inner join rounds r on r.id = rs.round_id
       inner join users u on u.id = rs.user_id where rs.round_id in (?) order by rs.best_score desc", rounds.map(&:id)]).group_by{|rs| rs.round_id}
-    rs_hash = {}
+      rs_hash = {}
 
-    round_range.each do |round_id, users|
-      temp_users = users[0..2]
-      if temp_users.map(&:uid).include?(uid)
-        rs_hash[round_id] = temp_users
-      else
-        rs_hash[round_id] = temp_users
-        users.each_with_index do |u,index|
-          if u.uid == uid
-            u[:rank] = index+ 1
-            rs_hash[round_id] << u
+      round_range.each do |round_id, users|
+        temp_users = users[0..2]
+        if temp_users.map(&:uid).include?(uid)
+          rs_hash[round_id] = temp_users
+        else
+          rs_hash[round_id] = temp_users
+          users.each_with_index do |u,index|
+            if u.uid == uid
+              u[:rank] = index+ 1
+              rs_hash[round_id] << u
+            end
           end
         end
       end
+    
+      #加上每个关卡里面的知识卡片信息
+      knowledge_cards = KnowledgeCard.find_by_sql(["select kc.id, kc.name, kc.description, q.round_id from knowledge_cards kc inner join questions q
+on q.knowledge_card_id = kc.id and q.round_id in (?)", rounds.map(&:id)]).group_by{|rs| rs.round_id}
+      has_score_rounds = rs_hash.keys
+      render :json => {:rounds => rounds, :round_range => rs_hash, :round_ids => has_score_rounds, :knowledge_cards => knowledge_cards}
+    else
+      render :json => {:message => "no chapter"}
     end
     
-    #加上每个关卡里面的知识卡片信息
-    knowledge_cards = KnowledgeCard.find_by_sql(["select kc.id, kc.name, kc.description, q.round_id from knowledge_cards kc inner join questions q
-on q.knowledge_card_id = kc.id and q.round_id in (?)", rounds.map(&:id)]).group_by{|rs| rs.round_id}
-    has_score_rounds = rs_hash.keys
-    render :json => {:rounds => rounds, :round_range => rs_hash, :round_ids => has_score_rounds, :knowledge_cards => knowledge_cards}
   end
 
   #关卡排名
@@ -156,7 +161,7 @@ on q.knowledge_card_id = kc.id and q.round_id in (?)", rounds.map(&:id)]).group_
           user_course_relarion.update_attribute(:achieve_point, user_course_relarion.achieve_point + point)
         end
       end
-       render :json => {:message => user_course_relarion ? "success" : "error"}
+      render :json => {:message => user_course_relarion ? "success" : "error"}
     end
 
   end
