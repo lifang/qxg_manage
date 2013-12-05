@@ -18,7 +18,7 @@ class QuestionsController < ApplicationController
    redirect_to round_questions_path(@round)
   end
 
-  #导入多个关卡
+  #导入单个关卡
   def uploadfile
     course_id = params[:course_id].to_i
     chapter_id = params[:chapter_id].to_i

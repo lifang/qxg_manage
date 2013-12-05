@@ -120,7 +120,7 @@ module QuestionHelper
     return_info = {:error_infos => all_error_infos, :all_round_questions => all_round_questions}
   end
 
-  #读取一个excel题目
+  #读取excel中一道题
   def read_questions path, excel
     error_infos = [] #错误信息
     questions = []   #单个excel的题目集合
@@ -841,7 +841,14 @@ module QuestionHelper
         one_json_question << que
       end
 
-      question_total = Question.count("round_id=#{round.id}")
+      question_total = Question.where("round_id=#{round.id}").count
+      p "question_total#{question_total}"
+      if question_total%2 == 0
+        question_total = question_total%2
+      else
+        question_total = (question_total+1)/2
+      end
+      p "question_total#{question_total}"
       str = ""
       str = str + "course = {\"course_id\" : #{course_id},\n  \"chapter_id\" : #{chapter_id},\n
       \"round_id\" : #{round.id},\n \"round_time\" : \"#{round.round_time}\",\n \"question_total\":#{question_total},

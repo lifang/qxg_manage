@@ -2,25 +2,28 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/rounds/_rounds_list.html.erb" afterPath="$PROJECT_DIR$/app/views/rounds/_rounds_list.html.erb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/rounds_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/rounds_controller.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/cardbag_tags_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/cardbag_tags_controller.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/helpers/question_helper.rb" afterPath="$PROJECT_DIR$/app/helpers/question_helper.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/questions_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/questions_controller.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/db/schema.rb" afterPath="$PROJECT_DIR$/db/schema.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="qxg_manage.iws" />
     <ignored path=".idea/workspace.xml" />
-    <file path="/Gemfile" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1378970455361" ignored="false" />
+    <file path="/Gemfile" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384397473975" ignored="false" />
     <file path="/database.yml" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1380175734678" ignored="false" />
-    <file path="/index.html.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1383359367460" ignored="false" />
-    <file path="/routes.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1382887718411" ignored="false" />
-    <file path="/chapters_controller.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1380176446397" ignored="false" />
-    <file path="/question_helper.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1383388793983" ignored="false" />
-    <file path="/questions_controller.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1383388608288" ignored="false" />
+    <file path="/index.html.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384482930701" ignored="false" />
+    <file path="/routes.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1385622219005" ignored="false" />
+    <file path="/chapters_controller.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1385215981711" ignored="false" />
+    <file path="/question_helper.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384937648332" ignored="false" />
+    <file path="/questions_controller.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384936761017" ignored="false" />
     <file path="/_uploadzip.html.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1382883739347" ignored="false" />
-    <file path="/rounds_controller.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1383530342058" ignored="false" />
-    <file path="/a.dummy" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1382887998286" ignored="false" />
-    <file path="/Dummy.txt" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1383528640717" ignored="false" />
+    <file path="/rounds_controller.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384936806930" ignored="false" />
+    <file path="/a.dummy" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384936731900" ignored="false" />
+    <file path="/Dummy.txt" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1386233642654" ignored="false" />
     <file path="/common.js" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1382885701854" ignored="false" />
     <file path="/_detail.html.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1382941586200" ignored="false" />
-    <file path="/_question_list.html.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1382886633685" ignored="false" />
+    <file path="/_question_list.html.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384489864156" ignored="false" />
     <file path="/view.js.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1382890622354" ignored="false" />
     <file path="/_form.html.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1382894523572" ignored="false" />
     <file path="/style.css" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1382890464920" ignored="false" />
@@ -31,13 +34,77 @@
     <file path="$PROJECT_DIR$/config/initializers/backtrace_silencers.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1382941902637" ignored="false" />
     <file path="$PROJECT_DIR$/config/initializers/inflections.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1382941902637" ignored="false" />
     <file path="$PROJECT_DIR$/config/initializers/wrap_parameters.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1382941902637" ignored="false" />
-    <file path="$PROJECT_DIR$/db/schema.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1382941902652" ignored="false" />
-    <file path="$PROJECT_DIR$/config/application.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1382941902653" ignored="false" />
-    <file path="$PROJECT_DIR$/config/routes.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1382941902653" ignored="false" />
-    <file path="$PROJECT_DIR$/config/database.yml" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1382941902653" ignored="false" />
     <file path="$PROJECT_DIR$/config/initializers/mime_types.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1382941902653" ignored="false" />
-    <file path="/uploadfile.js.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1383363646669" ignored="false" />
+    <file path="/uploadfile.js.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1385649819978" ignored="false" />
     <file path="/_rounds_list.html.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1383529839167" ignored="false" />
+    <file path="$USER_HOME$/practise/config/database.yml" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384395235534" ignored="false" />
+    <file path="$USER_HOME$/practise/Gemfile" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384397521195" ignored="false" />
+    <file path="$USER_HOME$/practise/app/views/exercises/index.html.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384417036433" ignored="false" />
+    <file path="$USER_HOME$/practise/app/controllers/exercises_controller.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384416042323" ignored="false" />
+    <file path="$USER_HOME$/practise/app/views/exercises/_exerceise_form.html.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384411993629" ignored="false" />
+    <file path="/_exerceise_form.html.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384415244029" ignored="false" />
+    <file path="$USER_HOME$/practise/config/routes.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384483598529" ignored="false" />
+    <file path="$USER_HOME$/practise/app/views/exercises/new.js.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384412011148" ignored="false" />
+    <file path="$USER_HOME$/practise/app/views/exercises/_exercise_form.html.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384420003318" ignored="false" />
+    <file path="/_exercise_form.html.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384420035271" ignored="false" />
+    <file path="/exercises_controller.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384415878618" ignored="false" />
+    <file path="$USER_HOME$/practise/app/views/exercises/_uploadzip.html.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384413941620" ignored="false" />
+    <file path="$USER_HOME$/practise/app/assets/javascripts/exercise.js" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384418505606" ignored="false" />
+    <file path="/exercise.js" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384415192281" ignored="false" />
+    <file path="$USER_HOME$/practise/log/development.log" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384414329987" ignored="false" />
+    <file path="$USER_HOME$/practise/app/views/exercises/add.js.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384415894234" ignored="false" />
+    <file path="/add.js.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384415893309" ignored="false" />
+    <file path="$USER_HOME$/practise/app/controllers/questions_controller.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384420462746" ignored="false" />
+    <file path="$USER_HOME$/practise/app/views/questions/index.html.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384482931115" ignored="false" />
+    <file path="$USER_HOME$/practise/app/views/questions/_exercise_form.html.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384417759592" ignored="false" />
+    <file path="$USER_HOME$/practise/app/views/questions/new.js.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384418279450" ignored="false" />
+    <file path="$USER_HOME$/practise/app/views/questions/_question_form.html.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384485891220" ignored="false" />
+    <file path="/_question_form.html.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384485890389" ignored="false" />
+    <file path="$USER_HOME$/practise/app/assets/javascripts/questions.js" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384492087275" ignored="false" />
+    <file path="/questions.js" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384492086910" ignored="false" />
+    <file path="$USER_HOME$/practise/app/helpers/questions_helper.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384420599292" ignored="false" />
+    <file path="/questions_helper.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384420584029" ignored="false" />
+    <file path="$USER_HOME$/practise/app/views/questions/add_que.js.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384482365518" ignored="false" />
+    <file path="/add_que.js.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384482364361" ignored="false" />
+    <file path="$USER_HOME$/practise/app/views/questions/wwwww.js.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384483001866" ignored="false" />
+    <file path="$USER_HOME$/practise/app/assets/javascripts/application.js" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384488368201" ignored="false" />
+    <file path="$USER_HOME$/practise/app/controllers/api/exercises_controller.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384489591830" ignored="false" />
+    <file path="$USER_HOME$/practise/app/views/questions/_question_list.html.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384489990354" ignored="false" />
+    <file path="$USER_HOME$/bbk_project/app/helpers/tasks_helper.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1385651339778" ignored="false" />
+    <file path="/tasks_helper.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1385651331154" ignored="false" />
+    <file path="$USER_HOME$/bbk_project/app/controllers/tasks_controller.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1385655254274" ignored="false" />
+    <file path="/tasks_controller.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1385655121371" ignored="false" />
+    <file path="$USER_HOME$/bbk_project/app/models/task.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1385654619406" ignored="false" />
+    <file path="/task.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1385645126179" ignored="false" />
+    <file path="$USER_HOME$/bbk_project/app/assets/javascripts/tasks.js" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1385618545957" ignored="false" />
+    <file path="$USER_HOME$/bbk_project/config/routes.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1385622220950" ignored="false" />
+    <file path="$USER_HOME$/bbk_project/app/views/tasks/_left_workspace.html.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1385651529670" ignored="false" />
+    <file path="/_left_workspace.html.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1385651528939" ignored="false" />
+    <file path="$USER_HOME$/bbk_project/app/assets/stylesheets/tasks.css" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1385653270062" ignored="false" />
+    <file path="/tasks.css" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1385653064728" ignored="false" />
+    <file path="$USER_HOME$/bbk_project/app/views/tasks/_upload_panel.html.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1385623117129" ignored="false" />
+    <file path="/_upload_panel.html.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1385630409542" ignored="false" />
+    <file path="$USER_HOME$/bbk_project/app/views/tasks/_upload_form.html.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1385643605337" ignored="false" />
+    <file path="/_upload_form.html.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1385643604538" ignored="false" />
+    <file path="$USER_HOME$/bbk_project/app/views/tasks/_files_list.html.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1385650617676" ignored="false" />
+    <file path="/_files_list.html.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1385649485592" ignored="false" />
+    <file path="$USER_HOME$/bbk_project/app/views/tasks/_files_data_table.html.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1385649437784" ignored="false" />
+    <file path="/_files_data_table.html.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1385649134510" ignored="false" />
+    <file path="$USER_HOME$/bbk_project/app/views/tasks/show.html.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1385648085801" ignored="false" />
+    <file path="/show.html.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1385648085801" ignored="false" />
+    <file path="$USER_HOME$/bbk_project/app/views/tasks/_right_workspace.html.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1385644719214" ignored="false" />
+    <file path="/_right_workspace.html.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1385629261547" ignored="false" />
+    <file path="$USER_HOME$/bbk_project/app/views/tasks/_workspaces.html.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1385652586474" ignored="false" />
+    <file path="/_workspaces.html.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1385652481943" ignored="false" />
+    <file path="$USER_HOME$/bbk_project/app/views/tasks/uploadfile.js.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1385649943001" ignored="false" />
+    <file path="$USER_HOME$/bbk_project/app/controllers/users_controller.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1385655534800" ignored="false" />
+    <file path="$USER_HOME$/bbk_project/app/models/accessory.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1385645994222" ignored="false" />
+    <file path="/accessory.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1385645994222" ignored="false" />
+    <file path="$USER_HOME$/bbk_project/db/migrate/20131128134804_modify_accessory_url_from_accessory.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1385646560392" ignored="false" />
+    <file path="/20131128134804_modify_accessory_url_from_accessory.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1385646559675" ignored="false" />
+    <file path="$USER_HOME$/bbk_project/db/schema.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1385646780989" ignored="false" />
+    <file path="/users_controller.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1385655533314" ignored="false" />
+    <file path="$PROJECT_DIR$/../bbk_project/app/controllers/tasks_controller.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1386235096934" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,54 +129,25 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="question_helper.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/helpers/question_helper.rb">
+      <file leaf-file-name="rounds_controller.rb" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/controllers/rounds_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="102" column="0" selection-start="2405" selection-end="2405" vertical-scroll-proportion="0.0">
+            <state line="84" column="16" selection-start="3415" selection-end="3415" vertical-scroll-proportion="-0.63410854">
               <folding>
-                <element signature="e#102#244#0" expanded="false" />
-                <element signature="e#256#959#0" expanded="false" />
-                <element signature="e#977#1274#0" expanded="false" />
-                <element signature="e#1296#1828#0" expanded="false" />
-                <element signature="e#1849#2388#0" expanded="false" />
-                <element signature="e#2407#5235#0" expanded="false" />
-                <element signature="e#5288#6903#0" expanded="false" />
-                <element signature="e#6915#9268#0" expanded="false" />
-                <element signature="e#9297#12461#0" expanded="false" />
-                <element signature="e#12484#13728#0" expanded="false" />
-                <element signature="e#13745#14504#0" expanded="false" />
-                <element signature="e#14523#15550#0" expanded="false" />
-                <element signature="e#15572#21698#0" expanded="false" />
-                <element signature="e#21710#28378#0" expanded="false" />
-                <element signature="e#28394#28839#0" expanded="false" />
+                <element signature="e#3401#5762#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="rounds_controller.rb" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/controllers/rounds_controller.rb">
+      <file leaf-file-name="questions_controller.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/controllers/questions_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="31" column="51" selection-start="1141" selection-end="1141" vertical-scroll-proportion="0.54617417">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="index.html.erb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/rounds/index.html.erb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="14" column="36" selection-start="529" selection-end="529" vertical-scroll-proportion="-8.75">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="_rounds_list.html.erb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/rounds/_rounds_list.html.erb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="3" column="92" selection-start="189" selection-end="189" vertical-scroll-proportion="-1.875">
-              <folding />
+            <state line="20" column="7" selection-start="574" selection-end="574" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="e#579#4455#0" expanded="true" />
+                <element signature="e#5065#6620#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -132,11 +170,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/app/views/questions/_sortby.html.erb" />
-        <option value="$PROJECT_DIR$/app/views/questions/_errors.html.erb" />
-        <option value="$PROJECT_DIR$/app/assets/javascripts/common.js" />
-        <option value="$PROJECT_DIR$/app/views/rounds/_detail.html.erb" />
-        <option value="$PROJECT_DIR$/app/views/questions/_form.html.erb" />
         <option value="$PROJECT_DIR$/app/assets/stylesheets/style.css" />
         <option value="$PROJECT_DIR$/app/views/rounds/index.html.erb" />
         <option value="$PROJECT_DIR$/app/views/questions/index.html.erb" />
@@ -144,10 +177,15 @@
         <option value="$PROJECT_DIR$/app/views/questions/edit.js.erb" />
         <option value="$PROJECT_DIR$/app/views/questions/_uploadzip.html.erb" />
         <option value="$PROJECT_DIR$/app/views/questions/uploadfile.js.erb" />
-        <option value="$PROJECT_DIR$/app/controllers/questions_controller.rb" />
-        <option value="$PROJECT_DIR$/app/helpers/question_helper.rb" />
         <option value="$PROJECT_DIR$/app/views/rounds/_rounds_list.html.erb" />
+        <option value="$PROJECT_DIR$/log/development.log" />
+        <option value="$PROJECT_DIR$/config/routes.rb" />
+        <option value="$PROJECT_DIR$/public/qixueguan/Course_2/Chapter_4/Round_4/questions.js" />
+        <option value="$PROJECT_DIR$/app/controllers/api/chapters_controller.rb" />
+        <option value="$PROJECT_DIR$/public/qixueguan/Course_1/Chapter_1/Round_3/questions.js" />
         <option value="$PROJECT_DIR$/app/controllers/rounds_controller.rb" />
+        <option value="$PROJECT_DIR$/app/helpers/question_helper.rb" />
+        <option value="$PROJECT_DIR$/app/controllers/questions_controller.rb" />
       </list>
     </option>
   </component>
@@ -190,6 +228,7 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="RailsProjectView" />
       <pane id="ProjectPane">
         <subPane>
@@ -240,8 +279,306 @@
               <option name="myItemId" value="qixueguan" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
+          </PATH>
+          <PATH>
             <PATH_ELEMENT>
-              <option name="myItemId" value="tmp" />
+              <option name="myItemId" value="qxg_manage" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qxg_manage" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="public" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qixueguan" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Course_6" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Chapter_7" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qxg_manage" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qxg_manage" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="public" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qixueguan" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Course_6" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Chapter_7" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Round_9" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qxg_manage" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qxg_manage" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="public" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qixueguan" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Course_5" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Chapter_6" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qxg_manage" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qxg_manage" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="public" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qixueguan" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Course_5" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Chapter_6" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Round_8" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qxg_manage" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qxg_manage" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="public" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qixueguan" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Course_4" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Chapter_5" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qxg_manage" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qxg_manage" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="public" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qixueguan" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Course_4" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Chapter_5" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Round_7" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qxg_manage" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qxg_manage" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="public" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qixueguan" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Course_3" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Chapter_4" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qxg_manage" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qxg_manage" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="public" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qixueguan" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Course_3" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Chapter_4" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Round_6" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qxg_manage" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qxg_manage" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="public" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qixueguan" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Course_2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qxg_manage" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qxg_manage" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="public" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qixueguan" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Course_2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Chapter_3" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qxg_manage" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qxg_manage" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="public" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qixueguan" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Course_2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Chapter_3" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Round_5" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -267,9 +604,96 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qxg_manage" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qxg_manage" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="public" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qixueguan" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Course_1" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Chapter_1" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qxg_manage" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qxg_manage" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="public" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qixueguan" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Course_1" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Chapter_1" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Round_3" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qxg_manage" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qxg_manage" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qxg_manage" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="qxg_manage" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controllers" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -291,7 +715,33 @@
       <recent name="$PROJECT_DIR$/app/assets/javascripts" />
     </key>
   </component>
+  <component name="RestClientSettings">
+    <option name="LAST_HOST" value="http://localhost:3000" />
+  </component>
   <component name="RunManager" selected="Rails.Development: qxg_manage">
+    <configuration default="false" name="IRB console" type="IrbRunConfigurationType" factoryName="IRB console" temporary="true">
+      <module name="qxg_manage" />
+      <IRB_RUN_CONFIG NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
+      <IRB_RUN_CONFIG NAME="WORK DIR" VALUE="$PROJECT_DIR$" />
+      <IRB_RUN_CONFIG NAME="SHOULD_USE_SDK" VALUE="false" />
+      <IRB_RUN_CONFIG NAME="ALTERN_SDK_NAME" VALUE="" />
+      <IRB_RUN_CONFIG NAME="myPassParentEnvs" VALUE="true" />
+      <envs />
+      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
+      <EXTENSION ID="JRubyRunConfigurationExtension" />
+      <EXTENSION ID="RubyCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" track_test_folders="true" runner="rcov">
+        <COVERAGE_PATTERN ENABLED="true">
+          <PATTERN REGEXPS="/.rvm/" INCLUDED="false" />
+        </COVERAGE_PATTERN>
+      </EXTENSION>
+      <EXTENSION ID="org.jetbrains.plugins.ruby.motion.run.MotionSimulatorRunExtension" />
+      <IRB_RUN_CONFIG NAME="SCRIPT_PATH" VALUE="/usr/local/bin/irb" />
+      <IRB_RUN_CONFIG NAME="SCRIPT_ARGS" VALUE="--prompt simple" />
+      <IRB_RUN_CONFIG NAME="IS_RAILS_CONSOLE" VALUE="false" />
+      <RunnerSettings RunnerId="RubyRunner" />
+      <ConfigurationWrapper RunnerId="RubyRunner" />
+      <method />
+    </configuration>
     <configuration default="false" name="questions_controller" type="RubyRunConfigurationType" factoryName="Ruby" temporary="true">
       <module name="qxg_manage" />
       <RUBY_RUN_CONFIG NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
@@ -440,6 +890,27 @@
       <RTEST_RUN_CONFIG_SETTINGS_ID NAME="RUNNER_OPTIONS" VALUE="" />
       <method />
     </configuration>
+    <configuration default="true" type="IrbRunConfigurationType" factoryName="IRB console">
+      <module name="" />
+      <IRB_RUN_CONFIG NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
+      <IRB_RUN_CONFIG NAME="WORK DIR" VALUE="" />
+      <IRB_RUN_CONFIG NAME="SHOULD_USE_SDK" VALUE="false" />
+      <IRB_RUN_CONFIG NAME="ALTERN_SDK_NAME" VALUE="" />
+      <IRB_RUN_CONFIG NAME="myPassParentEnvs" VALUE="true" />
+      <envs />
+      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
+      <EXTENSION ID="JRubyRunConfigurationExtension" />
+      <EXTENSION ID="RubyCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" track_test_folders="true" runner="rcov">
+        <COVERAGE_PATTERN ENABLED="true">
+          <PATTERN REGEXPS="/.rvm/" INCLUDED="false" />
+        </COVERAGE_PATTERN>
+      </EXTENSION>
+      <EXTENSION ID="org.jetbrains.plugins.ruby.motion.run.MotionSimulatorRunExtension" />
+      <IRB_RUN_CONFIG NAME="SCRIPT_PATH" VALUE="" />
+      <IRB_RUN_CONFIG NAME="SCRIPT_ARGS" VALUE="" />
+      <IRB_RUN_CONFIG NAME="IS_RAILS_CONSOLE" VALUE="false" />
+      <method />
+    </configuration>
     <configuration default="true" type="JavascriptDebugSession" factoryName="Remote" singleton="true">
       <JSRemoteDebuggerConfigurationSettings>
         <option name="engineId" value="embedded" />
@@ -504,12 +975,12 @@
       </EXTENSION>
       <EXTENSION ID="org.jetbrains.plugins.ruby.motion.run.MotionSimulatorRunExtension" />
       <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="SCRIPT_ARGS" VALUE="" />
-      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="PORT" VALUE="3000" />
+      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="PORT" VALUE="3001" />
       <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="IP" VALUE="127.0.0.1" />
       <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="DUMMY_APP" VALUE="test/dummy" />
       <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="RAILS_SERVER_TYPE" VALUE="default" />
       <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="ENVIRONMENT_TYPE" VALUE="development" />
-      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="BROWSER_URL" VALUE="http://127.0.0.1:3000" />
+      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="BROWSER_URL" VALUE="http://127.0.0.1:3001" />
       <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="LAUNCH_JS" VALUE="false" />
       <RunnerSettings RunnerId="RubyRunner" />
       <ConfigurationWrapper RunnerId="RubyRunner" />
@@ -565,16 +1036,18 @@
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_PREREQS" VALUE="false" />
       <method />
     </configuration>
-    <list size="5">
-      <item index="0" class="java.lang.String" itemvalue="Ruby.questions_controller" />
+    <list size="6">
+      <item index="0" class="java.lang.String" itemvalue="IRB console.IRB console" />
       <item index="1" class="java.lang.String" itemvalue="Rails.Production: qxg_manage" />
       <item index="2" class="java.lang.String" itemvalue="Rails.Development: qxg_manage" />
       <item index="3" class="java.lang.String" itemvalue="Rake.test" />
       <item index="4" class="java.lang.String" itemvalue="Rake.spec" />
+      <item index="5" class="java.lang.String" itemvalue="Ruby.questions_controller" />
     </list>
     <recent_temporary>
-      <list size="1">
-        <item index="0" class="java.lang.String" itemvalue="Ruby.questions_controller" />
+      <list size="2">
+        <item index="0" class="java.lang.String" itemvalue="IRB console.IRB console" />
+        <item index="1" class="java.lang.String" itemvalue="Ruby.questions_controller" />
       </list>
     </recent_temporary>
   </component>
@@ -632,18 +1105,18 @@
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="true" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.32919255" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="true" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.22265932" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="true" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.24940991" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.22187254" sideWeight="0.65217394" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19984265" sideWeight="0.54953563" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="true" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.31987578" sideWeight="0.5003934" order="8" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3478261" sideWeight="0.4996066" order="2" side_tool="false" content_ui="tabs" x="72" y="249" width="1271" height="267" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="true" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.48297215" sideWeight="0.4996066" order="2" side_tool="false" content_ui="tabs" x="72" y="249" width="1271" height="267" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32817337" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.5866873" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.52329195" sideWeight="0.4996066" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="REST Client" active="false" anchor="right" auto_hide="true" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.32972136" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="REST Client" active="false" anchor="bottom" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4504644" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -712,113 +1185,134 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/views/questions/remove_knowledge_card.js.erb">
+    <entry file="file://$PROJECT_DIR$/app/controllers/api/users_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="1" column="57" selection-start="65" selection-end="65" vertical-scroll-proportion="0.02636204" />
+        <state line="84" column="58" selection-start="2648" selection-end="2648" vertical-scroll-proportion="0.39123377" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/rounds/uploadfile.js.erb">
+    <entry file="file://$PROJECT_DIR$/public/qixueguan/Course_1/Chapter_1/Round_3/questions.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="66" selection-start="281" selection-end="281" vertical-scroll-proportion="0.10544816" />
+        <state line="10" column="92" selection-start="739" selection-end="739" vertical-scroll-proportion="0.43037975">
+          <folding>
+            <element signature="e#203#4899#0" expanded="false" />
+          </folding>
+        </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/rounds/_detail.html.erb">
+    <entry file="file://$PROJECT_DIR$/public/qixueguan/Course_2/Chapter_4/Round_1/questions.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="86" selection-start="93" selection-end="93" vertical-scroll-proportion="0.07908612" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/questions/_uploadzip.html.erb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="46" selection-start="602" selection-end="602" vertical-scroll-proportion="0.22804055" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/questions/_error_infos.html.erb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1" column="18" selection-start="72" selection-end="83" vertical-scroll-proportion="0.025337838" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/questions/uploadfile.js.erb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="8" selection-start="371" selection-end="371" vertical-scroll-proportion="0.22804055" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/questions/edit.js.erb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="13" selection-start="198" selection-end="198" vertical-scroll-proportion="0.1266892" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/questions/_question_list.html.erb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="19" column="54" selection-start="895" selection-end="895" vertical-scroll-proportion="0.545977" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/questions/index.html.erb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="38" selection-start="424" selection-end="424" vertical-scroll-proportion="0.20114942" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/round.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1" column="6" selection-start="23" selection-end="23" vertical-scroll-proportion="0.0375">
+        <state line="5" column="20" selection-start="111" selection-end="113" vertical-scroll-proportion="0.13178295">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/question.rb">
+    <entry file="file://$PROJECT_DIR$/public/qixueguan/Course_2/Chapter_4/Round_1/woman.jpg">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/qixueguan/Course_2/Chapter_3/Round_5/questions.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="28" selection-start="113" selection-end="127" vertical-scroll-proportion="0.073051944">
+        <state line="6" column="32" selection-start="147" selection-end="147" vertical-scroll-proportion="0.15813954">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/user.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="17" column="12" selection-start="550" selection-end="550" vertical-scroll-proportion="0.39534885">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/qixueguan/Course_3/Chapter_4/Round_6/questions.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="e#9#4907#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/qixueguan/Course_5/Chapter_6/Round_8/questions.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="28" column="953" selection-start="4931" selection-end="4931" vertical-scroll-proportion="0.21085271">
+          <folding>
+            <element signature="e#9#4931#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/qixueguan/Course_6/Chapter_7/Round_9/questions.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="28" column="950" selection-start="4930" selection-end="4930" vertical-scroll-proportion="0.21085271">
+          <folding>
+            <element signature="e#9#4930#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/helpers/question_helper.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="102" column="0" selection-start="2405" selection-end="2405" vertical-scroll-proportion="0.0">
+        <state line="844" column="41" selection-start="29846" selection-end="29846" vertical-scroll-proportion="0.33333334">
           <folding>
-            <element signature="e#102#244#0" expanded="false" />
-            <element signature="e#256#959#0" expanded="false" />
-            <element signature="e#977#1274#0" expanded="false" />
-            <element signature="e#1296#1828#0" expanded="false" />
-            <element signature="e#1849#2388#0" expanded="false" />
-            <element signature="e#2407#5235#0" expanded="false" />
-            <element signature="e#5288#6903#0" expanded="false" />
-            <element signature="e#6915#9268#0" expanded="false" />
-            <element signature="e#9297#12461#0" expanded="false" />
-            <element signature="e#12484#13728#0" expanded="false" />
-            <element signature="e#13745#14504#0" expanded="false" />
-            <element signature="e#14523#15550#0" expanded="false" />
-            <element signature="e#15572#21698#0" expanded="false" />
-            <element signature="e#21710#28378#0" expanded="false" />
-            <element signature="e#28394#28839#0" expanded="false" />
+            <element signature="e#277#980#0" expanded="true" />
+            <element signature="e#998#1354#0" expanded="true" />
+            <element signature="e#1376#1920#0" expanded="true" />
+            <element signature="e#1939#2502#0" expanded="true" />
+            <element signature="e#2523#3032#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/rounds/index.html.erb">
+    <entry file="file://$PROJECT_DIR$/app/views/rounds/_uploadzip.html.erb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="36" selection-start="529" selection-end="529" vertical-scroll-proportion="-8.75">
+        <state line="12" column="9" selection-start="694" selection-end="694" vertical-scroll-proportion="0.38449112">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/rounds/uploadfile.js.erb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="1" column="55" selection-start="93" selection-end="93" vertical-scroll-proportion="0.02746365">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/qixueguan/Course_4/Chapter_5/Round_7/questions.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="8" column="23" selection-start="195" selection-end="195" vertical-scroll-proportion="0.21085271">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/cardbag_tags_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="16" column="12" selection-start="365" selection-end="365" vertical-scroll-proportion="0.20930232">
+          <folding>
+            <element signature="e#108#306#0" expanded="true" />
+            <element signature="e#312#351#0" expanded="true" />
+            <element signature="e#355#684#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/questions_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="100" column="14" selection-start="3640" selection-end="3640" vertical-scroll-proportion="0.024875622">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/rounds/_rounds_list.html.erb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="92" selection-start="189" selection-end="189" vertical-scroll-proportion="-1.875">
-          <folding />
+        <state line="20" column="7" selection-start="574" selection-end="574" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="e#579#4455#0" expanded="true" />
+            <element signature="e#5065#6620#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/rounds_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="31" column="51" selection-start="1141" selection-end="1141" vertical-scroll-proportion="0.54617417">
-          <folding />
+        <state line="84" column="16" selection-start="3415" selection-end="3415" vertical-scroll-proportion="-0.63410854">
+          <folding>
+            <element signature="e#3401#5762#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

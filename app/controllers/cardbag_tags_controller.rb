@@ -9,7 +9,7 @@ class CardbagTagsController < ApplicationController
       f.js {render :search}
     end
   end
-
+  
   def new
     @tag = CardbagTag.new
   end
