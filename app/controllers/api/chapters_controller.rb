@@ -9,9 +9,9 @@ class Api::ChaptersController < ApplicationController
   end
 
   #我的成就
-#  def user_achieve
-#    render :json => Achieve.where(:user_id=>params[:uid],:course_id=>params[:course_id]).select(:achieve_data_id).order("created_at desc").map(&:achieve_data_id).uniq
-#  end
+  #  def user_achieve
+  #    render :json => Achieve.where(:user_id=>params[:uid],:course_id=>params[:course_id]).select(:achieve_data_id).order("created_at desc").map(&:achieve_data_id).uniq
+  #  end
 
   #我的道具
   def user_prop
@@ -22,38 +22,48 @@ class Api::ChaptersController < ApplicationController
     render :json => Prop.my_props(params[:uid],params[:course_id])
   end
 
-  #关卡列表
+  #章节下所有关卡列表
+  #张，是否是自己跟好友，还是此关卡所有人？
   def user_round
     #uid, chapter_id
     uid = params[:uid].to_i
     chapter_id = params[:chapter_id].to_i
     chapter = Chapter.find_by_id chapter_id
-    rounds = Round.find_by_sql("SELECT r.id, r.chapter_id, r.name, r.questions_count, r.round_time, r.time_ratio, r.blood,
- r.max_score, rs.score score, rs.star from rounds r LEFT JOIN round_scores rs on r.id=rs.round_id AND rs.user_id =#{uid} where
-r.chapter_id = #{chapter_id} and r.course_id = #{chapter.course_id}  ORDER BY rs.score DESC")
+    if chapter
+      friend_ids = Friend.where(:user_id => uid).map(&:friend_id) << uid
+      friend_ids = friend_ids.uniq
+      rounds = Round.find_by_sql(["SELECT rs.user_id, r.id, r.chapter_id, r.name, r.questions_count, r.round_time, r.time_ratio, r.blood,
+ r.max_score, rs.score score, rs.star from rounds r LEFT JOIN round_scores rs on r.id=rs.round_id AND rs.user_id in (?) where
+r.chapter_id = #{chapter_id} and r.course_id = #{chapter.course_id}", friend_ids])
 
-    round_range = RoundScore.find_by_sql(["select u.name u_name, u.id uid, u.img img, rs.score score, rs.round_id round_id from round_scores rs inner join rounds r on r.id = rs.round_id
-      inner join users u on u.id = rs.user_id where rs.round_id in (?) order by rs.score desc", rounds.map(&:id)]).group_by{|rs| rs.round_id}
-    rs_hash = {}
+      round_range = RoundScore.find_by_sql(["select u.name u_name, u.id uid, u.img img, rs.score score, rs.round_id round_id from round_scores rs inner join rounds r on r.id = rs.round_id
+      inner join users u on u.id = rs.user_id where rs.round_id in (?) order by rs.best_score desc", rounds.map(&:id)]).group_by{|rs| rs.round_id}
+      rs_hash = {}
 
-    round_range.each do |round_id, users|
-      temp_users = users[0..2]
-      if temp_users.map(&:uid).include?(uid)
-        rs_hash[round_id] = temp_users
-      else
-        rs_hash[round_id] = temp_users
-        users.each_with_index do |user,index|
-          if user.uid == uid
-            user[:rank] = index+ 1
-            rs_hash[round_id] << user
+      round_range.each do |round_id, users|
+        temp_users = users[0..2]
+        if temp_users.map(&:uid).include?(uid)
+          rs_hash[round_id] = temp_users
+        else
+          rs_hash[round_id] = temp_users
+          users.each_with_index do |u,index|
+            if u.uid == uid
+              u[:rank] = index+ 1
+              rs_hash[round_id] << u
+            end
           end
         end
       end
+    
+      #加上每个关卡里面的知识卡片信息
+      knowledge_cards = KnowledgeCard.find_by_sql(["select kc.id, kc.name, kc.description, q.round_id from knowledge_cards kc inner join questions q
+on q.knowledge_card_id = kc.id and q.round_id in (?)", rounds.map(&:id)]).group_by{|rs| rs.round_id}
+      has_score_rounds = rs_hash.keys
+      render :json => {:rounds => rounds, :round_range => rs_hash, :round_ids => has_score_rounds, :knowledge_cards => knowledge_cards}
+    else
+      render :json => {:message => "no chapter"}
     end
-    #TODO
-#加上每个关卡里面的知识卡片信息
-    has_score_rounds = rs_hash.keys
-    render :json => {:rounds => rounds, :round_range => rs_hash, :round_ids => has_score_rounds}
+    
   end
 
   #关卡排名
@@ -106,14 +116,12 @@ r.chapter_id = #{chapter_id} and r.course_id = #{chapter.course_id}  ORDER BY rs
   def user_cards
     #course_id, uid
     ucr = UserCourseRelation.find_by_user_id_and_course_id(params[:uid], params[:course_id])
-    knowledge_cards = KnowledgeCard.joins(:user_cards_relations).select("*")
-    .where(:user_cards_relations => {:user_id=>params[:uid],:course_id => params[:course_id]})
+    knowledge_cards = KnowledgeCard.joins(:user_cards_relations).select("*").where(:user_cards_relations => {:user_id=>params[:uid],:course_id => params[:course_id]})
 
     tags = CardbagTag.find_by_sql("select id,name,user_id,course_id,types from cardbag_tags where (course_id=1 and user_id is null) or (course_id=1 and user_id =#{params[:uid]})")
     
     tag_cards = CardTagRelation.joins(:cardbag_tag).where(:course_id => params[:course_id],
-      :knowledge_card_id => knowledge_cards.map(&:id))
-    .select("cardbag_tags.id, cardbag_tags.name, cardbag_tags.types, knowledge_card_id")
+      :knowledge_card_id => knowledge_cards.map(&:id)).select("cardbag_tags.id, cardbag_tags.name, cardbag_tags.types, knowledge_card_id")
      
     tag_card_hash = tag_cards.group_by { |re| re.knowledge_card_id }
      
@@ -134,11 +142,28 @@ r.chapter_id = #{chapter_id} and r.course_id = #{chapter.course_id}  ORDER BY rs
     render :json =>KnowledgeCard.where(:course_id=>params[:course_id])
   end
 
-  #保存成就点数
-  #TODO
+  #保存成就点数,user_course_relations 累加成就点数，Achieve新增记录
   def save_achieve
-    #参数 uid, cid， achieve_point成就
-     user_course_relarion = UserCourseRelation.find_by_user_id_and_course_id(params[:uid], params[:cid])
+    #参数 uid, course_id， achieve_point (achieve_id)_point 成就可能多个
+    #更新
+    uid = params[:uid]
+    course_id = params[:course_id]
+    Achieve.transaction do
+      user_course_relarion = UserCourseRelation.find_by_user_id_and_course_id(uid, course_id)
+
+      if user_course_relarion && params[:achieve_point]
+        params[:achieve_point].split(",").each do |ap|
+          achieve_data_id = ap.split("_")[0].to_i
+          point = ap.split("_")[1].to_i
+          achieve = Achieve.find_by_user_id_and_course_id_and_achieve_data_id(uid, course_id, achieve_data_id)
+          Achieve.create({:user_id => uid, :course_id => course_id, :achieve_data_id => achieve_data_id, :point => point}) unless achieve
+
+          user_course_relarion.update_attribute(:achieve_point, user_course_relarion.achieve_point + point)
+        end
+      end
+      render :json => {:message => user_course_relarion ? "success" : "error"}
+    end
+
   end
 
   #知识卡片添加标签
@@ -194,8 +219,11 @@ r.chapter_id = #{chapter_id} and r.course_id = #{chapter.course_id}  ORDER BY rs
     #参数uid，course_id, num, gold
     bcr = BuyCardbagRecord.create({:user_id => params[:uid], :course_id => params[:course_id], :num => params[:num], :gold => params[:gold]})
     user_course_relation = UserCourseRelation.find_by_user_id_and_course_id(params[:uid], params[:course_id])
-    ucr = user_course_relation.update_attribute(:cardbag_count, user_course_relation.cardbag_count + params[:num].to_i) if user_course_relation
-    render :json => {:msg => bcr&&ucr ? "success" : "error"}
+    if user_course_relation
+      ucr = user_course_relation.update_attributes(:cardbag_count => user_course_relation.cardbag_count + params[:num].to_i, :gold => user_course_relation.gold.to_i - params[:gold].to_i)
+      cardbag_use_count = user_course_relation.cardbag_count.to_i - user_course_relation.cardbag_use_count.to_i
+    end
+    render :json => {:msg => bcr&&ucr ? "success" : "error", :cardbag_left_count => cardbag_use_count.to_i}
   end
 
   #添加错题
@@ -214,6 +242,18 @@ r.chapter_id = #{chapter_id} and r.course_id = #{chapter.course_id}  ORDER BY rs
     ucr = UserCourseRelation.find_by_user_id_and_course_id(params[:uid], params[:course_id])
     ucrd = ucr.destroy
     render :json => {:msg => ucrd ? "success" : "error"}
+  end
+
+  #下载课程时请求保存user_course_relations
+  def save_user_course
+    #uid,course_id，卡包默认值25
+    uid,course_id = params[:uid],params[:course_id]
+    UserCourseRelation.transaction do
+      ucr = UserCourseRelation.find_by_course_id_and_user_id(course_id, uid)
+      ucr_new = UserCourseRelation.create({:user_id => uid, :course_id => course_id, :cardbag_count => 25, :cardbag_use_count => 0, :gold => 0,
+          :gold_total => 0, :level => 1, :achieve_point => 0, :experience_value => 0 }) unless ucr
+      render :json => {:message => ucr_new ? "success" : "error"}
+    end
   end
   
 end

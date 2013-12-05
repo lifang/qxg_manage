@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131120073051) do
+ActiveRecord::Schema.define(:version => 20131121140659) do
 
   create_table "achieve_counts", :force => true do |t|
     t.integer  "user_id"
@@ -134,6 +134,7 @@ ActiveRecord::Schema.define(:version => 20131120073051) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "round_time"
+    t.integer  "status",         :limit => 1, :default => 0
     t.integer  "round_count"
     t.integer  "chapters_count",              :default => 0
   end
@@ -214,6 +215,10 @@ ActiveRecord::Schema.define(:version => 20131120073051) do
     t.datetime "updated_at"
     t.integer  "star",       :limit => 1
     t.integer  "rank",       :limit => 1
+    t.integer  "star",          :limit => 1
+    t.integer  "rank",          :limit => 1
+    t.boolean  "toppest_flag"
+    t.boolean  "all3star_flag"
   end
 
   add_index "round_scores", ["chapter_id"], :name => "index_round_scores_on_chapter_id"
@@ -259,6 +264,8 @@ ActiveRecord::Schema.define(:version => 20131120073051) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "experience_value"
+    t.integer  "round_toppest_count", :default => 0
+    t.integer  "round_3star_count",   :default => 0
   end
 
   add_index "user_course_relations", ["course_id"], :name => "index_user_course_relations_on_course_id"
@@ -296,7 +303,7 @@ ActiveRecord::Schema.define(:version => 20131120073051) do
     t.boolean  "sex"
     t.string   "img"
     t.string   "phone"
-    t.integer  "weibo_id"
+    t.string   "weibo_id"
     t.datetime "weibo_time"
     t.integer  "types"
     t.datetime "created_at"

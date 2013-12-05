@@ -5,6 +5,7 @@ class KnowledgeCard < ActiveRecord::Base
   has_many :user_cards_relations
   has_many :card_tag_relations
   has_many :cardbag_tags, :through => :card_tag_relations
+  has_many :questions
   SIZE = 30
   IMG_PATH = "/public/uploads/kcards/%d/"
   IMG_REAL_PATH = "/uploads/kcards/%d/"

@@ -51,10 +51,27 @@ class CoursesController < ApplicationController
   #审核
   def verify
     @course = Course.find_by_id params[:id]
-    if @course.update_attribute(:status, true)
-      @notice = "审核成功"
-    else
-      @notice = "审核失败"
+    Course.transaction do
+      if @course.update_attribute(:status, true)
+        @notice = "审核成功"
+        #计算每一等级需要的经验值
+        chapters = @course.chapters
+        course_rounds_count = chapters.inject(0){|sum, chapter| sum += (chapter.rounds_count.to_i)}
+        exp_arr  = update_course_level(course_rounds_count)
+       
+        exp_arr.each_with_index do |experience, index|
+          lv = LevelValue.find_by_course_id_and_level(@course.id, index + 1)
+          if lv
+            lv.update_attribute(:experience_value, experience)
+          else
+            LevelValue.create({:course_id => @course.id, :level => index + 1, :experience_value =>  experience})
+          end
+         
+        end
+
+      else
+        @notice = "审核失败"
+      end
     end
   end
 end

@@ -59,7 +59,7 @@ QxgManage::Application.routes.draw do
       collection do
         get :user_chapter,:user_achieve,:user_prop,:user_round,:user_rank,:user_card,:user_cards,:list_card
         post :used_prop,:save_card,:delete_card,:add_tag_to_card,:add_remark_to_card,:user_add_tag,:user_update_tag,
-          :user_del_tag, :add_wrong_question, :buy_card_slot
+          :user_del_tag, :add_wrong_question, :buy_card_slot, :save_user_course,:save_achieve
       end
     end
     resources :users do
@@ -71,7 +71,7 @@ QxgManage::Application.routes.draw do
     resources :user_manages do
       collection do
         get :selected_courses, :search_course, :search_single_course, :props_list, :buy_prop,
-          :everyday_tasks, :set_task_day,:achieve_points_ranking,:add_friend,:course_to_chapter,:course_level
+          :everyday_tasks, :set_task_day,:achieve_points_ranking,:add_friend,:course_to_chapter,:course_level,:return_round_ids
         post :contact_list, :weibo_list,:bind_weibo, :remove_wrong_questions
       end
     end
