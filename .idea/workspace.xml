@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/qxg_manage.iml" afterPath="$PROJECT_DIR$/.idea/qxg_manage.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/rounds_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/rounds_controller.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="qxg_manage.iws" />
@@ -18,7 +16,7 @@
     <file path="/_uploadzip.html.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1382883739347" ignored="false" />
     <file path="/rounds_controller.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384936806930" ignored="false" />
     <file path="/a.dummy" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384936731900" ignored="false" />
-    <file path="/Dummy.txt" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1386293699372" ignored="false" />
+    <file path="/Dummy.txt" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1386301159187" ignored="false" />
     <file path="/common.js" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1382885701854" ignored="false" />
     <file path="/_detail.html.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1382941586200" ignored="false" />
     <file path="/_question_list.html.erb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1384489864156" ignored="false" />
@@ -103,6 +101,10 @@
     <file path="$USER_HOME$/bbk_project/db/schema.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1385646780989" ignored="false" />
     <file path="/users_controller.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1385655533314" ignored="false" />
     <file path="$PROJECT_DIR$/../bbk_project/app/controllers/tasks_controller.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1386235096934" ignored="false" />
+    <file path="$PROJECT_DIR$/../bbk_project/app/controllers/messages_controller.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1386296623775" ignored="false" />
+    <file path="$PROJECT_DIR$/../bbk_project/app/assets/javascripts/tasks.js" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1386298179819" ignored="false" />
+    <file path="$PROJECT_DIR$/../bbk_project/db/migrate/20131206025441_modify_types_from_task.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1386298538819" ignored="false" />
+    <file path="$PROJECT_DIR$/../bbk_project/db/schema.rb" changelist="ecc68c2e-eef3-42c6-aa4b-65473a4a06ea" time="1386302389753" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -127,20 +129,14 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="rounds_controller.rb" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/controllers/rounds_controller.rb">
+      <file leaf-file-name="question_helper.rb" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/helpers/question_helper.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="45" column="40" selection-start="1593" selection-end="1593" vertical-scroll-proportion="0.34263566">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="questions_controller.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/controllers/questions_controller.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="20" column="7" selection-start="574" selection-end="574" vertical-scroll-proportion="0.0">
-              <folding />
+            <state line="765" column="54" selection-start="25599" selection-end="25599" vertical-scroll-proportion="0.79591835">
+              <folding>
+                <element signature="e#277#980#0" expanded="true" />
+                <element signature="e#26149#31730#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -190,7 +186,7 @@
     <option name="CUSTOM_FILTER" />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="48" />
+    <option name="x" value="1414" />
     <option name="y" value="-3" />
     <option name="width" value="1319" />
     <option name="height" value="772" />
@@ -221,8 +217,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="RailsProjectView" />
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -251,20 +245,6 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="db" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="qxg_manage" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="qxg_manage" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
               <option name="myItemId" value="app" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -283,25 +263,27 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="controllers" />
+              <option name="myItemId" value="helpers" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
+      <pane id="RailsProjectView" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="recentsLimit" value="5" />
     <property name="options.lastSelected" value="editor.preferences.appearance" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="recentsLimit" value="5" />
     <property name="restartRequiresConfirmation" value="true" />
-    <property name="dynamic.classpath" value="false" />
-    <property name="options.splitter.details.proportions" value="0.2" />
-    <property name="options.searchVisible" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="Ruby.ViewRefParam.DefaultExtension" value="html.erb" />
+    <property name="options.searchVisible" value="true" />
+    <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="dynamic.classpath" value="false" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -693,14 +675,14 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="48" y="-3" width="1319" height="772" extended-state="6" />
+    <frame x="1414" y="-3" width="1319" height="772" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="true" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.32763976" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="true" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.32919255" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="true" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.22265932" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="true" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.24940991" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.20298977" sideWeight="0.54953563" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2061369" sideWeight="0.54953563" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="true" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.31987578" sideWeight="0.5003934" order="8" side_tool="true" content_ui="tabs" />
@@ -805,11 +787,6 @@
         <state line="17" column="12" selection-start="550" selection-end="550" vertical-scroll-proportion="0.39534885" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/qixueguan/Course_3/Chapter_4/Round_6/questions.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/public/qixueguan/Course_5/Chapter_6/Round_8/questions.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="28" column="953" selection-start="4931" selection-end="4931" vertical-scroll-proportion="0.21085271" />
@@ -818,11 +795,6 @@
     <entry file="file://$PROJECT_DIR$/public/qixueguan/Course_6/Chapter_7/Round_9/questions.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="28" column="950" selection-start="4930" selection-end="4930" vertical-scroll-proportion="0.21085271" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/helpers/question_helper.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="844" column="41" selection-start="29846" selection-end="29846" vertical-scroll-proportion="0.33333334" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/rounds/_uploadzip.html.erb">
@@ -847,24 +819,26 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/questions_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="7" selection-start="574" selection-end="574" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="20" column="7" selection-start="574" selection-end="574" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/db/schema.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="24" selection-start="874" selection-end="874" vertical-scroll-proportion="0.026356589">
-          <folding>
-            <marker date="1386236986434" expanded="true" signature="-1:-1" placeholder="do ... end" />
-          </folding>
-        </state>
+        <state line="16" column="24" selection-start="874" selection-end="874" vertical-scroll-proportion="0.026356589" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/rounds_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="45" column="40" selection-start="1593" selection-end="1593" vertical-scroll-proportion="0.34263566">
-          <folding />
+        <state line="50" column="26" selection-start="1699" selection-end="1699" vertical-scroll-proportion="0.6062015" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/helpers/question_helper.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="765" column="54" selection-start="25599" selection-end="25599" vertical-scroll-proportion="0.79591835">
+          <folding>
+            <element signature="e#277#980#0" expanded="true" />
+            <element signature="e#26149#31730#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
