@@ -40,6 +40,12 @@ class RoundsController < ApplicationController
   def verify
     @round = Round.find_by_id params[:id]
     question_total = @round.questions.count
+    if question_total%2 == 0
+      question_total = question_total/2
+    else
+      question_total = (question_total+1)/2
+    end
+
     chapter_id = @round.chapter_id
     course_id =@round.course_id
     one_json_question = []
