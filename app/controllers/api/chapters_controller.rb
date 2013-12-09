@@ -97,7 +97,7 @@ on q.knowledge_card_id = kc.id and q.round_id in (?)", rounds.map(&:id)]).group_
   def user_cards
     #course_id, uid
     ucr = UserCourseRelation.find_by_user_id_and_course_id(params[:uid], params[:course_id])
-    knowledge_cards = KnowledgeCard.joins(:user_cards_relations).select("*").where(:user_cards_relations => {:user_id=>params[:uid],:course_id => params[:course_id]})
+    knowledge_cards = KnowledgeCard.joins(:user_cards_relations).select("knowledge_cards.*, user_cards_relations.remark remark").where(:user_cards_relations => {:user_id=>params[:uid],:course_id => params[:course_id]})
 
     tags = CardbagTag.find_by_sql("select id,name,user_id,course_id,types from cardbag_tags where (course_id=1 and user_id is null) or (course_id=1 and user_id =#{params[:uid]})")
 
@@ -107,7 +107,7 @@ on q.knowledge_card_id = kc.id and q.round_id in (?)", rounds.map(&:id)]).group_
     tag_card_hash = tag_cards.group_by { |re| re.knowledge_card_id }
 
     knowledge_cards.each{|card| card[:tag_ids] = (tag_card_hash[card.id] && tag_card_hash[card.id].map(&:id)) || []}
-    render :json =>{:cards => knowledge_cards, :tags => tags, :cards_total => ucr.try(:cardbag_count), :cards_left_count => ucr.try(:cardbag_count) - ucr.try(:cardbag_use_count)}
+    render :json =>{:cards => knowledge_cards, :tags => tags, :cards_total => ucr.try(:cardbag_count), :cards_left_count => ucr.try(:cardbag_count).to_i - ucr.try(:cardbag_use_count).to_i}
   end
 
 
