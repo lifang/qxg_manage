@@ -72,7 +72,7 @@ QxgManage::Application.routes.draw do
       collection do
         get :selected_courses, :search_course, :search_single_course, :props_list, :buy_prop,
           :everyday_tasks, :set_task_day,:achieve_points_ranking,:add_friend,:course_to_chapter,:course_level,:return_round_ids
-        post :contact_list, :weibo_list,:bind_weibo, :remove_wrong_questions
+        post :contact_list, :weibo_list,:bind_weibo, :remove_wrong_questions, :after_everyday_tasks
       end
     end
   end

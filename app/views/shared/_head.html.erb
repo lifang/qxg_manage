@@ -3,7 +3,7 @@
     <div class="logo">齐学馆后台管理系统</div>
     <div class="user">
       <% if session[:email].nil? %>
-        <%= link_to '登陆', '/'%>
+        <%= link_to '登录', '/'%>
       <% else %>
         <div class="user_name"><%= session[:email] %></div>
         <div class="out"><%= link_to '退出', '/logout', :title => "退出" %></div>

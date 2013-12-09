@@ -4,6 +4,10 @@ module Constant
   VERIFY_STATUS_NAME = { 0 => "未审核", 1 => "已审核"}
   VARIFY_STATUS = {:not_verified => 0, :verified => 1}
 
+  #课程类别
+  COURSE_TYPES = {0 => "英语四级", 1 => "英语六级", 2 => "托福口语", 3 => "雅思", 4 => "JAVA",
+    5 => "Android", 6 => "Cocos2d-x", 7 => "计算机"}
+
   #道具，购买 还是使用。源自buy_record.rb
   PROP_TYPES = {0 => "购买", 1 => "使用"}
   PROP_TYPE_NAME = {:buy => 0, :use => 1}
@@ -15,7 +19,7 @@ module Constant
   #每日任务答题，默认血量，默认题目数量
   BLOOD = 5
   QUESTION_COUNT = 20
-
+  CARD_BAG_DEFAULT = 25
 
   #道具状态，答题前中后，源自prop.rb
   PROP_STATUS = {0 => "正常", 1 => "删除"}

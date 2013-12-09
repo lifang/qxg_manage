@@ -1,6 +1,7 @@
 #encoding: utf-8
 class Api::UsersController < ActionController::Base
-  def login     #登陆
+  def login     #登录
+    #email, password
     email = params[:email]
     user = User.find_by_email(email)
     password = params[:password]
@@ -37,6 +38,7 @@ class Api::UsersController < ActionController::Base
 
 
   def update_user_date    #编辑更新
+    #参数 uid,name ,birthday,sex, phone
     user = User.find_by_id(params[:uid].to_i)
     name = params[:name].strip
     birthday = params[:birthday]
@@ -54,6 +56,7 @@ class Api::UsersController < ActionController::Base
   end
 
   def upload_head_img     #上传头像
+    #参数 img, uid
     img = params[:img]
     uid = params[:uid]
     user = User.find_by_id(uid)
@@ -66,6 +69,7 @@ class Api::UsersController < ActionController::Base
   end
 
   def set_password      #设置密码
+    #参数uid, old_password, new_password
     opwd = params[:old_password]
     npwd = params[:new_password]
     user = User.find_by_id(params[:uid].to_i)
