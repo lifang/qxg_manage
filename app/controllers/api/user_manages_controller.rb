@@ -245,7 +245,7 @@ class Api::UserManagesController < ActionController::Base
 
       props = Prop.find_by_sql("select p.id prop_id, p.name prop_name, p.description, p.price, p.types, p.question_types,
   upr.user_prop_num, upr.user_id user_id from props p left join user_prop_relations upr on p.id=upr.prop_id  and ( upr.user_id=#{uid} || upr.user_id is null)
-left join users u on u.id = upr.user_id and upr.user_prop_num >=1 where  p.course_id=#{cid} and p.status = #{Prop::STATUS_NAME[:normal]}") #道具列表(包含我的道具)
+left join users u on u.id = upr.user_id and upr.user_prop_num >=1 where  p.course_id=#{cid} and p.status = #{PROP_STATUS_NAME[:normal]}") #道具列表(包含我的道具)
       props.map{|prop|
         prop[:logo] = prop.img.thumb.url
       }
@@ -256,7 +256,7 @@ left join users u on u.id = upr.user_id and upr.user_prop_num >=1 where  p.cours
       complete_arr = []
       chapters.each do |chapter|
         rs = RoundScore.where(:user_id => uid, :chapter_id => chapter.id) #章节所有关卡全部完成
-        three_stars = RoundScore.where(:user_id => uid, :chapter_id => chapter.id, :star => Round::STAR[:three_star]) #章节所有关卡满星
+        three_stars = RoundScore.where(:user_id => uid, :chapter_id => chapter.id, :star => ROUND_STAR[:three_star]) #章节所有关卡满星
         chapter[:all_complete] = (chapter.rounds_count == rs.count) ? 1 : 0
         chapter[:all_3_star] = (chapter.rounds_count == three_stars.count) ? 1 : 0
         complete_arr <<  chapter
@@ -344,7 +344,7 @@ left join users u on u.id = upr.user_id and upr.user_prop_num >=1 where  p.cours
         end
         #保存关卡得分 结束
 
-        if star == Round::STAR[:three_star] && !round_score.star_3flag #此关卡得过3星的标志
+        if star == ROUND_STAR[:three_star] && !round_score.star_3flag #此关卡得过3星的标志
           round_score.update_attribute(:star_3flag, true)
         end
 

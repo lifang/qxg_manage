@@ -71,7 +71,7 @@ on q.knowledge_card_id = kc.id and q.round_id in (?)", rounds.map(&:id)]).group_
     response.header['Content-Type'] = 'text'
     Prop.transaction do
       prop = Prop.find_by_id(params[:prop_id])
-      prop_use_record = BuyRecord.create({:user_id => params[:uid], :prop_id => params[:prop_id], :count => 1, :gold => prop.price, :types => ROP_TYPE_NAME[:use]}) if prop
+      prop_use_record = BuyRecord.create({:user_id => params[:uid], :prop_id => params[:prop_id], :count => 1, :gold => prop.price, :types => PROP_TYPE_NAME[:use]}) if prop
       user_prop = UserPropRelation.where(:user_id => params[:uid],:prop_id => params[:prop_id]).first
       up = user_prop.update_attributes(:user_prop_num => user_prop.user_prop_num-1) if user_prop
       render :text => prop_use_record&&up ? "success" : "error"
@@ -100,7 +100,7 @@ on q.knowledge_card_id = kc.id and q.round_id in (?)", rounds.map(&:id)]).group_
     ucr = UserCourseRelation.find_by_user_id_and_course_id(params[:uid], params[:course_id])
     knowledge_cards = KnowledgeCard.joins(:user_cards_relations).select("knowledge_cards.*, user_cards_relations.remark remark").where(:user_cards_relations => {:user_id=>params[:uid],:course_id => params[:course_id]})
 
-    tags = CardbagTag.find_by_sql("select id,name,user_id,course_id,types from cardbag_tags where (course_id=1 and user_id is null) or (course_id=1 and user_id =#{params[:uid]})")
+    tags = CardbagTag.find_by_sql("select id,name,user_id,course_id,types from cardbag_tags where (course_id = #{params[:course_id]} and user_id is null) or (course_id = #{params[:course_id]} and user_id =#{params[:uid]})")
 
     tag_cards = CardTagRelation.joins(:cardbag_tag).where(:course_id => params[:course_id],
       :knowledge_card_id => knowledge_cards.map(&:id)).select("cardbag_tags.id, cardbag_tags.name, cardbag_tags.types, knowledge_card_id")
@@ -172,7 +172,7 @@ on q.knowledge_card_id = kc.id and q.round_id in (?)", rounds.map(&:id)]).group_
   def user_add_tag
     #参数uid, tag_name, course_id
     CardbagTag.transaction do
-      cardbag_tag = CardbagTag.create({:name => params[:tag_name],:user_id => params[:uid], :course_id => params[:course_id], :types => CardbagTag::TYPE_NAME[:user]})
+      cardbag_tag = CardbagTag.create({:name => params[:tag_name],:user_id => params[:uid], :course_id => params[:course_id], :types => TAG_TYPE_NAME[:user]})
       render :json => {:msg => cardbag_tag ? "success" : "error", :tag => cardbag_tag}
     end
   end

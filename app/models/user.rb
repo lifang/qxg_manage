@@ -1,5 +1,6 @@
 #encoding: utf-8
 class User < ActiveRecord::Base
+  include Constant
   has_many :user_course_relations
   has_many :courses, :through => :user_course_relations
   has_many :user_prop_relations
@@ -7,11 +8,8 @@ class User < ActiveRecord::Base
   has_many :friends
   require 'mini_magick'
   validates :email, :uniqueness => {:message => "this email has been regisited"}
-  TYPES = {           #用户类型
-    :ADMIN => 0,
-    :NORMAL => 1
-  }
-  scope :signed_user, where(:types => TYPES[:NORMAL])
+
+  scope :signed_user, where(:types => USER_TYPES[:NORMAL])
 
   def encrypt_password(pwd)
     self.password = Digest::SHA2.hexdigest(pwd)

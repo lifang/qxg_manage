@@ -183,7 +183,7 @@ class QuestionsController < ApplicationController
         :options => e[:options], :answer => e[:answer])
       end
       round = Round.find(round_id)
-      round.update_attributes(:status => Round::STATUS[:not_verified])
+      round.update_attributes(:status => VARIFY_STATUS[:not_verified])
       @info = {:status => 0 , :notice => "编辑完成！", :question => @questions, :branch_question => @branch_question_hash}
     else
       @info = {:status => -1, :notice => error_infos}

@@ -28,7 +28,7 @@ class Api::UsersController < ActionController::Base
     name = params[:name]
     pwd = params[:password]
     phone = params[:phone]
-    user = User.new(:email => email, :name => name, :phone => phone, :types => User::TYPES[:NORMAL])
+    user = User.new(:email => email, :name => name, :phone => phone, :types => USER_TYPES[:NORMAL])
     user.encrypt_password(pwd)
     if user.save
       render :json => "success"

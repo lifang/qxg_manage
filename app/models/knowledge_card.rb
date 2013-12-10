@@ -1,5 +1,6 @@
 #encoding: utf-8
 class KnowledgeCard < ActiveRecord::Base
+  include Constant
   require "fileutils"
   belongs_to :course
   has_many :user_cards_relations
@@ -10,7 +11,7 @@ class KnowledgeCard < ActiveRecord::Base
   IMG_PATH = "/public/uploads/kcards/%d/"
   IMG_REAL_PATH = "/uploads/kcards/%d/"
   def system_tag
-    self.cardbag_tags.joins(:card_tag_relations).where(:types => CardbagTag::TYPE_NAME[:system]).where("card_tag_relations.user_id is null").map(&:name).join("、")
+    self.cardbag_tags.joins(:card_tag_relations).where(:types => TAG_TYPE_NAME[:system]).where("card_tag_relations.user_id is null").map(&:name).join("、")
   end
 
   def upload_file(file)

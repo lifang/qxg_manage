@@ -7,8 +7,8 @@
       </tr>
       <% @questions.each do |question| %>
         <tr>
-          <td><%= Question::TYPES[question.types] %></td>
-          <td><%= render :partial => "#{Question::TYPE_NAMES.invert[question.types]}", :locals => {:question => question} %></td>
+          <td><%= Constant::QUESTION_TYPES[question.types] %></td>
+          <td><%= render :partial => "#{Constant::QUESTION_TYPE_NAMES.invert[question.types]}", :locals => {:question => question} %></td>
           <td>
             <%= link_to "编辑", view_round_question_path(@round.id,question.id), :remote => true, :class => "green_btn passEdit" %>
             <%= link_to "删除题目", round_question_path(question.round_id, question), :method => :delete, :confirm => "确认删除题目吗?", :class => "green_btn" %>

@@ -19,13 +19,13 @@
               <dl>
                 <dt>课程名：</dt><dd title="<%= course.name %>"><%= course.name.truncate(8, separator: ' ') %></dd>
                 <dt>出版社：</dt><dd title="<%= course.press %>"><%= course.press.truncate(10, separator: ' ') %></dd>
-                <dt>课程类别：</dt><dd><%= Course::TYPES[course.types] %></dd>
+                <dt>课程类别：</dt><dd><%= Constant::COURSE_TYPES[course.types] %></dd>
                 <dt>描述：</dt><dd title="<%= course.description %>"><%= course.description.truncate(25, separator: ' ') %></dd>
               </dl>
             </div>
           </div>
           <div>
-            <div class="action">是否通过审核：<span><%= Course::STATUS_NAME[course.status] %></span>
+            <div class="action">是否通过审核：<span><%= Constant::VERIFY_STATUS_NAME[course.status] %></span>
               <%= verify_button(course) if course.status==0 %>
             </div>
             <div class="action">

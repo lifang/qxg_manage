@@ -29,7 +29,7 @@ class CoursesController < ApplicationController
     @course = Course.find_by_id params[:id]
     params[:course][:name] =  name_strip(params[:course][:name])
     if @course.update_attributes(params[:course])
-      @course.status = Course::STATUS[:not_verified] if @course.status == Course::STATUS[:verified]
+      @course.status = VARIFY_STATUS[:not_verified] if @course.status == VARIFY_STATUS[:verified]
       @course.save
       @notice = "更新成功！"
       render :success

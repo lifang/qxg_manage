@@ -5,7 +5,7 @@
 
         <label title="<%= round.name %>"><%= round.name.truncate(8, separator: ' ') %></label>
         <p class="passEnter">题目数量：<%= round.questions_count || 0 %></p>
-        <p class="passEnter">是否通过审核：<span><%= Course::STATUS_NAME[round.status] %></span>
+        <p class="passEnter">是否通过审核：<span><%= Constant::VERIFY_STATUS_NAME[round.status] %></span>
           <%= verify_button(round) if round.status==0 %></p>
         <br/>
         <%= link_to "进入关卡", round_questions_path(round),:class => "green_btn passEnter" %>

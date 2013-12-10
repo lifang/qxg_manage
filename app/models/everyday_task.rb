@@ -1,7 +1,6 @@
 #encoding: utf-8
 class EverydayTask < ActiveRecord::Base
-  BLOOD = 5
-  QUESTION_COUNT = 20
+  include Constant
 
   #返回每日任务连续登录天数
   def get_login_day

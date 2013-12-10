@@ -22,8 +22,8 @@
               <td class="prop_name"><%= image_tag prop.img.thumb.url, :style => "width:30px; height:30px;" %><%= prop.name %></td>
               <td><%= prop.description %></td>
               <td><%= prop.price %></td>
-              <td><%= prop.question_types.split(",").map{|type| Question::TYPES[type.to_i]}.join("、") %></td>
-              <td><%= Prop::TYPES[prop.types] %></td>
+              <td><%= prop.question_types.split(",").map{|type| Constant::QUESTION_TYPES[type.to_i]}.join("、") %></td>
+              <td><%= Constant::PROP_TYPES[prop.types] %></td>
               <td>
                 <% unless prop.status %>
                   <%= link_to "编辑", edit_course_prop_path(@course, prop), :remote => true, :class => "propInfo green_btn" %>

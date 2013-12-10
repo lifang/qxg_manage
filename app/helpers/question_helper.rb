@@ -330,7 +330,7 @@ module QuestionHelper
                 error_info << "文件'#{excel}'第#{line}行：填空题内容不能为空"
               end
             else
-              que_tpye = Question::TYPE_NAMES[:input] #填空题
+              que_tpye = Constant::QUESTION_TYPE_NAMES[:input] #填空题
             end
         elsif count_c != 0 && count_a == 0 && count_b == 0   #语音输入题
             count_f = 0
@@ -345,7 +345,7 @@ module QuestionHelper
                 error_info << "文件'#{excel}'第#{line}行：语音输入题内容不能为空"
               end
             else
-              que_tpye = Question::TYPE_NAMES[:voice_input] # 语音输入题
+              que_tpye = Constant::QUESTION_TYPE_NAMES[:voice_input] # 语音输入题
             end
         elsif count_d != 0   # 综合题
             tmp_val = distinguish_question_three excel, line, que
@@ -427,7 +427,7 @@ module QuestionHelper
               error_info << "文件'#{excel}'第#{line}行：连线题对应关系不正确"
             end
           else
-            que_tpye = Question::TYPE_NAMES[:lineup] #连线题
+            que_tpye = Constant::QUESTION_TYPE_NAMES[:lineup] #连线题
           end
         elsif d != 0 && d < tmp.split(/\|\|/).length
           que_tpye = -1 #未知题型
@@ -453,7 +453,7 @@ module QuestionHelper
             error_info << "文件'#{excel}'第#{line}行：选择题没有答案或答案为空"
           end
         else
-          que_tpye = Question::TYPE_NAMES[:single_choice] #单选题
+          que_tpye = Constant::QUESTION_TYPE_NAMES[:single_choice] #单选题
         end
       elsif count > 1
         if c != 0
@@ -464,7 +464,7 @@ module QuestionHelper
             error_info << "文件'#{excel}'第#{line}行：选择题没有答案或答案为空"
           end
         else
-          que_tpye = Question::TYPE_NAMES[:multiple_choice] #多选题
+          que_tpye = Constant::QUESTION_TYPE_NAMES[:multiple_choice] #多选题
         end
       end
     elsif(count_e == 0 && count_f != 0) #当只有;;分隔符 排序题
@@ -496,7 +496,7 @@ module QuestionHelper
             error_info << "文件'#{excel}'第#{line}行：排序题的选项不能为空"
           end
         else
-          que_tpye = Question::TYPE_NAMES[:sortby] #排序题
+          que_tpye = Constant::QUESTION_TYPE_NAMES[:sortby] #排序题
         end
       end
     end
@@ -535,7 +535,7 @@ module QuestionHelper
         count += 1 if e.to_s.scan(";;").length != 0
       end
       if count == 0
-        que_tpye = Question::TYPE_NAMES[:drag] # 拖拽题
+        que_tpye = Constant::QUESTION_TYPE_NAMES[:drag] # 拖拽题
       else
         if excel.size == 0 || line.size == 0
           error_info << "拖拽题中不能包含';;'符号或'@@'符号"
@@ -592,7 +592,7 @@ module QuestionHelper
     end
 
     if count_a != 0 && count == 0
-      que_tpye = Question::TYPE_NAMES[:zonghe]
+      que_tpye = Constant::QUESTION_TYPE_NAMES[:zonghe]
     elsif count_a == 0 && count == 0
       que_tpye = -1
       if excel.size == 0 || line.size == 0
@@ -634,7 +634,7 @@ module QuestionHelper
       end
     end
     if count_zero == 0 && count_one_more == 0
-      que_tpye = Question::TYPE_NAMES[:fillin] # 完型填空
+      que_tpye = Constant::QUESTION_TYPE_NAMES[:fillin] # 完型填空
     elsif count_zero != 0 || count_one_more != 0
       if excel.size == 0 || line.size == 0
         error_info << "完型填空题中的某个选项没答案或有多个答案"
@@ -659,7 +659,7 @@ module QuestionHelper
     description = "" #知识卡片描述
     card_types = "" #知识卡片标签
 
-    if type == Question::TYPE_NAMES[:single_choice]          #单选题
+    if type == Constant::QUESTION_TYPE_NAMES[:single_choice]          #单选题
       branch_question_types = type
       options = que.scan(/\[\[[^\[\[]*\]\]/)[0].to_s.scan(/(?<=\[\[).*(?=\]\])/).to_a[0].to_s.gsub(/\|\|/,";||;")
       options.split(";||;").each do |e|
@@ -670,7 +670,7 @@ module QuestionHelper
       content = que.gsub(/\[\[[^\[\[]*\]\]/,"[[text]]").gsub(/\[\[text\]\]$/,"")
       branch_questions << {:branch_content => branch_content, :branch_question_types => branch_question_types,
                            :options => options, :answer => answer}
-    elsif type == Question::TYPE_NAMES[:multiple_choice]   #多选题
+    elsif type == Constant::QUESTION_TYPE_NAMES[:multiple_choice]   #多选题
       branch_question_types = type
       options = que.scan(/\[\[[^\[\[]*\]\]/)[0].to_s.scan(/(?<=\[\[).*(?=\]\])/).to_a[0].to_s.gsub(/\|\|/,";||;")
       c = 0
@@ -688,7 +688,7 @@ module QuestionHelper
       content = que.gsub(/\[\[[^\[\[]*\]\]/,"[[text]]").gsub(/\[\[text\]\]$/,"")
       branch_questions << {:branch_content => branch_content, :branch_question_types => branch_question_types,
                            :options => options, :answer => answer}
-    elsif type == Question::TYPE_NAMES[:fillin]   #完型填空题
+    elsif type == Constant::QUESTION_TYPE_NAMES[:fillin]   #完型填空题
       branch_question_types = type
       all_answers = []
       all_options = []
@@ -711,7 +711,7 @@ module QuestionHelper
         end
       end
       content = que.gsub(/\[\[[^\[\[]*\]\]/,"[[text]]")
-    elsif type == Question::TYPE_NAMES[:sortby]   #排序题
+    elsif type == Constant::QUESTION_TYPE_NAMES[:sortby]   #排序题
       branch_question_types = type
       options = que.scan(/\[\[[^\[\[]*\]\]/)[0].to_s.scan(/(?<=\[\[).*(?=\]\])/).to_a[0].to_s.gsub(/\;\;/,";||;").gsub(/;\|\|;$/,"")
       answer =options
@@ -719,7 +719,7 @@ module QuestionHelper
       content = que.gsub(/\[\[[^\[\[]*\]\]/,"")
       branch_questions << {:branch_content => branch_content, :branch_question_types => branch_question_types,
                            :options => options, :answer => answer}
-    elsif type == Question::TYPE_NAMES[:lineup]   #连线题
+    elsif type == Constant::QUESTION_TYPE_NAMES[:lineup]   #连线题
       branch_question_types = type
       options = que.scan(/\[\[[^\[\[]*\]\]/)[0].to_s.scan(/(?<=\[\[).*(?=\]\])/).to_a[0].to_s.gsub(/\|\|/,";||;").gsub(/file>>>/,"file>;=;").gsub(/>>/,";=;")
       answer =options
@@ -727,7 +727,7 @@ module QuestionHelper
       content = que.gsub(/\[\[[^\[\[]*\]\]/,"")
       branch_questions << {:branch_content => branch_content, :branch_question_types => branch_question_types,
                            :options => options, :answer => answer}
-    elsif type == Question::TYPE_NAMES[:voice_input]  #语音输入题
+    elsif type == Constant::QUESTION_TYPE_NAMES[:voice_input]  #语音输入题
       branch_question_types = type
       options = que.scan(/\{\{[^\{\{]*\}\}/)[0].to_s.scan(/(?<=\{\{).*(?=\}\})/).to_a[0]
       answer =options
@@ -735,7 +735,7 @@ module QuestionHelper
       content = que.gsub(/\{\{[^\{\{]*\}\}/,"")
       branch_questions << {:branch_content => branch_content, :branch_question_types => branch_question_types,
                            :options => options, :answer => answer}
-    elsif type == Question::TYPE_NAMES[:zonghe] #综合题
+    elsif type == Constant::QUESTION_TYPE_NAMES[:zonghe] #综合题
       tmp = que.to_s.split(%r{\n\s*})
       tmp.each do |e|
         result = distinguish_question_types excel="", e, line=""
@@ -747,7 +747,7 @@ module QuestionHelper
                                :options => branch_que[:branch_questions][0][:options], :answer => branch_que[:branch_questions][0][:answer]}
         end
       end
-    elsif type == Question::TYPE_NAMES[:drag]     #拖拽题
+    elsif type == Constant::QUESTION_TYPE_NAMES[:drag]     #拖拽题
       branch_question_types = type
       c = 0
       que.scan(/\[\[[^\[\[]*\]\]/).to_a.each  do  |e|
@@ -760,7 +760,7 @@ module QuestionHelper
       content = que.gsub(/\[\[[^\[\[]*\]\]/,"[[text]]")
       branch_questions << {:branch_content => branch_content, :branch_question_types => branch_question_types,
                            :options => options, :answer => answer}
-    elsif type == Question::TYPE_NAMES[:input]    #填空题
+    elsif type == Constant::QUESTION_TYPE_NAMES[:input]    #填空题
       branch_question_types = type
       c = 0
       que.scan(/\(\([^\(\(]*\)\)/).to_a.each  do  |e|
@@ -805,7 +805,7 @@ module QuestionHelper
         if x[:card_name].size != 0
           cardbag_tag = CardbagTag.find_by_course_id_and_name(course_id,x[:card_types])
           if cardbag_tag.nil?
-            cardbag_tag = CardbagTag.create(:course_id => course_id, :name => x[:card_types].to_s, :types => CardbagTag::TYPE_NAME[:system])
+            cardbag_tag = CardbagTag.create(:course_id => course_id, :name => x[:card_types].to_s, :types => Constant::TAG_TYPE_NAME[:system])
           end
           knowledge_card = KnowledgeCard.create(:name => x[:card_name].to_s, :description => x[:card_description].to_s, :course_id => course_id, :types => 1)
           if !knowledge_card.nil?
@@ -884,7 +884,7 @@ module QuestionHelper
       end
       File.delete "#{chapter_dir}/Round_#{round.id}.zip" if File.exist? "#{chapter_dir}/Round_#{round.id}.zip"
       Archive::Zip.archive("#{chapter_dir}/Round_#{round.id}.zip", round_dir)
-      round.update_attributes(:status => Round::STATUS[:not_verified])
+      round.update_attributes(:status => Constant::VARIFY_STATUS[:not_verified])
     end
   end
 

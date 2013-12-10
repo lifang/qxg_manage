@@ -13,12 +13,12 @@
   </div>
   <div class="form_row">
     <label class="required label" >类型：</label>
-    <%= f.select :types, Prop::TYPES.invert, {:prompt => "请选择类型"}, {:required => true}  %>
+    <%= f.select :types, Constant::PROP_QUESTION_TYPES.invert, {:prompt => "请选择类型"}, {:required => true}  %>
   </div>
   <div class="form_row">
     <label class="required label">适合题型：</label>
     <div class="prop_question_type">
-      <% Question::TYPES.each do |value, name| %>
+      <% Constant::QUESTION_TYPES.each do |value, name| %>
         <% check = @prop.question_types.nil? ? false : @prop.question_types.split(",").map(&:to_i).include?(value) %>
         <%= check_box_tag "prop[question_types][]", value, check,  :required => true, :id => "prop_#{value}" %><%= name %>
       <% end %>
