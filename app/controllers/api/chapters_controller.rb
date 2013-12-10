@@ -1,5 +1,6 @@
 #encoding: utf-8
 class Api::ChaptersController < ApplicationController
+  include Constant
   #我的道具
   def user_prop
     #uid, course_id

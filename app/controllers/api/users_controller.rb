@@ -1,5 +1,6 @@
 #encoding: utf-8
 class Api::UsersController < ActionController::Base
+  include Constant
   def login     #登录
     #email, password
     email = params[:email]

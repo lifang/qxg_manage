@@ -1,6 +1,6 @@
 #encoding: utf-8
 class Api::UserManagesController < ActionController::Base
-
+  include Constant
   def search_course     #查询课程
     #search_name, uid  已审核
     name = params[:search_name].strip.gsub(/[%_]/){|x|'\\' + x}
