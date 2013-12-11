@@ -5,7 +5,7 @@ class Round < ActiveRecord::Base
   has_many :questions, :dependent => :destroy
   has_many :round_scores, :dependent => :destroy
 
-  validates :name, :uniqueness => { :scope => :chapter_id,
-    :message => "同一章节下关卡名称已存在！" }
+  # validates :name, :uniqueness => { :scope => :chapter_id,
+  #   :message => "同一章节下关卡名称已存在！" }
   scope :verified, where(:status => VARIFY_STATUS[:verified])
 end

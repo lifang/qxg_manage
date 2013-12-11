@@ -92,6 +92,7 @@ class RoundsController < ApplicationController
       course_id = params[:course_id]
       chapter_id = params[:chapter_id]
       user = User.find_by_email(session[:email])
+      round_id = nil
       zip_file = params[:file]
       @error_infos =[]
 
@@ -140,11 +141,11 @@ class RoundsController < ApplicationController
         @notice_info = @error_infos
         status = 1
       else #转移文件&插入数据&写入XML文件
-        import_data read_excel_result[:all_round_questions], course_id, chapter_id, zip_url, user.id
+        import_data read_excel_result[:all_round_questions], course_id, chapter_id, zip_url, round_id
         status = 0
         @notice_info = ["导入完成！"]
       end
-      #FileUtils.remove_dir zip_url if !zip_url.nil? && Dir.exist?(zip_url)
+      FileUtils.remove_dir zip_url if !zip_url.nil? && Dir.exist?(zip_url)
       @rounds = Round.where({:course_id => params[:course_id], :chapter_id => params[:chapter_id]}).paginate(:per_page => 16, :page => params[:page])
       @result = {:notice => @notice_info, :status => status}
   end
