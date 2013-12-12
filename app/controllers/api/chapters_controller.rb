@@ -152,10 +152,10 @@ on q.knowledge_card_id = kc.id and q.round_id in (?)", rounds.map(&:id)]).group_
     CardTagRelation.transaction do
       ctr = CardTagRelation.where({:user_id => params[:uid], :knowledge_card_id => params[:card_id], :course_id => params[:course_id], :cardbag_tag_id => params[:tag_id]})
       if ctr.present?
-        render :json => {:msg => "added"} #卡片已经加在当前标签下
+        render :json => {:message => "added"} #卡片已经加在当前标签下
       else
         card_tag_relation = CardTagRelation.create({:user_id => params[:uid], :knowledge_card_id => params[:card_id], :course_id => params[:course_id], :cardbag_tag_id => params[:tag_id]})
-        render :json => {:msg => card_tag_relation ? "success" : "error"}
+        render :json => {:message => card_tag_relation ? "success" : "error"}
       end
     end
   end
@@ -165,7 +165,7 @@ on q.knowledge_card_id = kc.id and q.round_id in (?)", rounds.map(&:id)]).group_
     #参数 uid， course_id, card_id, remark
     user_card_relation = UserCardsRelation.where(:course_id  => params[:course_id], :user_id => params[:uid],
       :knowledge_card_id => params[:card_id])[0]
-    render :json => {:msg => user_card_relation && user_card_relation.update_attribute(:remark, params[:remark].strip) ? "success" : "error"}
+    render :json => {:message => user_card_relation && user_card_relation.update_attribute(:remark, params[:remark].strip) ? "success" : "error"}
   end
 
   #用户自定义添加标签
@@ -173,7 +173,7 @@ on q.knowledge_card_id = kc.id and q.round_id in (?)", rounds.map(&:id)]).group_
     #参数uid, tag_name, course_id
     CardbagTag.transaction do
       cardbag_tag = CardbagTag.create({:name => params[:tag_name],:user_id => params[:uid], :course_id => params[:course_id], :types => TAG_TYPE_NAME[:user]})
-      render :json => {:msg => cardbag_tag ? "success" : "error", :tag => cardbag_tag}
+      render :json => {:message => cardbag_tag ? "success" : "error", :tag => cardbag_tag}
     end
   end
 
@@ -183,7 +183,7 @@ on q.knowledge_card_id = kc.id and q.round_id in (?)", rounds.map(&:id)]).group_
     CardbagTag.transaction do
       cardbag_tag = CardbagTag.find_by_id(params[:tag_id])
       ct = cardbag_tag.update_attribute(:name, params[:tag_name])
-      render :json => {:msg => ct ? "success" : "error"}
+      render :json => {:message => ct ? "success" : "error"}
     end
   end
 
@@ -192,7 +192,7 @@ on q.knowledge_card_id = kc.id and q.round_id in (?)", rounds.map(&:id)]).group_
     #参数tag_id
     cardbag_tag = CardbagTag.find_by_id(params[:tag_id])
     ct = cardbag_tag.destroy
-    render :json => {:msg => ct ? "success" : "error"}
+    render :json => {:message => ct ? "success" : "error"}
   end
 
   #购买卡槽
@@ -204,7 +204,7 @@ on q.knowledge_card_id = kc.id and q.round_id in (?)", rounds.map(&:id)]).group_
       ucr = user_course_relation.update_attributes(:cardbag_count => user_course_relation.cardbag_count + params[:num].to_i, :gold => user_course_relation.gold.to_i - params[:gold].to_i)
       cardbag_use_count = user_course_relation.cardbag_count.to_i - user_course_relation.cardbag_use_count.to_i
     end
-    render :json => {:msg => bcr&&ucr ? "success" : "error", :cardbag_left_count => cardbag_use_count.to_i}
+    render :json => {:message => bcr&&ucr ? "success" : "error", :cardbag_left_count => cardbag_use_count.to_i}
   end
 
   #添加错题
@@ -223,7 +223,7 @@ on q.knowledge_card_id = kc.id and q.round_id in (?)", rounds.map(&:id)]).group_
     UserCourseRelation.transaction do
       ucr = UserCourseRelation.find_by_user_id_and_course_id(params[:uid], params[:course_id])
       ucrd = ucr.destroy
-      render :json => {:msg => ucrd ? "success" : "error"}
+      render :json => {:message => ucrd ? "success" : "error"}
     end
   end
 
