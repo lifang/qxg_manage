@@ -62,12 +62,16 @@ class QuestionsController < ApplicationController
              rescue
                 error_infos << "#{excels[0]}不是excel文件，请重新导入"
              end
-             round_name = oo.cell(2,'A').to_s.strip
-             if round_name.size > 0
-                round = Round.find_by_name_and_chapter_id_and_course_id(round_name,chapter_id,course_id)
-                if round.nil? || (round.id != round_id)
-                   error_infos << "该excel题目文件不属于该关卡，请重新导入"
-                else
+             # round_name = oo.cell(2,'A').to_s.strip
+             # p round_name
+             # if round_name.size > 0
+                # round = Round.find_by_name_and_chapter_id_and_course_id(round_name,chapter_id,course_id)
+                round = Round.find_by_id_and_chapter_id_and_course_id(round_id,chapter_id,course_id)
+                p round.id
+                p round_id
+                # if round.nil? || (round.id != round_id)
+                   # error_infos << "该excel题目文件不属于该关卡，请重新导入"
+                # else
                    #获取excel中题目的错误信息
                    read_excel_result  = read_excel zip_url, excels
                    #p "read_excel_result#{read_excel_result}"
@@ -78,8 +82,8 @@ class QuestionsController < ApplicationController
                        error_infos << e
                      end
                    end
-                end
-             end
+                # end
+             # end
             end
           end
         end

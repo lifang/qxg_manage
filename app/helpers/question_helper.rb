@@ -797,6 +797,7 @@ module QuestionHelper
         # round = Round.create(:chapter_id => chapter_id, :course_id => course_id, :name => round_name)
         else
           round = Round.find_by_id(round_id)
+          round.update_attributes(:name => round_name)
         end  
         p round.id
         update_round_data round, round_score, round_time, time_correct_percent, blood
