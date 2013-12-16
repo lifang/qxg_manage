@@ -23,7 +23,7 @@ class Api::ChaptersController < ApplicationController
  r.max_score, rs.score score, rs.star from rounds r LEFT JOIN round_scores rs on r.id=rs.round_id AND rs.user_id in (?) where
 r.chapter_id = #{chapter_id} and r.course_id = #{chapter.course_id} order by r.id asc", friend_ids])
 
-      round_range = RoundScore.find_by_sql(["select u.name u_name, u.id uid, u.img img, rs.score score, rs.round_id round_id from round_scores rs inner join rounds r on r.id = rs.round_id
+      round_range = RoundScore.find_by_sql(["select u.name u_name, u.id uid, u.img img, rs.best_score score, rs.round_id round_id from round_scores rs inner join rounds r on r.id = rs.round_id
       inner join users u on u.id = rs.user_id where rs.round_id in (?) order by rs.best_score desc", rounds.map(&:id)]).group_by{|rs| rs.round_id}
       rs_hash = {}
 
