@@ -16,6 +16,10 @@
     <%= f.select :types, Constant::PROP_QUESTION_TYPES.invert, {:prompt => "请选择类型"}, {:required => true}  %>
   </div>
   <div class="form_row">
+    <label class="required label" >作用：</label>
+    <%= f.select :function_type, Constant::PROP_FUNCTION_TYPES_NAME.invert, {:prompt => "请选择"}, {:required => true}  %>
+  </div>
+  <div class="form_row">
     <label class="required label">适合题型：</label>
     <div class="prop_question_type">
       <% Constant::QUESTION_TYPES.each do |value, name| %>

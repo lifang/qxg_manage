@@ -7,4 +7,6 @@ class CardbagTag < ActiveRecord::Base
 
   validates :name, :uniqueness => { :scope => :course_id,
     :message => "同一课程下标签名称已存在！" }
+
+  scope :system, where(:types => TAG_TYPE_NAME[:system])
 end

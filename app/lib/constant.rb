@@ -25,6 +25,9 @@ module Constant
   PROP_STATUS = {0 => "正常", 1 => "删除"}
   PROP_STATUS_NAME = {:normal => 0, :delete => 1}
   PROP_QUESTION_TYPES = {0 => "答题前", 1 => "答题中", 2 => "答题后"}
+  #时光卡，财富卡，去错卡，医疗卡，作弊卡，换题卡，经验卡 @道具作用
+  PROP_FUNCTION_TYPES = {:time => 0, :asset => 1, :remove_wrong => 2, :medical => 3, :cheat => 4, :exchange => 5, :experience => 6}
+  PROP_FUNCTION_TYPES_NAME = {0 => "时光卡", 1 => "财富卡", 2 => "去错卡", 3 => "医疗卡", 4 => "作弊卡", 5 => "换题卡", 6 => "经验卡"}
 
   #题目类型，源自question,rb
   QUESTION_TYPES = {0 => "单选题", 1 => "多选题", 2 => "完形填空", 3 => "排序题", 4 => "连线题", 5 => "语音输入题", 6 => "综合题", 7 => "拖拽题", 8 => "填空题"}

@@ -15,7 +15,7 @@ class User < ActiveRecord::Base
     self.password = Digest::SHA2.hexdigest(pwd)
   end
 
-   def self.upload_img(img_url,user_id,folder_name)
+  def self.upload_img(img_url,user_id,folder_name)
     path = "#{Rails.root}/public"
     dirs=["/#{folder_name}","/#{user_id}"]
     dirs.each_with_index {|dir,index| Dir.mkdir path+dirs[0..index].join   unless File.directory? path+dirs[0..index].join }
