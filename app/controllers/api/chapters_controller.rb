@@ -21,7 +21,7 @@ class Api::ChaptersController < ApplicationController
       friend_ids = friend_ids.uniq
       rounds = Round.find_by_sql(["SELECT rs.user_id, r.id, r.chapter_id, r.name, r.questions_count, r.round_time, r.time_ratio, r.blood,
  r.max_score, rs.score score, rs.star from rounds r LEFT JOIN round_scores rs on r.id=rs.round_id AND rs.user_id in (?) where
-r.chapter_id = #{chapter_id} and r.course_id = #{chapter.course_id} order by r.id asc", friend_ids])
+r.chapter_id = #{chapter_id} and r.course_id = #{chapter.course_id} and r.status=#{VARIFY_STATUS[:verified]} order by r.id asc", friend_ids])
 
       round_range = RoundScore.find_by_sql(["select u.name u_name, u.id uid, u.img img, rs.best_score score, rs.round_id round_id from round_scores rs inner join rounds r on r.id = rs.round_id
       inner join users u on u.id = rs.user_id where rs.round_id in (?) order by rs.best_score desc", rounds.map(&:id)]).group_by{|rs| rs.round_id}
@@ -52,17 +52,6 @@ on q.knowledge_card_id = kc.id and q.round_id in (?)", rounds.map(&:id)]).group_
     end
 
   end
-
-  #  #关卡排名
-  #  def user_rank
-  #    rank_score,ranks,u_rank = {},{},{}
-  #    RoundScore.joins("inner join users u on u.id=round_scores.user_id").where(:chapter_id =>params[:chapter_id]).select([:user_id,:score,:"u.name",:round_id]).
-  #      each {|r| rank_score[r.round_id].nil? ?  rank_score[r.round_id]= {"#{r.score}_#{r.user_id}" => r} : rank_score[r.round_id].merge!({"#{r.score}_#{r.user_id}" => r});
-  #      ranks[r.round_id]= {"#{r.score}_#{r.user_id}"=>r} if r.user_id == params[:uid].to_i}
-  #    rank_score.each {|rank,v| u_rank[rank] = v.sort.reverse[0..2]}
-  #    ranks.each {|k,v| ranks[k] = [rank_score[k].keys.sort.reverse.index(v.keys[0])+1,v.values[0]["score"]]}
-  #    render :json => {:user_rank => u_rank,:my_rank => ranks}
-  #  end
 
   #使用道具
   def used_prop
