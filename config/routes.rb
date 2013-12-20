@@ -59,7 +59,8 @@ QxgManage::Application.routes.draw do
       collection do
         get :user_chapter,:user_achieve,:user_prop,:user_round,:user_rank,:user_card,:user_cards,:list_card
         post :used_prop,:save_card,:delete_card,:add_tag_to_card,:add_remark_to_card,:user_add_tag,:user_update_tag,
-          :user_del_tag, :add_wrong_question, :buy_card_slot, :save_user_course,:save_achieve,:user_delete_course
+          :user_del_tag, :add_wrong_question, :buy_card_slot, :save_user_course,:save_achieve,:user_delete_course,
+          :rouns_used_prop
       end
     end
     resources :users do

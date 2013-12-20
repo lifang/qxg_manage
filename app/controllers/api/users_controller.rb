@@ -51,7 +51,7 @@ class Api::UsersController < ActionController::Base
       if user.update_attributes(:name => name, :birthday => birthday, :sex => sex, :phone => phone)
         render :json => "success"
       else
-        render :json => "error"
+        render :json => user.errors.messages.values.flatten.join(",")
       end
     end
   end

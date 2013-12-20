@@ -7,7 +7,8 @@ class User < ActiveRecord::Base
   has_many :props, :through => :user_prop_relations
   has_many :friends
   require 'mini_magick'
-  validates :email, :uniqueness => {:message => "this email has been regisited"}
+  validates :email, :uniqueness => {:message => "email_wrong"}
+  validates :phone, :uniqueness => {:message => "phone_wrong"}
 
   scope :signed_user, where(:types => USER_TYPES[:NORMAL])
 

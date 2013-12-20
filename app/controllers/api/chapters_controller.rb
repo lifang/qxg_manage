@@ -67,6 +67,23 @@ on q.knowledge_card_id = kc.id and q.round_id in (?)", rounds.map(&:id)]).group_
     end
   end
 
+  #使用道具
+  def rouns_used_prop
+    #prop_ids(逗号分隔), uid
+    Prop.transaction do
+      flag = true
+      prop_ids = params[:prop_ids].split(",")
+      prop_ids.each do |prop_id|
+        prop = Prop.find_by_id(prop_id)
+        prop_use_record = BuyRecord.create({:user_id => params[:uid], :prop_id => prop_id, :count => 1, :gold => prop.price, :types => PROP_TYPE_NAME[:use]}) if prop
+        user_prop = UserPropRelation.where(:user_id => params[:uid],:prop_id => prop_id).first
+        up = user_prop.update_attributes(:user_prop_num => user_prop.user_prop_num-1) if user_prop
+        flag = prop_use_record&&up
+      end
+      render :text => flag ? "success" : "error"
+    end
+  end
+
   #收藏知识卡片
   def save_card
     #uid， card_id, course_id

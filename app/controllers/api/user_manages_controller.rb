@@ -37,23 +37,28 @@ class Api::UserManagesController < ActionController::Base
     cid = params[:course_id]
     selected_courses = UserCourseRelation.where(["user_id = ? ", uid]).map(&:course_id)
     course = Course.select("id, name, press, description, types, img").find_by_id_and_status(cid.to_i, VARIFY_STATUS[:verified])
-    course_hash = course.attributes
-    chapter = course.chapters.verified[0]
-    if chapter
-      rounds = chapter.rounds.verified.limit 5
-      chapter_hash = chapter.attributes
-      chapter_hash[:logo] = chapter.img.thumb.url
-      chapter_hash.delete(:img)
-      course_hash[:chapter] = chapter_hash
-      course_hash[:rounds] = rounds
+    if course
+      course_hash = course.attributes
+      chapter = course.chapters.verified[0]
+      if chapter
+        rounds = chapter.rounds.verified.limit 5
+        chapter_hash = chapter.attributes
+        chapter_hash[:logo] = chapter.img.thumb.url
+        chapter_hash.delete(:img)
+        course_hash[:chapter] = chapter_hash
+        course_hash[:rounds] = rounds
+      end
+      course_hash[:logo] = course.img.thumb.url
+      course_hash[:types] = COURSE_TYPES[course.types]
+      course_hash[:is_new] = selected_courses.include?(course.id) ? 0 : 1
+      course_hash.delete(:img)
+      message = "success"
+    else
+      message = "course_not_found"
     end
-    course_hash[:logo] = course.img.thumb.url
-    course_hash[:types] = COURSE_TYPES[course.types]
-    course_hash[:is_new] = selected_courses.include?(course.id) ? 0 : 1
-    course_hash.delete(:img)
     #flag = UserCourseRelation.find_by_user_id_and_course_id(uid, cid).nil?
 
-    render :json => {:course => course_hash, :message => "success"}
+    render :json => {:course => course_hash || {}, :message => message}
   end
 
   def selected_courses  #课程中心，所有课程以及 用户已选择的课程标志is_new
