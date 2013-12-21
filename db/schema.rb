@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131124081851) do
+ActiveRecord::Schema.define(:version => 20131220015546) do
 
   create_table "achieve_counts", :force => true do |t|
     t.integer  "user_id"
@@ -187,7 +187,8 @@ ActiveRecord::Schema.define(:version => 20131124081851) do
     t.string   "img"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "status",         :default => false
+    t.boolean  "status",                      :default => false
+    t.integer  "function_type",  :limit => 2
   end
 
   add_index "props", ["course_id"], :name => "index_props_on_course_id"
@@ -298,7 +299,7 @@ ActiveRecord::Schema.define(:version => 20131124081851) do
     t.boolean  "sex"
     t.string   "img"
     t.string   "phone"
-    t.integer  "weibo_id"
+    t.integer  "weibo_id",   :limit => 8
     t.datetime "weibo_time"
     t.integer  "types"
     t.datetime "created_at"

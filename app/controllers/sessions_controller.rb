@@ -8,6 +8,7 @@ class SessionsController < ApplicationController
     @email = params[:user_email]
     password = params[:user_password]
     user = User.find_by_email(@email)
+    p Digest::SHA2.hexdigest(password)
     if user && user.password == Digest::SHA2.hexdigest(password) && user.types==0
       session[:email] = user.email
       redirect_to courses_path
