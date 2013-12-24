@@ -15,6 +15,8 @@ class QuestionsController < ApplicationController
    p params
    @question = Question.find_by_id params[:id]
    @question.destroy
+   round = @question.round
+   round.update_attributes(:status => VARIFY_STATUS[:not_verified])
    redirect_to round_questions_path(@round)
   end
 

@@ -19,12 +19,12 @@ class Api::ChaptersController < ApplicationController
     if chapter
       friend_ids = Friend.where(:user_id => uid).map(&:friend_id) << uid
       friend_ids = friend_ids.uniq
-      rounds = Round.find_by_sql(["SELECT rs.user_id, r.id, r.chapter_id, r.name, r.questions_count, r.round_time, r.time_ratio, r.blood,
- r.max_score, rs.score score, rs.star from rounds r LEFT JOIN round_scores rs on r.id=rs.round_id AND rs.user_id in (?) where
-r.chapter_id = #{chapter_id} and r.course_id = #{chapter.course_id} and r.status=#{VARIFY_STATUS[:verified]} order by r.id asc", friend_ids])
+      rounds = Round.find_by_sql(["SELECT distinct r.id, r.chapter_id, r.name, r.questions_count, r.round_time, r.time_ratio, r.blood,
+ r.max_score, rs.score score, rs.star from rounds r LEFT JOIN round_scores rs on r.id=rs.round_id AND rs.user_id = ? where
+r.chapter_id = #{chapter_id} and r.course_id = #{chapter.course_id} and r.status=#{VARIFY_STATUS[:verified]} order by r.id asc", uid])
 
       round_range = RoundScore.find_by_sql(["select u.name u_name, u.id uid, u.img img, rs.best_score score, rs.round_id round_id from round_scores rs inner join rounds r on r.id = rs.round_id
-      inner join users u on u.id = rs.user_id where rs.round_id in (?) order by rs.best_score desc", rounds.map(&:id)]).group_by{|rs| rs.round_id}
+      inner join users u on u.id in (?) where rs.round_id in (?) order by rs.best_score desc", friend_ids, rounds.map(&:id)]).group_by{|rs| rs.round_id}
       rs_hash = {}
 
       round_range.each do |round_id, users|
@@ -69,7 +69,7 @@ on q.knowledge_card_id = kc.id and q.round_id in (?)", rounds.map(&:id)]).group_
 
   #使用道具
   def rouns_used_prop
-    #prop_ids(逗号分隔), uid
+    #prop_ids(逗号分隔), uid, course_id
     Prop.transaction do
       flag = true
       prop_ids = params[:prop_ids].split(",")
@@ -80,7 +80,7 @@ on q.knowledge_card_id = kc.id and q.round_id in (?)", rounds.map(&:id)]).group_
         up = user_prop.update_attributes(:user_prop_num => user_prop.user_prop_num-1) if user_prop
         flag = prop_use_record&&up
       end
-      render :text => flag ? "success" : "error"
+      render :json => {:message => flag ? "success" : "error", :props => flag ? Prop.my_props(params[:uid],params[:course_id]) : []}
     end
   end
 
@@ -120,9 +120,12 @@ on q.knowledge_card_id = kc.id and q.round_id in (?)", rounds.map(&:id)]).group_
 
   #移除知识卡片
   def delete_card
-    #uid ,card_id
+    #uid ,card_id, course_id
     user_cards_relation = UserCardsRelation.where(:user_id=>params[:uid],:knowledge_card_id => params[:card_id]).first
-    render :json => {:message => user_cards_relation.destroy ? "success" : "error"}
+    user_cards_relation.destroy
+    user_course_relation = UserCourseRelation.find_by_user_id_and_course_id(params[:uid], params[:course_id])
+    ucr = user_course_relation.update_attribute(:cardbag_use_count, user_course_relation.cardbag_use_count - 1) if user_course_relation
+    render :json => {:message =>  ucr ? "success" : "error"}
   end
 
   #保存成就点数,user_course_relations 累加成就点数，Achieve新增记录

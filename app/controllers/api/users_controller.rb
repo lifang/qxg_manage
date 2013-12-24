@@ -16,6 +16,7 @@ class Api::UsersController < ActionController::Base
         props = Prop.find_by_sql("select upr.*,p.* from users u left join user_prop_relations upr on u.id=upr.user_id
                                   left join props p on upr.prop_id=p.id
                                   where u.id=#{user.id}")
+        p user
         render :json => {:user => user, :courses => courses, :props => props}
       end
     else

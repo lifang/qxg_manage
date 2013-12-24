@@ -165,7 +165,7 @@ class Api::UserManagesController < ActionController::Base
         rs_question.map{|q| q && q.round.round_scores.where(:round_scores => {:user_id => params[:uid]}).update_all(updated_at: Time.now) }
       end
     else
-      questions = wrong_questions[20]
+      questions = wrong_questions[0..19]
     end
     questions_arr = []
     questions.each{|question|
@@ -193,7 +193,7 @@ class Api::UserManagesController < ActionController::Base
       questions_arr << q_hash
     }
     #每日任务默认血量是 5，  问题数量 20
-    render :json =>{:questions => questions_arr, :status => status, :blood => BLOOD, :question_count => QUESTION_COUNT }
+    render :json =>{:questions => questions_arr, :status => status, :blood => BLOOD, :question_total => QUESTION_COUNT }
   end
 
   #每日任务做完后,1，更新登录天数, 更新金币
