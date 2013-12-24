@@ -72,15 +72,14 @@ class RoundsController < ApplicationController
       a = a + 1
     end
     str = str + "]}"
-    p str
-    File.open("#{Rails.root}/public/qixueguan/Course_#{course_id}/Chapter_#{chapter_id}/Round_#{@round.id}/questions.js", 'wb') do |f|
+    round_url = "#{Rails.root}/public/qixueguan/Course_#{course_id}/Chapter_#{chapter_id}/Round_#{@round.id}"
+    File.delete "#{round_url}/questions.js" if File.exist? "#{round_url}/questions.js"
+    File.open("#{round_url}/questions.js", 'wb') do |f|
       f.write(str)
     end
-    chapter_dir = "#{Rails.root}/public/qixueguan/Course_#{course_id}/Chapter_#{chapter_id}"
-    round_dir = chapter_dir + "/Round_#{@round.id}"
-    Archive::Zip.archive("#{chapter_dir}/Round_#{@round.id}.zip", round_dir)
+    File.delete "#{round_url}.zip" if File.exist? "#{round_url}.zip"
+    Archive::Zip.archive("#{round_url}.zip", round_url)
     if @round.update_attribute(:status, true)
-
       @notice = "审核成功"
     else
       @notice = "审核失败"

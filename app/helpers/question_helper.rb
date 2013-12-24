@@ -665,7 +665,7 @@ module QuestionHelper
       options.split(";||;").each do |e|
         answer = e.to_s.scan(/[^\@\@].*/)[0].to_s if e.to_s.match(/^@@.*/)
       end
-      options = options.gsub(/@@/,"").gsub(/^;\|\|;/,"").gsub(/;\|\|;$/,"")
+      options = options.gsub(/@@/,"").gsub(/^;\|\|;/,"").gsub(/;\|\|;\s*$/,"")
       #content = que.gsub(/\[\[[^\[\[]*\]\]/,"[[text]]")
       content = que.gsub(/\[\[[^\[\[]*\]\]/,"[[text]]").gsub(/\[\[text\]\]$/,"")
       branch_questions << {:branch_content => branch_content, :branch_question_types => branch_question_types,
@@ -683,7 +683,7 @@ module QuestionHelper
           c = c + 1
         end
       end
-      options = options.gsub(/@@/,"").gsub(/^;\|\|;/,"").gsub(/;\|\|;$/,"")
+      options = options.gsub(/@@/,"").gsub(/^;\|\|;/,"").gsub(/;\|\|;\s*$/,"")
       #content = que.gsub(/\[\[[^\[\[]*\]\]/,"[[text]]")
       content = que.gsub(/\[\[[^\[\[]*\]\]/,"[[text]]").gsub(/\[\[text\]\]$/,"")
       branch_questions << {:branch_content => branch_content, :branch_question_types => branch_question_types,
@@ -698,7 +698,7 @@ module QuestionHelper
         e.split(";||;").to_a.each do |x|
           all_answers << x.gsub(/^@@/, "").to_s if x.lstrip.match(/^@@.+/)
         end
-        all_options <<  e.gsub(/@@/,"")
+        all_options <<  e.gsub(/@@/,"").gsub(/^;\|\|;/,"").gsub(/;\|\|;\s*$/,"")
       end
 
       if all_answers.length == all_options.length
