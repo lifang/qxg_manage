@@ -189,7 +189,7 @@ class Api::UserManagesController < ActionController::Base
       end
       q_hash[:card_id] = question.knowledge_card.try(:id)
       q_hash[:card_name] = question.knowledge_card.try(:name)
-      q_hash[:card_description] = question.knowledge_card.try(:description)
+      q_hash[:description] = question.knowledge_card.try(:description)
       questions_arr << q_hash
     }
     #每日任务默认血量是 5，  问题数量 20
@@ -203,9 +203,14 @@ class Api::UserManagesController < ActionController::Base
       uid = params[:uid].to_i
       cid = params[:course_id].to_i
       et = EverydayTask.find_by_user_id_and_course_id(uid, cid)
-      login_day = et && et.get_login_day  || 0  #更新每日任务登录天数
+      
       begin
-        et.update_attribute(:day, login_day + 1)
+        if et
+          login_day = et && et.get_login_day  || 0  #更新每日任务登录天数
+          et.update_attribute(:day, login_day + 1)
+        else
+          et = EverydayTask.create({:user_id => uid, :course_id => cid, :day => 1})
+        end
         user_course_relarion = UserCourseRelation.find_by_user_id_and_course_id(uid, cid)
         user_course_relarion.update_attributes(:gold, user_course_relarion.gold.to_i + params[:gold].to_i) if user_course_relarion
         message = "success"
@@ -252,8 +257,12 @@ class Api::UserManagesController < ActionController::Base
   upr.user_prop_num, upr.user_id user_id from props p left join user_prop_relations upr on p.id=upr.prop_id  and ( upr.user_id=#{uid} || upr.user_id is null)
 left join users u on u.id = upr.user_id and upr.user_prop_num >=1 where  p.course_id=#{cid} and p.status = #{PROP_STATUS_NAME[:normal]}") #道具列表(包含我的道具)
       props.map{|prop|
-        prop[:logo] = prop.img.thumb.url
-      }
+            if prop.user_prop_num.present? && prop.user_prop_num < 0
+              props.delete(prop)
+            else
+              prop[:logo] = prop.img.thumb.url
+            end 
+        }
       #    props = props.select{|p| p.user_id == uid || p.user_id == nil}
       chapters = course.chapters.verified.select("id,name,rounds_count")
 

@@ -18,7 +18,7 @@ class User < ActiveRecord::Base
 
   def self.upload_img(img_url,user_id,folder_name)
     path = "#{Rails.root}/public"
-    dirs=["/#{folder_name}","/#{user_id}"]
+    dirs=["/#{folder_name}"]
     dirs.each_with_index {|dir,index| Dir.mkdir path+dirs[0..index].join   unless File.directory? path+dirs[0..index].join }
     file=img_url.original_filename
     filename="#{dirs.join}/img_#{user_id}."+ file.split(".").reverse[0]

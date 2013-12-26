@@ -24,7 +24,7 @@ class Api::ChaptersController < ApplicationController
 r.chapter_id = #{chapter_id} and r.course_id = #{chapter.course_id} and r.status=#{VARIFY_STATUS[:verified]} order by r.id asc", uid])
 
       round_range = RoundScore.find_by_sql(["select u.name u_name, u.id uid, u.img img, rs.best_score score, rs.round_id round_id from round_scores rs inner join rounds r on r.id = rs.round_id
-      inner join users u on u.id in (?) where rs.round_id in (?) order by rs.best_score desc", friend_ids, rounds.map(&:id)]).group_by{|rs| rs.round_id}
+      inner join users u on rs.user_id = u.id where rs.round_id in (?) and rs.user_id in (?) order by rs.best_score desc", rounds.map(&:id), friend_ids]).group_by{|rs| rs.round_id}
       rs_hash = {}
 
       round_range.each do |round_id, users|
@@ -93,7 +93,7 @@ on q.knowledge_card_id = kc.id and q.round_id in (?)", rounds.map(&:id)]).group_
     if user_course_relation && ((user_course_relation.cardbag_count.to_i - user_course_relation.cardbag_use_count.to_i) > 0)
       user_card_relation = UserCardsRelation.find_by_user_id_and_knowledge_card_id(params[:uid], params[:card_id] )
       user_card_relation_new = UserCardsRelation.create(:user_id=>params[:uid],:knowledge_card_id => params[:card_id], :course_id => params[:course_id]) unless user_card_relation
-      ucr = user_course_relation.update_attribute(:cardbag_use_count, user_course_relation.cardbag_use_count + 1) if user_course_relation
+      ucr = user_course_relation.update_attribute(:cardbag_use_count, user_course_relation.cardbag_use_count + 1) unless user_card_relation
       render :text => user_card_relation ? "added" : (user_card_relation_new && ucr ? "success" : "error")
     else
       render :text => "not_enough"
@@ -226,15 +226,16 @@ on q.knowledge_card_id = kc.id and q.round_id in (?)", rounds.map(&:id)]).group_
     render :text => umq ? "added" : (umq_new ? "success" : "error")
   end
 
-  #用户前台删除课程
-  def user_delete_course
-    #uid, course_id
-    UserCourseRelation.transaction do
-      ucr = UserCourseRelation.find_by_user_id_and_course_id(params[:uid], params[:course_id])
-      ucrd = ucr.destroy
-      render :json => {:message => ucrd ? "success" : "error"}
-    end
-  end
+#  #用户前台删除课程
+#  def user_delete_course
+#    #uid, course_id
+#    UserCourseRelation.transaction do
+#      ucr = UserCourseRelation.find_by_user_id_and_course_id(params[:uid], params[:course_id]).destroy
+#      user_mistake_questions = UserMistakeQuestion.where(:user_id => params[:uid], :course_id => params[:course_id]).delete_all
+#      ucrd = ucr.destroy
+#      render :json => {:message => ucrd ? "success" : "error"}
+#    end
+#  end
 
   #下载课程时请求保存user_course_relations
   def save_user_course
