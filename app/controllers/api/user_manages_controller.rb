@@ -176,7 +176,7 @@ class Api::UserManagesController < ActionController::Base
       q_hash[:course_id] = question.round.course_id
       q_hash[:content] = question.content
       q_hash[:question_types] = question.types
-      q_hash[:prefix] = "#{question.round.course_id}/#{question.round.chapter_id}/#{question.round_id}/"
+      q_hash[:prefix] = "/mnt/sdcard/qixueguan/#{params[:uid]}/#{question.round.course_id}/#{question.round.chapter_id}/Round_#{question.round_id}/"
       q_hash[:branch_questions] = []
       question.branch_questions.each do |bq|
         bq_hash = {}
@@ -206,13 +206,12 @@ class Api::UserManagesController < ActionController::Base
       
       begin
         if et
-          login_day = et && et.get_login_day  || 0  #更新每日任务登录天数
-          et.update_attribute(:day, login_day + 1)
+          et.get_login_day  #更新每日任务登录天数
         else
           et = EverydayTask.create({:user_id => uid, :course_id => cid, :day => 1})
         end
         user_course_relarion = UserCourseRelation.find_by_user_id_and_course_id(uid, cid)
-        user_course_relarion.update_attributes(:gold, user_course_relarion.gold.to_i + params[:gold].to_i) if user_course_relarion
+        user_course_relarion.update_attribute(:gold, user_course_relarion.gold.to_i + params[:gold].to_i) if user_course_relarion
         message = "success"
       rescue
         message = "error"
@@ -251,7 +250,7 @@ class Api::UserManagesController < ActionController::Base
     course = Course.find_by_id(cid)
     if course
       et = EverydayTask.find_by_user_id_and_course_id(uid, cid)
-      login_day = et && et.get_login_day  || 0  #每日任务登录天数
+      login_day = et && et.day || 0  #每日任务登录天数
 
       props = Prop.find_by_sql("select p.id prop_id, p.name prop_name, p.description, p.price, p.types, p.question_types,
   upr.user_prop_num, upr.user_id user_id from props p left join user_prop_relations upr on p.id=upr.prop_id  and ( upr.user_id=#{uid} || upr.user_id is null)
@@ -321,7 +320,7 @@ left join users u on u.id = upr.user_id and upr.user_prop_num >=1 where  p.cours
   #返回微博好友
   def weibo_list
     #参数 uid， weibo_ids用逗号分隔
-    weibo_ids = params[:weibo_ids].split(",")
+    weibo_ids = params[:weibo_ids].split(",").map(&:to_i)
     in_app_weibo_users = User.where(:weibo_id => weibo_ids)
     not_in_app_weibo_ids = weibo_ids - in_app_weibo_users.map(&:weibo_id)
     weibo_user_ids = in_app_weibo_users.map(&:id)

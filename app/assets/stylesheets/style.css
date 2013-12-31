@@ -244,7 +244,7 @@ h1 a { cursor: pointer;}
 
 .main th{ background:#d8dde0;}
 
-.cpt_box .cpt_title { font-size:24px; font-weight:bold; display:block; line-height:82px; margin-left:30px;}
+.cpt_box .cpt_title { font-size:24px; font-weight:bold; display:block; line-height:82px; margin-left:30px;height: 82px; overflow: hidden;}
 
 .passUp { margin:10px 240px; height:40px;}
 

@@ -9,6 +9,8 @@ class EverydayTask < ActiveRecord::Base
     if now_time - task_time > 1
       self.update_attribute("day", 0)
     end
-    self.day
+    if now_time - task_time == 1
+      self.update_attribute("day", self.day + 1)
+    end
   end
 end

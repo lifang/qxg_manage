@@ -29,6 +29,7 @@ class KnowledgeCardsController < ApplicationController
       @knowledge_card.cardbag_tags.delete_all
     end
     if @knowledge_card.update_attributes(params[:knowledge_card])
+      @knowledge_card.course.update_attribute(:status, VARIFY_STATUS[:not_verified])
       render :success
     else
       render :error

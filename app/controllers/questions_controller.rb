@@ -124,6 +124,7 @@ class QuestionsController < ApplicationController
   def remove_knowledge_card
     @question = Question.find_by_id params[:question_id]
     @question.update_attribute(:knowledge_card_id, nil)
+    @question.round.update_attribute(:status, VARIFY_STATUS[:not_verified])
   end
 
   def search

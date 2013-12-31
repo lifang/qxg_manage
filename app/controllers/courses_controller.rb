@@ -57,6 +57,8 @@ class CoursesController < ApplicationController
         #计算每一等级需要的经验值
         chapters = @course.chapters
         course_rounds_count = chapters.inject(0){|sum, chapter| sum += (chapter.rounds_count.to_i)}
+        p 111111111111111111111
+        p course_rounds_count
         exp_arr  = update_course_level(course_rounds_count)
        
         exp_arr.each_with_index do |experience, index|
