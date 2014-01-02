@@ -226,16 +226,30 @@ on q.knowledge_card_id = kc.id and q.round_id in (?)", rounds.map(&:id)]).group_
     render :text => umq ? "added" : (umq_new ? "success" : "error")
   end
 
-#  #用户前台删除课程
-#  def user_delete_course
-#    #uid, course_id
-#    UserCourseRelation.transaction do
-#      ucr = UserCourseRelation.find_by_user_id_and_course_id(params[:uid], params[:course_id]).destroy
-#      user_mistake_questions = UserMistakeQuestion.where(:user_id => params[:uid], :course_id => params[:course_id]).delete_all
-#      ucrd = ucr.destroy
-#      render :json => {:message => ucrd ? "success" : "error"}
-#    end
-#  end
+  #用户前台删除课程
+  def user_delete_course
+    #uid, course_id
+    begin
+      uid, course_id = params[:uid], params[:course_id]
+      UserCourseRelation.transaction do
+        ucr = UserCourseRelation.find_by_user_id_and_course_id(uid, course_id).destroy #删除用户课程关系记录
+        user_mistake_questions = UserMistakeQuestion.where(:user_id => uid, :course_id => course_id).delete_all #删除用户课程错题记录
+        achieves = Achieve.where(:user_id => uid, :course_id => course_id).delete_all #删除用户获得成就记录
+        buy_cardbag_records = BuyCardbagRecord.where(:user_id => uid, :course_id => course_id).delete_all #删除用户购买卡包记录
+        buy_records = BuyRecord.where(:user_id => uid, :course_id => course_id).delete_all #删除用户购买/使用道具记录
+        card_tag_relations = CardTagRelation.where(:user_id => uid, :course_id => course_id).delete_all #删除卡片添加标签记录
+        cardbag_tags = CardbagTag.where(:user_id => uid, :course_id => course_id).delete_all #删除自定义标签记录
+        everyday_tasks = EverydayTask.where(:user_id => uid, :course_id => course_id).delete_all #删除每日任务记录
+        round_scores = RoundScore.joins("chapter").where(:chapters => {:course_id => course_id}, :user_id => uid).delete_all
+        user_cards_relations = UserCardsRelation.where(:user_id => uid, :course_id => course_id).delete_all #删除用户收藏知识卡片记录
+        user_prop_relations = UserPropRelation.joins("prop").where(:user_id => uid, :props => {:course_id => course_id}).delete_all #删除用户道具记录
+      end
+      message = "success"
+    rescue
+      message = "error"
+    end
+    render :json => {:message => message}
+  end
 
   #下载课程时请求保存user_course_relations
   def save_user_course

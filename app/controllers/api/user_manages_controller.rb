@@ -372,9 +372,10 @@ left join users u on u.id = upr.user_id and upr.user_prop_num >=1 where  p.cours
 
         end
         #保存当前关卡，用户以及好友的得分排名 结束
-
-        star3_count = RoundScore.where(:round_id => round_id, :star_3flag => true).length  #当前关卡, 用户得3星的次数
-        toppest_count = RoundScore.where(:round_id => round_id, :toppest_flag => true).length  #当前关卡, 用户得第一的次数
+        course = Course.find_by_id(course_id)
+        chapter_ids = course.chapter_ids if course
+        star3_count = RoundScore.where(:chapter_id => chapter_ids || [], :star_3flag => true).length  #当前课程, 用户得3星的次数
+        toppest_count = RoundScore.where(:chapter_id => chapter_ids || [], :toppest_flag => true).length  #当前课程, 用户得第一的次数
 
 
         old_exp_value = ucr.experience_value.to_i
@@ -392,7 +393,7 @@ left join users u on u.id = upr.user_id and upr.user_prop_num >=1 where  p.cours
             :level_exp_value => level_exp_value, :gold => ucr.gold_total, :toppest_count => toppest_count, :star3_count => star3_count, :card_use_count => ucr.cardbag_use_count}
         end
       else
-        render :json => {:message => "record not found"}
+        render :json => {:message => "record_not_found"}
       end
     end
     #返回值加上累计金币，当前课程当前用户关卡排名第一的次数
