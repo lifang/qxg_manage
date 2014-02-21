@@ -59,7 +59,6 @@ function file_validate(obj){
     else
         $("#btn_upload").removeAttr("disabled");
     end
-
 }
 
 function show_tag(obj){

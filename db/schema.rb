@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131024055235) do
+ActiveRecord::Schema.define(:version => 20131024100949) do
 
   create_table "achieve_counts", :force => true do |t|
     t.integer  "user_id"
@@ -101,7 +101,7 @@ ActiveRecord::Schema.define(:version => 20131024055235) do
     t.integer  "user_id"
     t.integer  "course_id"
     t.string   "name"
-    t.integer  "types"
+    t.integer  "types",      :default => 0
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -113,10 +113,10 @@ ActiveRecord::Schema.define(:version => 20131024055235) do
     t.integer  "course_id"
     t.string   "name"
     t.string   "img"
-    t.integer  "round_count"
+    t.integer  "rounds_count"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "status",      :limit => 1, :default => 0
+    t.integer  "status",       :limit => 1, :default => 0
   end
 
   add_index "chapters", ["course_id"], :name => "index_chapters_on_course_id"
@@ -127,7 +127,7 @@ ActiveRecord::Schema.define(:version => 20131024055235) do
     t.text     "description"
     t.string   "img"
     t.integer  "types"
-    t.integer  "status",      :limit => 1, :default => 0
+    t.integer  "status",         :limit => 1, :default => 0
     t.integer  "time_ratio"
     t.integer  "blood"
     t.integer  "max_score"
@@ -135,6 +135,7 @@ ActiveRecord::Schema.define(:version => 20131024055235) do
     t.datetime "updated_at"
     t.integer  "round_time"
     t.integer  "round_count"
+    t.integer  "chapters_count",              :default => 0
   end
 
   create_table "everyday_tasks", :force => true do |t|
@@ -284,7 +285,7 @@ ActiveRecord::Schema.define(:version => 20131024055235) do
     t.string   "email"
     t.string   "password"
     t.string   "name"
-    t.datetime "birthday"
+    t.date     "birthday"
     t.boolean  "sex"
     t.string   "img"
     t.string   "phone"
