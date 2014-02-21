@@ -1,6 +1,8 @@
 #encoding: utf-8
 class Api::UsersController < ActionController::Base
-  def login     #登陆
+  include Constant
+  def login     #登录
+    #email, password
     email = params[:email]
     user = User.find_by_email(email)
     password = params[:password]
@@ -14,6 +16,7 @@ class Api::UsersController < ActionController::Base
         props = Prop.find_by_sql("select upr.*,p.* from users u left join user_prop_relations upr on u.id=upr.user_id
                                   left join props p on upr.prop_id=p.id
                                   where u.id=#{user.id}")
+        p user
         render :json => {:user => user, :courses => courses, :props => props}
       end
     else
@@ -26,7 +29,7 @@ class Api::UsersController < ActionController::Base
     name = params[:name]
     pwd = params[:password]
     phone = params[:phone]
-    user = User.new(:email => email, :name => name, :phone => phone, :types => User::TYPES[:NORMAL])
+    user = User.new(:email => email, :name => name, :phone => phone, :types => USER_TYPES[:NORMAL])
     user.encrypt_password(pwd)
     if user.save
       render :json => "success"
@@ -37,6 +40,7 @@ class Api::UsersController < ActionController::Base
 
 
   def update_user_date    #编辑更新
+    #参数 uid,name ,birthday,sex, phone
     user = User.find_by_id(params[:uid].to_i)
     name = params[:name].strip
     birthday = params[:birthday]
@@ -48,24 +52,26 @@ class Api::UsersController < ActionController::Base
       if user.update_attributes(:name => name, :birthday => birthday, :sex => sex, :phone => phone)
         render :json => "success"
       else
-        render :json => "error"
+        render :json => user.errors.messages.values.flatten.join(",")
       end
     end
   end
 
   def upload_head_img     #上传头像
+    #参数 img, uid
     img = params[:img]
     uid = params[:uid]
     user = User.find_by_id(uid)
     url = User.upload_img(img, uid, "user_head_img")
     if user.update_attribute("img", url)
-      render :json => "success"
+      render :json => {:message => "success", :img => user.img}
     else
       render :json => "error"
     end
   end
 
   def set_password      #设置密码
+    #参数uid, old_password, new_password
     opwd = params[:old_password]
     npwd = params[:new_password]
     user = User.find_by_id(params[:uid].to_i)

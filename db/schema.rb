@@ -11,8 +11,8 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131024100949) do
 
+ActiveRecord::Schema.define(:version => 20131220015546) do
   create_table "achieve_counts", :force => true do |t|
     t.integer  "user_id"
     t.integer  "course_id"
@@ -171,6 +171,12 @@ ActiveRecord::Schema.define(:version => 20131024100949) do
 
   add_index "knowledge_cards", ["course_id"], :name => "index_knowledge_cards_on_course_id"
 
+  create_table "level_values", :force => true do |t|
+    t.integer "course_id"
+    t.integer "level"
+    t.integer "experience_value"
+  end
+
   create_table "props", :force => true do |t|
     t.integer  "course_id"
     t.string   "name"
@@ -181,7 +187,8 @@ ActiveRecord::Schema.define(:version => 20131024100949) do
     t.string   "img"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "status",         :default => false
+    t.boolean  "status",                      :default => false
+    t.integer  "function_type",  :limit => 2
   end
 
   add_index "props", ["course_id"], :name => "index_props_on_course_id"
@@ -206,7 +213,10 @@ ActiveRecord::Schema.define(:version => 20131024100949) do
     t.datetime "day"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "star",       :limit => 1
+    t.integer  "star",         :limit => 1
+    t.boolean  "toppest_flag",              :default => false
+    t.boolean  "star_3flag",                :default => false
+    t.integer  "best_score",                :default => 0
   end
 
   add_index "round_scores", ["chapter_id"], :name => "index_round_scores_on_chapter_id"
@@ -243,12 +253,12 @@ ActiveRecord::Schema.define(:version => 20131024100949) do
   create_table "user_course_relations", :force => true do |t|
     t.integer  "user_id"
     t.integer  "course_id"
-    t.integer  "cardbag_count"
-    t.integer  "cardbag_use_count"
-    t.integer  "gold"
-    t.integer  "gold_total"
-    t.integer  "level"
-    t.integer  "achieve_point"
+    t.integer  "cardbag_count",     :default => 0
+    t.integer  "cardbag_use_count", :default => 0
+    t.integer  "gold",              :default => 0
+    t.integer  "gold_total",        :default => 0
+    t.integer  "level",             :default => 1
+    t.integer  "achieve_point",     :default => 0
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "experience_value"
@@ -289,7 +299,7 @@ ActiveRecord::Schema.define(:version => 20131024100949) do
     t.boolean  "sex"
     t.string   "img"
     t.string   "phone"
-    t.integer  "weibo_id"
+    t.integer  "weibo_id",   :limit => 8
     t.datetime "weibo_time"
     t.integer  "types"
     t.datetime "created_at"

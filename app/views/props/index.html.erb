@@ -14,6 +14,7 @@
             <th>描述</th>
             <th>金币</th>
             <th>适应题型</th>
+            <th>道具作用</th>
             <th>道具类型</th>
             <th>操作</th>
           </tr>
@@ -22,8 +23,10 @@
               <td class="prop_name"><%= image_tag prop.img.thumb.url, :style => "width:30px; height:30px;" %><%= prop.name %></td>
               <td><%= prop.description %></td>
               <td><%= prop.price %></td>
-              <td><%= prop.question_types.split(",").map{|type| Question::TYPES[type.to_i]}.join("、") %></td>
-              <td><%= Prop::TYPES[prop.types] %></td>
+              <td><%= prop.question_types.split(",").map{|type| Constant::QUESTION_TYPES[type.to_i]}.join("、") %></td>
+              <td><%= Constant::PROP_FUNCTION_TYPES_NAME[prop.function_type] %></td>
+              <td><%= Constant::PROP_QUESTION_TYPES[prop.types] %></td>
+
               <td>
                 <% unless prop.status %>
                   <%= link_to "编辑", edit_course_prop_path(@course, prop), :remote => true, :class => "propInfo green_btn" %>

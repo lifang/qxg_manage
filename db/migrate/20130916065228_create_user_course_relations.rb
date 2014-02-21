@@ -3,12 +3,12 @@ class CreateUserCourseRelations < ActiveRecord::Migration
     create_table :user_course_relations do |t|
       t.integer :user_id
       t.integer :course_id
-      t.integer :cardbag_count
-      t.integer :cardbag_use_count
-      t.integer :gold
-      t.integer :gold_total
-      t.integer :level
-      t.integer :achieve_point
+      t.integer :cardbag_count,:default => 0
+      t.integer :cardbag_use_count,:default => 0
+      t.integer :gold,:default => 0
+      t.integer :gold_total,:default => 0
+      t.integer :level, :default => 1
+      t.integer :achieve_point, :default => 0
 
       t.timestamps
     end

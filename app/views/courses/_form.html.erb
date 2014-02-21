@@ -5,7 +5,7 @@
   </div>
   <div class="form_row">
     <label class="required label">所属类别：</label>
-    <%= f.select :types, Course::TYPES.invert, {:prompt => "请选择类别"}, {:required => true}  %>
+    <%= f.select :types, Constant::COURSE_TYPES.invert, {:prompt => "请选择类别"}, {:required => true}  %>
   </div>
   <div class="form_row">
     <label class="required label">出版社：</label>

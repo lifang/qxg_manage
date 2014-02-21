@@ -33,7 +33,7 @@ class ChaptersController < ApplicationController
     @chapter = Chapter.find_by_id(params[:id])
     params[:chapter][:name] =  name_strip(params[:chapter][:name])
     if @chapter.update_attributes(params[:chapter])
-      @chapter.status = Chapter::STATUS[:not_verified] if @chapter.status == Chapter::STATUS[:verified]
+      @chapter.status = VARIFY_STATUS[:not_verified] if @chapter.status == VARIFY_STATUS[:verified]
       @chapter.save
       flash[:notice] = "更新成功！"
       render :success
@@ -47,6 +47,8 @@ class ChaptersController < ApplicationController
 
   def destroy
     @chapter = Chapter.find_by_id(params[:id])
+    chapter_url = "#{Rails.root}/public/qixueguan/Course_#{@chapter.course_id}/Chapter_#{@chapter.id}"
+    FileUtils.remove_dir chapter_url if Dir.exist? chapter_url
     @chapter.destroy
     flash[:notice] = "删除成功"
     redirect_to course_chapters_path(@course.id)

@@ -15,7 +15,7 @@ class RoundsController < ApplicationController
     @round = Round.find_by_id params[:id]
      params[:round][:name] =  name_strip(params[:round][:name])
     if @round.update_attributes(params[:round])
-      @round.status = Round::STATUS[:not_verified] if @round.status == Round::STATUS[:verified]
+      @round.status = VARIFY_STATUS[:not_verified] if @round.status == VARIFY_STATUS[:verified]
       @round.save
       @notice = "更新成功！"
       render :success
@@ -40,12 +40,18 @@ class RoundsController < ApplicationController
   def verify
     @round = Round.find_by_id params[:id]
     question_total = @round.questions.count
+    if question_total%2 == 0
+      question_total = question_total/2
+    else
+      question_total = (question_total+1)/2
+    end
+
     chapter_id = @round.chapter_id
     course_id =@round.course_id
     one_json_question = []
     questions = @round.questions
     str = ""
-    str = str + "{\"course_id\" : #{course_id},\n  \"chapter_id\" : #{chapter_id},\n
+    str = str + "course = {\"course_id\" : #{course_id},\n  \"chapter_id\" : #{chapter_id},\n
     \"round_id\" : #{@round.id},\n \"round_time\" : \"#{@round.round_time}\",\n \"question_total\":#{question_total},
       \"round_score\" : #{@round.max_score},  \"percent_time_correct\" : #{@round.time_ratio},\n
     \"blood\" : #{@round.blood},\"questions\" :["
@@ -66,15 +72,14 @@ class RoundsController < ApplicationController
       a = a + 1
     end
     str = str + "]}"
-    p str
-    File.open("#{Rails.root}/public/qixueguan/Course_#{course_id}/Chapter_#{chapter_id}/Round_#{@round.id}/questions.js", 'wb') do |f|
+    round_url = "#{Rails.root}/public/qixueguan/Course_#{course_id}/Chapter_#{chapter_id}/Round_#{@round.id}"
+    File.delete "#{round_url}/questions.js" if File.exist? "#{round_url}/questions.js"
+    File.open("#{round_url}/questions.js", 'wb') do |f|
       f.write(str)
     end
-    chapter_dir = "#{Rails.root}/public/qixueguan/Course_#{course_id}/Chapter_#{chapter_id}"
-    round_dir = chapter_dir + "/Round_#{@round.id}"
-    Archive::Zip.archive("#{chapter_dir}/Round_#{@round.id}.zip", round_dir)
+    File.delete "#{round_url}.zip" if File.exist? "#{round_url}.zip"
+    Archive::Zip.archive("#{round_url}.zip", round_url)
     if @round.update_attribute(:status, true)
-
       @notice = "审核成功"
     else
       @notice = "审核失败"
@@ -86,6 +91,7 @@ class RoundsController < ApplicationController
       course_id = params[:course_id]
       chapter_id = params[:chapter_id]
       user = User.find_by_email(session[:email])
+      round_id = nil
       zip_file = params[:file]
       @error_infos =[]
 
@@ -93,7 +99,7 @@ class RoundsController < ApplicationController
         @error_infos << "zip压缩包不存在"
       else
         user_tmp_path = "#{Rails.root}/public/qixueguan/tmp/user_#{user.id}"
-        zip_dir = rename_zip
+        zip_dir = rename_file
         if upload(user_tmp_path,zip_dir,zip_file)== false  #上传文件
             @error_infos << "上传失败"
         else
@@ -108,14 +114,21 @@ class RoundsController < ApplicationController
               if excels.length <= 0
                   @error_infos << "没有找到excel题目文件"
               else
-                  #获取excel中题目的错误信息
-                  read_excel_result  = read_excel zip_url, excels
-                  #p "read_excel_result#{read_excel_result}"
-                  #p read_excel_result[:all_round_questions]
-                  #p read_excel_result[:error_infos]
-                  if read_excel_result[:error_infos].length != 0
-                    read_excel_result[:error_infos].each do |e|
+                  s = check_excel_name excels
+                  if s[:status] == 1 #excel命名有问题
+                    s[:error_infos].each do |e|
                       @error_infos << e
+                    end
+                  else
+                    #获取excel中题目的错误信息
+                    read_excel_result  = read_excel zip_url, excels
+                    #p "read_excel_result#{read_excel_result}"
+                    #p read_excel_result[:all_round_questions]
+                    #p read_excel_result[:error_infos]
+                    if read_excel_result[:error_infos].length != 0
+                      read_excel_result[:error_infos].each do |e|
+                        @error_infos << e
+                      end
                     end
                   end
               end
@@ -125,17 +138,18 @@ class RoundsController < ApplicationController
 
       if @error_infos.length != 0 #判断错误信息是否为空
         @notice_info = @error_infos
+        status = 1
       else #转移文件&插入数据&写入XML文件
-        import_data read_excel_result[:all_round_questions], course_id, chapter_id, zip_url, user.id
-        @notice_info = "导入完成！"
+        import_data read_excel_result[:all_round_questions], course_id, chapter_id, zip_url, round_id
+        status = 0
+        @notice_info = ["导入完成！"]
       end
-      @rounds = Round.where({:course_id => params[:course_id], :chapter_id => params[:chapter_id]}).paginate(:per_page => 16, :page => params[:page])
       FileUtils.remove_dir zip_url if !zip_url.nil? && Dir.exist?(zip_url)
-      @hash_result = {:notice => @notice_info, :round => @rounds}
+      @rounds = Round.where({:course_id => params[:course_id], :chapter_id => params[:chapter_id]}).paginate(:per_page => 16, :page => params[:page])
+      @result = {:notice => @notice_info, :status => status}
   end
 
   private
-
   def get_course_chapter
     @course = Course.find_by_id params[:course_id]
     @chapter = Chapter.find_by_id params[:chapter_id]

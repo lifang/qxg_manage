@@ -22,7 +22,7 @@
           </div>
           <div>
             <div class="action">
-              是否通过审核：<span><%= Course::STATUS_NAME[chapter.status] %></span>
+              是否通过审核：<span><%= Constant::VERIFY_STATUS_NAME[chapter.status] %></span>
               <%= verify_button(chapter) if chapter.status==0 %>
             </div>
             <br/>

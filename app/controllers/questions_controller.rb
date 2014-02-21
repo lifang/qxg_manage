@@ -15,10 +15,12 @@ class QuestionsController < ApplicationController
    p params
    @question = Question.find_by_id params[:id]
    @question.destroy
+   round = @question.round
+   round.update_attributes(:status => VARIFY_STATUS[:not_verified])
    redirect_to round_questions_path(@round)
   end
 
-  #导入多个关卡
+  #导入单个关卡
   def uploadfile
     course_id = params[:course_id].to_i
     chapter_id = params[:chapter_id].to_i
@@ -26,46 +28,52 @@ class QuestionsController < ApplicationController
     user = User.find_by_email(session[:email])
     zip_file = params[:file]
     zip_url = ""
-    @error_infos =[]
+    error_infos =[]
 
     if zip_file.nil?
-      @error_infos << "zip压缩包不存在"
+      error_infos << "zip压缩包不存在"
     else
       user_tmp_path = "#{Rails.root}/public/qixueguan/tmp/user_#{user.id}"
-      zip_dir = rename_zip
+      zip_dir = rename_file
       p zip_file
       if upload(user_tmp_path,zip_dir,zip_file)== false  #上传文件
-        @error_infos << "上传失败"
+        error_infos << "上传失败"
       else
         zip_url = "#{user_tmp_path}/#{zip_dir}"
         if unzip(zip_url) == false         #解压zip压缩包
-          @error_infos << "zip压缩包不正确，请上传正确的压缩包"
+          error_infos << "zip压缩包不正确，请上传正确的压缩包"
         else
           #获取excel文件数组和资源目录数组
           excels_and_dirs = get_excels_and_dirs zip_url
           excels = excels_and_dirs[:excels]
           resource_dirs = excels_and_dirs[:dirs]
           if excels.length <= 0
-             @error_infos << "没有找到excel题目文件"
-             #FileUtils.remove_dir zip_url
+             error_infos << "没有找到excel题目文件"
           elsif excels.length > 1
-             @error_infos << "只能导入一个关卡的题目"
-             #FileUtils.remove_dir zip_url
+             error_infos << "只能导入一个关卡的题目"
           else
+            s = check_excel_name excels
+            if s[:status] == 1 #excel命名有问题
+              s[:error_infos].each do |e|
+                error_infos << e
+              end
+            else
              begin
                 oo = Roo::Excel.new("#{zip_url}/#{excels[0]}")
                 oo.default_sheet = oo.sheets.first
              rescue
-                @error_infos << "#{excels[0]}不是excel文件，请重新导入"
-                #FileUtils.remove_dir zip_url
+                error_infos << "#{excels[0]}不是excel文件，请重新导入"
              end
-             round_name = oo.cell(2,'A').to_s.strip
-             if round_name.size > 0
-                round = Round.find_by_name_and_chapter_id_and_course_id(round_name,chapter_id,course_id)
-                if round.nil? || (round.id != round_id)
-                   @error_infos << "该excel题目文件不属于该关卡，请重新导入"
-                   #FileUtils.remove_dir zip_url
-                else
+             # round_name = oo.cell(2,'A').to_s.strip
+             # p round_name
+             # if round_name.size > 0
+                # round = Round.find_by_name_and_chapter_id_and_course_id(round_name,chapter_id,course_id)
+                round = Round.find_by_id_and_chapter_id_and_course_id(round_id,chapter_id,course_id)
+                p round.id
+                p round_id
+                # if round.nil? || (round.id != round_id)
+                   # error_infos << "该excel题目文件不属于该关卡，请重新导入"
+                # else
                    #获取excel中题目的错误信息
                    read_excel_result  = read_excel zip_url, excels
                    #p "read_excel_result#{read_excel_result}"
@@ -73,20 +81,21 @@ class QuestionsController < ApplicationController
                    #p read_excel_result[:error_infos]
                    if read_excel_result[:error_infos].length != 0
                      read_excel_result[:error_infos].each do |e|
-                       @error_infos << e
+                       error_infos << e
                      end
                    end
-                end
-             end
+                # end
+             # end
+            end
           end
         end
       end
     end
 
-    if @error_infos.length != 0 #判断错误信息是否为空
-        @status = 1
-        @notice_info = @error_infos
-        @info = {:status => @status, :notice => @notice_info}
+    if error_infos.length != 0 #判断错误信息是否为空
+        status = 1
+        notice_info = error_infos
+        @info = {:status => status, :notice => notice_info}
     else #转移文件&插入数据&写入文件
         questions = Question.where("round_id=#{round_id}")
         if !questions.nil?
@@ -94,28 +103,28 @@ class QuestionsController < ApplicationController
               branch_questions = e.branch_questions
               if e.knowledge_card_id != nil
                 knowledge_card = e.knowledge_card
-                card_tag_relation = CardTagRelation.find_by_knowledge_card_id_and_user_id(knowledge_card.id,user.id)
+                card_tag_relation = CardTagRelation.find_by_knowledge_card_id(knowledge_card.id)
                 card_tag_relation.destroy #删除和知识卡片的关系
               end
               e.destroy  #删除题目
           end
         end
-
-        import_data read_excel_result[:all_round_questions], course_id, chapter_id, zip_url, user.id
-        @status = 0
-        @notice_info = "导入完成！"
-        @round = Round.find(round_id)
-        @questions = @round.questions.includes(:knowledge_card).paginate(:per_page => 10, :page => 1)
-        @branch_question_hash = BranchQuestion.where({:question_id => @questions.map(&:id)}).group_by{|bq| bq.question_id}
-        @info = {:status => @status, :notice => @notice_info, :question => @questions, :branch_question => @branch_question_hash}
+        import_data read_excel_result[:all_round_questions], course_id, chapter_id, zip_url, round_id
+        status = 0
+        notice_info = "导入完成！"
+        # @round = Round.find(round_id)
+        # @questions = @round.questions.includes(:knowledge_card).paginate(:per_page => 10, :page => params[:page])
+        # @branch_question_hash = BranchQuestion.where({:question_id => @questions.map(&:id)}).group_by{|bq| bq.question_id}
+        # @info = {:status => status, :notice => @notice_info, :question => @questions, :branch_question => @branch_question_hash}
+        @info = {:status => status, :notice => notice_info}
     end
-
     FileUtils.remove_dir zip_url if Dir.exist? zip_url
   end
 
   def remove_knowledge_card
     @question = Question.find_by_id params[:question_id]
     @question.update_attribute(:knowledge_card_id, nil)
+    @question.round.update_attribute(:status, VARIFY_STATUS[:not_verified])
   end
 
   def search
@@ -154,9 +163,9 @@ class QuestionsController < ApplicationController
         error_infos << "与原题题型不符，只能编辑题目内容，不能改变题型！"
       end
       #p "result#{result}"
-      error_info = result[:error_info]
-
-      error_infos << error_info if !error_info.empty?
+      result[:error_info].each do |e|
+        error_infos << e.to_s.strip if e.to_s.strip.size != 0
+      end
     end
     p origin_types
     p type
@@ -177,7 +186,7 @@ class QuestionsController < ApplicationController
         :options => e[:options], :answer => e[:answer])
       end
       round = Round.find(round_id)
-      round.update_attributes(:status => Round::STATUS[:not_verified])
+      round.update_attributes(:status => VARIFY_STATUS[:not_verified])
       @info = {:status => 0 , :notice => "编辑完成！", :question => @questions, :branch_question => @branch_question_hash}
     else
       @info = {:status => -1, :notice => error_infos}

@@ -9,7 +9,7 @@ class CardbagTagsController < ApplicationController
       f.js {render :search}
     end
   end
-
+  
   def new
     @tag = CardbagTag.new
   end
@@ -34,6 +34,7 @@ class CardbagTagsController < ApplicationController
     @tag = CardbagTag.find_by_id(params[:id])
     params[:cardbag_tag][:name] =  name_strip(params[:cardbag_tag][:name])
     if @tag.update_attributes(params[:cardbag_tag])
+      @tag.course.update_attribute(:status, VARIFY_STATUS[:not_verified])
       @notice = "更新成功"
       render :success
     else
